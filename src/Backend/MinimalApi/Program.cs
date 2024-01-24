@@ -1,17 +1,13 @@
 ﻿using System.Net;
-using Azure.Core;
-
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Graph;
-using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 namespace MinimalApi;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -88,13 +84,6 @@ public class Program
         {
             app.UseExceptionHandler("/Error");
             app.UseHsts();
-        }
-
-        var configuration = app.Services.GetRequiredService<IConfiguration>();
-        var checkCosmosClientSetup = configuration.GetValue<bool>("CosmosDB:CheckCosmosClientSetup");
-        if (checkCosmosClientSetup)
-        {
-            await app.CheckCosmosClientSetup();
         }
 
         app.UseHttpsRedirection();

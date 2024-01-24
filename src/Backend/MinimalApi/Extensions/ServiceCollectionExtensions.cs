@@ -153,25 +153,4 @@ internal static class ServiceCollectionExtensions
                             .AllowAnyHeader()
                             .AllowAnyMethod()));
     }
-
-    public static async Task CheckCosmosClientSetup(this WebApplication app)
-    {
-        try
-        {
-            var configuration = app.Services.GetRequiredService<IConfiguration>();
-            var cosmosClient = app.Services.GetRequiredService<CosmosClient>();
-            var logger = app.Services.GetRequiredService<ILogger<CosmosClient>>();
-
-            var cosmosDbName = configuration["CosmosDB:Name"];
-            await cosmosClient.CreateDatabaseIfNotExistsAsync(cosmosDbName);
-
-            // If the operation is successful, the setup is correct
-            logger.LogInformation("CosmosClient is set up correctly.");
-        }
-        catch (CosmosException ex)
-        {
-            // If the operation fails, throw an exception
-            throw new Exception("CosmosClient is not set up correctly.", ex);
-        }
-    }
 }
