@@ -15,7 +15,7 @@ public class AzureOpenAIClientTest(WebApplicationFactory<Program> factory) : ICl
         Response<ChatCompletions> responseWithoutStream = await client.GetChatCompletionsAsync(
             new ChatCompletionsOptions()
             {
-                DeploymentName = "gunvor-gpt-4-32k",
+                DeploymentName = "docAssistant-gpt-4-32k",
                 Messages =
                 {
                     new ChatRequestSystemMessage(@"You are an AI assistant that helps people find information."),
