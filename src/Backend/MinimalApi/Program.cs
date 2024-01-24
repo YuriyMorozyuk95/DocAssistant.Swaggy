@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using Azure.Core;
 
-using GunvorCopilot.Backend.Core;
-
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Graph;
@@ -54,50 +52,6 @@ public class Program
                     },
                 };
             }, options => { builder.Configuration.Bind("AzureAd", options); });
-
-        builder.Services.AddSingleton<IApplicationGraphService, GraphService>(x =>
-        {
-            var clientId = builder.Configuration["AzureAd:ClientId"];
-            var tenantId = builder.Configuration["AzureAd:TenantId"];
-            var clientSecret = builder.Configuration["AzureAd:ClientSecret"];
-            var graphScope = builder.Configuration["AzureAd:GraphScope"];
-            var scopes = new[] { graphScope };
-
-            var options = new ClientSecretCredentialOptions
-            {
-                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
-            };
-
-            var clientSecretCredential = new ClientSecretCredential(
-			tenantId, clientId, clientSecret, options);
-
-            var graphClient = new GraphServiceClient(clientSecretCredential, scopes);
-
-            var logger = x.GetRequiredService<ILogger<GraphService>>();
-            var config = x.GetRequiredService<IConfiguration>();
-
-            return new GraphService(graphClient, logger, config);
-        });
-
-        builder.Services.AddScoped<IDelegatedGraphService, GraphService>(x =>
-        {
-            var tenantId = builder.Configuration["AzureAd:TenantId"];
-            var clientId = builder.Configuration["AzureAd:ClientId"];
-            var clientSecret = builder.Configuration["AzureAd:ClientSecret"];
-            var graphScope = builder.Configuration["AzureAd:GraphScope"];
-            var scopes = new[] { graphScope };
-
-            var tokenProvider = x.GetRequiredService<ITokenProvider>();
-            var token = tokenProvider.GetTokenFromHeader();
-
-            var credential = new OnBehalfOfCredential(tenantId, clientId, clientSecret, token);
-
-            var graphClient = new GraphServiceClient(credential, scopes);
-            var logger = x.GetRequiredService<ILogger<GraphService>>();
-            var config = x.GetRequiredService<IConfiguration>();
-
-            return new GraphService(graphClient, logger, config);
-        });
 
         builder.Services.AddScoped<IUserGroupService, UserGroupService>();
 

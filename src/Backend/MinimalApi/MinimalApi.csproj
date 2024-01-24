@@ -61,9 +61,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Frontend\ClientApp\ClientApp.csproj" />
 		<ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
-		<ProjectReference Include="..\GunvorCopilot.Backend.Core\GunvorCopilot.Backend.Core.csproj" />
-		<ProjectReference Include="..\GunvorCopilot.Data\GunvorCopilot.Data.csproj" />
-		<ProjectReference Include="..\GunvorCopilot.Data\GunvorCopilot.Data.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\PublishProfiles\" />
+	  <Folder Include="Properties\ServiceDependencies\" />
 	</ItemGroup>
 
 	<PropertyGroup>

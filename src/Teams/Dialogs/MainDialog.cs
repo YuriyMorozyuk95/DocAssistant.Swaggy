@@ -4,7 +4,7 @@ using Microsoft.Bot.Schema;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace GunvorCopilot.Teams.Dialogs
+namespace DocAssistant.OpenApi.Teams.Dialogs
 {
     public class MainDialog : LogoutDialog
     {

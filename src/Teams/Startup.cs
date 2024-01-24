@@ -1,10 +1,10 @@
-﻿using GunvorCopilot.Teams.Bots;
-using GunvorCopilot.Teams.Dialogs;
+﻿using DocAssistant.OpenApi.Teams.Bots;
+using DocAssistant.OpenApi.Teams.Dialogs;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
 
-namespace GunvorCopilot.Teams
+namespace DocAssistant.OpenApi.Teams
 {
     public class Startup
     {

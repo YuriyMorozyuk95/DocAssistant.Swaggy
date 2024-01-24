@@ -3,7 +3,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Bot.Schema;
 
-namespace GunvorCopilot.Teams.Dialogs
+namespace DocAssistant.OpenApi.Teams.Dialogs
 {
     public class LogoutDialog : ComponentDialog
     {

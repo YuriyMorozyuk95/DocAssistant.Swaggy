@@ -7,10 +7,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
-		<PackageReference Include="Microsoft.Bot.Builder.Dialogs"/>
+		<PackageReference Include="Microsoft.Bot.Builder.Dialogs" />
 		<PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" />
-		<PackageReference Include="NLog"  />
-		<PackageReference Include="NLog.Web.AspNetCore"/>
+		<PackageReference Include="NLog" />
+		<PackageReference Include="NLog.Web.AspNetCore" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -41,6 +41,11 @@
 		<None Update="Images\logout.png">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\PublishProfiles\" />
+	  <Folder Include="Properties\ServiceDependencies\" />
 	</ItemGroup>
 
 </Project>

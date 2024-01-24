@@ -2,7 +2,7 @@
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 
-namespace GunvorCopilot.Teams.Bots
+namespace DocAssistant.OpenApi.Teams.Bots
 {
     // This bot is derived (view DialogBot<T>) from the TeamsACtivityHandler class currently included as part of this sample.
 

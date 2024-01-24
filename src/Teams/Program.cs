@@ -1,6 +1,6 @@
 ﻿using NLog.Web;
 
-namespace GunvorCopilot.Teams
+namespace DocAssistant.OpenApi.Teams
 {
     public class Program
     {

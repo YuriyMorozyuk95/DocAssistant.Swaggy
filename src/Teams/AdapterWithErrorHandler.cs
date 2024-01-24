@@ -3,7 +3,7 @@ using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Builder.Teams;
 using Microsoft.Bot.Builder.TraceExtensions;
 
-namespace GunvorCopilot.Teams
+namespace DocAssistant.OpenApi.Teams
 {
     public class AdapterWithErrorHandler : CloudAdapter
     {

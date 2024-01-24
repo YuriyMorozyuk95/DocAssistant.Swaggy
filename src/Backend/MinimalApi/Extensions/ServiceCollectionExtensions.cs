@@ -4,8 +4,6 @@ using Azure;
 using Azure.Core;
 using Azure.Core.Pipeline;
 using Azure.Search.Documents.Indexes;
-using GunvorCopilot.Data;
-using GunvorCopilot.Data.Interfaces;
 using Microsoft.Azure.Cosmos;
 
 namespace MinimalApi.Extensions;
@@ -154,23 +152,6 @@ internal static class ServiceCollectionExtensions
                         policy.AllowAnyOrigin()
                             .AllowAnyHeader()
                             .AllowAnyMethod()));
-    }
-
-    internal static IServiceCollection AddCosmosDb(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddSingleton<CosmosClient>(x =>
-        {
-            var endpoint = configuration["CosmosDB:EndpointUrl"];
-            var key = configuration["CosmosDB:Key"];
-
-            var credential = new AzureKeyCredential(key!);
-            var cosmosClient = new CosmosClient(endpoint, credential);
-
-            return cosmosClient;
-        });
-
-        services.AddSingleton<IUserRepository, UserRepository>();
-        return services;
     }
 
     public static async Task CheckCosmosClientSetup(this WebApplication app)
