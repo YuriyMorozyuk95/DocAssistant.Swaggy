@@ -29,9 +29,6 @@ internal static class WebApplicationExtensions
 
         api.MapPost("upload-avatar", OnPostAvatarAsync).RequireAuthorization();
 
-        api.MapUserManagementApi();
-        api.MapUserGroupManagementApi();
-
         return app;
     }
 

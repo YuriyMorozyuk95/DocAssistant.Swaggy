@@ -26,7 +26,6 @@ public class Program
         builder.Services.AddAzureServices();
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddCosmosDb(builder.Configuration);
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 
         builder.Services.AddHttpClient();
@@ -53,7 +52,6 @@ public class Program
                 };
             }, options => { builder.Configuration.Bind("AzureAd", options); });
 
-        builder.Services.AddScoped<IUserGroupService, UserGroupService>();
 
 
         builder.Services.AddAntiforgery(options => { options.HeaderName = "X-CSRF-TOKEN-HEADER"; options.FormFieldName = "X-CSRF-TOKEN-FORM"; });

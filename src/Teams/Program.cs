@@ -29,7 +29,7 @@ namespace DocAssistant.OpenApi.Teams
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<DocAssistant.OpenApi.Teams.Startup>();
                 })
                 .UseNLog();  // NLog: Setup NLog for Dependency injection
     }
