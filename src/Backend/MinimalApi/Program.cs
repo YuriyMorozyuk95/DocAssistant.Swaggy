@@ -1,0 +1,175 @@
+﻿using System.Net;
+using Azure.Core;
+
+using GunvorCopilot.Backend.Core;
+
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Graph;
+using Microsoft.Identity.Client.Platforms.Features.DesktopOs.Kerberos;
+using Microsoft.Identity.Web;
+using Microsoft.IdentityModel.Tokens;
+namespace MinimalApi;
+
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+
+        //builder.Configuration.ConfigureAzureKeyVault();
+
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        builder.Services.AddOutputCache();
+        builder.Services.AddControllersWithViews();
+        builder.Services.AddRazorPages();
+        builder.Services.AddCrossOriginResourceSharing();
+        builder.Services.AddAzureServices();
+        builder.Services.AddHttpContextAccessor();
+
+        builder.Services.AddCosmosDb(builder.Configuration);
+        builder.Services.AddScoped<ITokenProvider, TokenProvider>();
+
+        builder.Services.AddHttpClient();
+		HttpClient.DefaultProxy = new WebProxy()
+		{
+			BypassProxyOnLocal = false,
+			UseDefaultCredentials = true
+		};
+
+		builder.Services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(options =>
+            {
+                builder.Configuration.Bind("AzureAd", options);
+                var tenantId = builder.Configuration["AzureAd:TenantId"];
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuers = new[]
+                    {
+                $"https://sts.windows.net/{tenantId}/",
+                $"https://login.microsoftonline.com/{tenantId}/v2.0"
+                    },
+                };
+            }, options => { builder.Configuration.Bind("AzureAd", options); });
+
+        builder.Services.AddSingleton<IApplicationGraphService, GraphService>(x =>
+        {
+            var clientId = builder.Configuration["AzureAd:ClientId"];
+            var tenantId = builder.Configuration["AzureAd:TenantId"];
+            var clientSecret = builder.Configuration["AzureAd:ClientSecret"];
+            var graphScope = builder.Configuration["AzureAd:GraphScope"];
+            var scopes = new[] { graphScope };
+
+            var options = new ClientSecretCredentialOptions
+            {
+                AuthorityHost = AzureAuthorityHosts.AzurePublicCloud,
+            };
+
+            var clientSecretCredential = new ClientSecretCredential(
+			tenantId, clientId, clientSecret, options);
+
+            var graphClient = new GraphServiceClient(clientSecretCredential, scopes);
+
+            var logger = x.GetRequiredService<ILogger<GraphService>>();
+            var config = x.GetRequiredService<IConfiguration>();
+
+            return new GraphService(graphClient, logger, config);
+        });
+
+        builder.Services.AddScoped<IDelegatedGraphService, GraphService>(x =>
+        {
+            var tenantId = builder.Configuration["AzureAd:TenantId"];
+            var clientId = builder.Configuration["AzureAd:ClientId"];
+            var clientSecret = builder.Configuration["AzureAd:ClientSecret"];
+            var graphScope = builder.Configuration["AzureAd:GraphScope"];
+            var scopes = new[] { graphScope };
+
+            var tokenProvider = x.GetRequiredService<ITokenProvider>();
+            var token = tokenProvider.GetTokenFromHeader();
+
+            var credential = new OnBehalfOfCredential(tenantId, clientId, clientSecret, token);
+
+            var graphClient = new GraphServiceClient(credential, scopes);
+            var logger = x.GetRequiredService<ILogger<GraphService>>();
+            var config = x.GetRequiredService<IConfiguration>();
+
+            return new GraphService(graphClient, logger, config);
+        });
+
+        builder.Services.AddScoped<IUserGroupService, UserGroupService>();
+
+
+        builder.Services.AddAntiforgery(options => { options.HeaderName = "X-CSRF-TOKEN-HEADER"; options.FormFieldName = "X-CSRF-TOKEN-FORM"; });
+
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddDistributedMemoryCache();
+        }
+        else
+        {
+#pragma warning disable CS8321 // Local function is declared but never used
+            static string GetEnvVar(string key) => Environment.GetEnvironmentVariable(key);
+#pragma warning restore CS8321 // Local function is declared but never used
+
+            // set application telemetry
+            //if (GetEnvVar("APPLICATIONINSIGHTS_CONNECTION_STRING") is string appInsightsConnectionString && !string.IsNullOrEmpty(appInsightsConnectionString))
+            //{
+            //    builder.Services.AddApplicationInsightsTelemetry((option) =>
+            //    {
+            //        option.ConnectionString = appInsightsConnectionString;
+            //    });
+            //}
+        }
+
+        var app = builder.Build();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            app.UseWebAssemblyDebugging();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Error");
+            app.UseHsts();
+        }
+
+        var configuration = app.Services.GetRequiredService<IConfiguration>();
+        var checkCosmosClientSetup = configuration.GetValue<bool>("CosmosDB:CheckCosmosClientSetup");
+        if (checkCosmosClientSetup)
+        {
+            await app.CheckCosmosClientSetup();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseOutputCache();
+        app.UseRouting();
+        app.UseStaticFiles();
+        app.UseCors();
+        app.UseBlazorFrameworkFiles();
+        app.UseAntiforgery();
+        app.MapRazorPages();
+        app.MapControllers();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.Use(next => context =>
+        {
+            var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+            var tokens = antiforgery.GetAndStoreTokens(context);
+            context.Response.Cookies.Append("XSRF-TOKEN", tokens?.RequestToken ?? string.Empty, new CookieOptions() { HttpOnly = false });
+            return next(context);
+        });
+        app.MapFallbackToFile("index.html");
+
+        app.MapApi();
+
+        app.Run();
+    }
+}
+

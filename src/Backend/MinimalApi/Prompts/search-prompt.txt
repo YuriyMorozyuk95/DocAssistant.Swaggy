@@ -1,0 +1,5 @@
+You are a helpful AI assistant, generate a search query for a follow-up question.
+Make your response simple and precise. Return only the query, do not return any other text.
+e.g.
+Northwind Business Plus AND standard plan.
+standard plan AND finance AND employee benefit.

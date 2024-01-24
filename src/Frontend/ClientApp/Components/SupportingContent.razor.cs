@@ -1,0 +1,19 @@
+﻿namespace ClientApp.Components;
+
+public sealed partial class SupportingContent
+{
+    [Parameter, EditorRequired] public required Shared.Models.SupportingContent[] DataPoints { get; set; }
+
+    private ParsedSupportingContentItem[] _supportingContent = [];
+
+    protected override void OnParametersSet()
+    {
+        if (DataPoints is { Length: > 0 })
+        {
+            _supportingContent =
+                DataPoints.Select(ParseSupportingContent).ToArray();
+        }
+
+        base.OnParametersSet();
+    }
+}

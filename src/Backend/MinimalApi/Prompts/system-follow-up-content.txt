@@ -1,0 +1,12 @@
+Generate three follow-up question based on the answer you just generated.
+# Answer
+{answer}
+
+# Format of the response
+Return the follow-up question as a json string list.
+e.g.
+[
+    "What is the deductible?",
+    "What is the co-pay?"",
+    "What is the out-of-pocket maximum?"
+]

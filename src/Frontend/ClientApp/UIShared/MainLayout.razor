@@ -1,0 +1,71 @@
+﻿@using Microsoft.FluentUI.AspNetCore
+@inherits LayoutComponentBase
+
+<MudThemeProvider @bind-IsDarkMode="@_isDarkTheme" Theme="_theme" />
+<MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.Small"
+                   CloseButton="true"
+                   DisableBackdropClick="true"
+                   Position="DialogPosition.Center"
+                   CloseOnEscapeKey="true" />
+<MudSnackbarProvider />
+
+<HeadContent>
+    <ConditionalStyles IsDarkTheme=@_isDarkTheme />
+</HeadContent>
+<MudRTLProvider RightToLeft="_isRightToLeft">
+    <MudLayout class="@(_isRightToLeft ? "rtl-lang" : "")">
+        <MudAppBar Elevation="20">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" id="nav-toggle"
+                        Title="Toggle navigation sidebar"
+                        Size="Size.Large" Edge="Edge.Start" OnClick="@OnMenuClicked" />
+            @if (SortDisabled is false)
+            {
+                <MudTooltip Text="@(_isReversed ? "Sort conversations with latest answers on bottom" : "Sort conversations with latest answers on top")"
+                            Placement="Placement.Right" Arrow="true" Color="Color.Primary">
+                    <MudToggleIconButton Toggled="@_isReversed" ToggledChanged=@OnIsReversedChanged Size="Size.Large"
+                                         ToggledSize="Size.Large" Color="Color.Inherit"
+                                         Icon=@Icons.Material.Filled.ArrowCircleDown ToggledColor="Color.Inherit"
+                                         ToggledIcon=@Icons.Material.Filled.ArrowCircleUp />
+                </MudTooltip>
+            }
+            <MudSpacer />
+            @if (SettingsDisabled is false)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Primary" Size="Size.Large"
+                           Title="Open the developer settings side panel"
+                           OnClick="@(_ => _settingsOpen = _settingsOpen is false)" />
+            }
+            <MudToggleIconButton Toggled="@_isDarkTheme" ToggledChanged=@OnThemeChanged Size="Size.Large"
+                                ToggledSize="Size.Large"
+                                 Title="Switch to Dark theme" Icon=@Icons.Material.Filled.DarkMode Color="@Color.Inherit"
+                                ToggledTitle="Switch to Light theme" ToggledIcon=@Icons.Material.Filled.WbSunny ToggledColor=@Color.Warning />
+            <AuthentificationStatus />
+        </MudAppBar>
+        <MudDrawer @bind-Open="_drawerOpen" Elevation="5" id="drawer">
+            <MudDrawerHeader>
+                <MudImage Src="Gunvor_Logo.svg" Class="rounded filter-shadow" Alt="GunvorCopilot Logo" Width="60" Height="60" Elevation="0" />
+                <MudSpacer />
+                <MudText Typo="Typo.h6" Color=Color.Surface>
+                    GunvorCopilot
+                </MudText>
+            </MudDrawerHeader>
+            <MudDivider Style="flex-grow: 0;" />
+            <NavMenu />
+        </MudDrawer>
+        <MudMainContent>            <MudContainer MaxWidth="MaxWidth.Large" Fixed="false" Class="my-6 pt-6">
+                <CascadingValue Value="_settingsPanel?.Settings" Name="Settings">
+                    <CascadingValue Value="_isReversed" Name="IsReversed">
+                        @Body
+                    </CascadingValue>
+                </CascadingValue>
+            </MudContainer>
+            @* TODO setup email*@
+            <SettingsPanel @ref="_settingsPanel" @bind-Open="@_settingsOpen" CopilotPrompts="@CopilotPrompts" UpdateButtonClicked="@OnUpdateButtonClickedAsync" />
+        </MudMainContent>
+    </MudLayout>
+</MudRTLProvider>
+
+<Microsoft.FluentUI.AspNetCore.Components.FluentToastProvider />  
+<Microsoft.FluentUI.AspNetCore.Components.FluentDialogProvider />  
+<Microsoft.FluentUI.AspNetCore.Components.FluentTooltipProvider />  
+<Microsoft.FluentUI.AspNetCore.Components.FluentMessageBarProvider />  

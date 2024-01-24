@@ -1,0 +1,16 @@
+﻿@using MudBlazor   
+@using Shared.TableEntities;
+@using Shared.Models;  
+  
+<MudSelect T="@UserGroup"
+    Class="my-3"
+    Label="@Label"
+    Disabled="@(!IsEnabled)"
+    MultiSelection="true"
+    SelectedValues="SelectedItems"
+    SelectedValuesChanged="OnSelectedItemsChangedAsync">
+    @foreach (var item in _items)  
+    {
+        <MudSelectItem T="UserGroup" Value="@item">@item.Name</MudSelectItem>
+    }  
+</MudSelect>
