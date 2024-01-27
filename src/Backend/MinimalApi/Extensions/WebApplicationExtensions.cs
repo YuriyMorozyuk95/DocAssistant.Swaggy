@@ -7,7 +7,7 @@ internal static class WebApplicationExtensions
         var api = app.MapGroup("api");
 
         // Long-form chat w/ contextual history endpoint
-        //api.MapPost("chat", OnPostChatAsync).RequireAuthorization();
+       api.MapPost("chat", OnPostChatAsync).RequireAuthorization();
 
         // Upload a document
         api.MapPost("documents", OnPostDocumentAsync).RequireAuthorization();
@@ -111,22 +111,21 @@ internal static class WebApplicationExtensions
         return TypedResults.Ok(enableLogout);
     }
 
-    //private static async Task<IResult> OnPostChatAsync(
-    //    ChatRequest request,
-    //    //ReadRetrieveReadChatService chatService,
-    //    CancellationToken cancellationToken)
-    //{
-    //    if (request is { History.Length: > 0 })
-    //    {
-    //        //var response = await chatService.ReplyAsync(
-    //        //    request.History, request.Overrides, cancellationToken);
+    private static async Task<IResult> OnPostChatAsync(
+        ChatRequest request,
+        ReadRetrieveReadChatService chatService,
+        CancellationToken cancellationToken)
+    {
+        if (request is { History.Length: > 0 })
+        {
+            var response = await chatService.ReplyAsync(
+                request.History, request.Overrides, cancellationToken);
 
-    //        //return TypedResults.Ok(response);
-    //        return TypedResults.Ok();
-    //    }
+            return TypedResults.Ok(response);
+        }
 
-    //    return Results.BadRequest();
-    //}
+        return Results.BadRequest();
+    }
 
     private static async Task<IResult> OnPostDocumentAsync(
         [FromForm] IFormFileCollection files,
