@@ -44,7 +44,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Backend\MinimalApi\MinimalApi.csproj" />
-	  <ProjectReference Include="..\..\DocAssistant.SemanticKernal\DocAssistant.SemanticKernal.csproj" />
+	  <ProjectReference Include="..\..\DocAssistant.SemanticKernal\DocAssistant.Ai.csproj" />
 	</ItemGroup>
 
 </Project>

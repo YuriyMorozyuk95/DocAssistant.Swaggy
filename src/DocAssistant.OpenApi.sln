@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocAssistant.OpenApi.Teams"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.Tests", "Tests\MinimalApi.Tests\MinimalApi.Tests.csproj", "{E9EC292A-E452-4B96-BEFD-7B51DD261D08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocAssistant.SemanticKernal", "DocAssistant.SemanticKernal\DocAssistant.SemanticKernal.csproj", "{A1A77828-C697-46CD-9C31-89E89166F9C2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocAssistant.Ai", "DocAssistant.SemanticKernal\DocAssistant.Ai.csproj", "{A1A77828-C697-46CD-9C31-89E89166F9C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -138,7 +138,7 @@ internal static class ServiceCollectionExtensions
         });
 
         services.AddSingleton<AzureBlobStorageService>();
-        //services.AddSingleton<ReadRetrieveReadChatService>();
+        services.AddSingleton<ReadRetrieveReadChatService>();
         services.AddSingleton<IUploaderDocumentService, UploaderDocumentService>();
         services.AddSingleton<IAzureSearchEmbedService, AzureSearchAzureSearchEmbedService>();
     }

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using DocAssistant.Ai;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -21,6 +22,7 @@ public class Program
         builder.Services.AddCrossOriginResourceSharing();
         builder.Services.AddAzureServices();
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddAiServices();
 
         builder.Services.AddScoped<ITokenProvider, TokenProvider>();
 
