@@ -4,7 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Azure.AI.FormRecognizer" Version="4.1.0" />
-    <PackageVersion Include="Azure.AI.OpenAI" Version="1.0.0-beta.8" />
+    <PackageVersion Include="Azure.AI.OpenAI" Version="1.0.0-beta.12" />
     <PackageVersion Include="Azure.Data.Tables" Version="12.8.2" />
     <PackageVersion Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.3.0" />
     <PackageVersion Include="Azure.Identity" Version="1.10.4" />
@@ -48,7 +48,7 @@
     <PackageVersion Include="Microsoft.Identity.Client" Version="4.57.0" />
     <PackageVersion Include="Microsoft.Identity.Web" Version="2.16.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageVersion Include="Microsoft.SemanticKernel" Version="0.24.230918.1-preview" />
+    <PackageVersion Include="Microsoft.SemanticKernel" Version="1.2.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageVersion Include="MudBlazor" Version="6.11.2" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />

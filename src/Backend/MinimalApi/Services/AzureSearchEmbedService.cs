@@ -427,17 +427,17 @@ public sealed partial class AzureSearchAzureSearchEmbedService : IAzureSearchEmb
         foreach (var section in sections)
         {
             Response<Embeddings> embeddings;
-            var options = new EmbeddingsOptions(new[] { section.Content.Replace('\r', ' ') });
+            var options = new EmbeddingsOptions(embeddingModelName, new[] { section.Content.Replace('\r', ' ') });
 
             try
             {
-                embeddings = await _openAiClient.GetEmbeddingsAsync(embeddingModelName, options);
+                embeddings = await _openAiClient.GetEmbeddingsAsync(options);
                 await Task.Delay(1000);
             }
             catch (Exception e)
             {
                 await Task.Delay(3000);
-                embeddings = await _openAiClient.GetEmbeddingsAsync(embeddingModelName, options);
+                embeddings = await _openAiClient.GetEmbeddingsAsync(options);
                 Console.WriteLine(e.Message);
             }
 

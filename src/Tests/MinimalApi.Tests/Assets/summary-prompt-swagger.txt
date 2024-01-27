@@ -1,0 +1,5 @@
+Could you create in prompt files in Semantik Kernal and call it with message: Please summaries text for easy to understood by non technical people:  
+
+input: {{input}}  
+Was executed: {{curl}}   
+with success response: {{response}}

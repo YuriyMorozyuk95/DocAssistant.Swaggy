@@ -8,15 +8,19 @@
 
 	<ItemGroup>
 	  <None Remove="Assets\petstore-swagger-full.json" />
-	  <None Remove="Assets\system-message-swagger.txt" />
+	  <None Remove="Assets\summary-prompt-swagger.txt" />
+	  <None Remove="Assets\system-prompt-swagger.txt" />
 	  <None Remove="Assets\test.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="Assets\summary-prompt-swagger.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Assets\petstore-swagger-full.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <Content Include="Assets\system-message-swagger.txt">
+	  <Content Include="Assets\system-prompt-swagger.txt">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Assets\test.jpg">
@@ -40,6 +44,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Backend\MinimalApi\MinimalApi.csproj" />
+	  <ProjectReference Include="..\..\DocAssistant.SemanticKernal\DocAssistant.SemanticKernal.csproj" />
 	</ItemGroup>
 
 </Project>

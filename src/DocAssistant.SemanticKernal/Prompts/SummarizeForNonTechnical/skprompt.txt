@@ -1,0 +1,11 @@
+These are the results from the API call "{{$curl}}"
+===RESULTS
+{{$response}} 
+===END RESULTS
+
+{{$input}} 
+
+Use the Results to answer the following query:
+
+Query: {{$input}}
+Answer:
