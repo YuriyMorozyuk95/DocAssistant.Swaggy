@@ -111,32 +111,6 @@ internal static class ServiceCollectionExtensions
             return documentAnalysisClient;
         });
 
-        services.AddSingleton(sp =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var (azureOpenAiServiceEndpoint, key) = (config["AzureOpenAiServiceEndpoint"], config["AzureOpenAiServiceEndpointKey"]);
-
-            ArgumentNullException.ThrowIfNullOrEmpty(azureOpenAiServiceEndpoint);
-
-            var credential = new AzureKeyCredential(key!);
-
-            var openAiClient = new OpenAIClient(
-                new Uri(azureOpenAiServiceEndpoint), credential, new OpenAIClientOptions
-                {
-                    Diagnostics = { IsLoggingContentEnabled = true },
-                    Transport = new HttpClientTransport(new HttpClient(new HttpClientHandler()
-                    {
-                        Proxy = new WebProxy()
-                        {
-                            BypassProxyOnLocal = false,
-                            UseDefaultCredentials = true,
-                        }
-                    }))
-                });
-
-            return openAiClient;
-        });
-
         services.AddSingleton<AzureBlobStorageService>();
         services.AddSingleton<ReadRetrieveReadChatService>();
         services.AddSingleton<IUploaderDocumentService, UploaderDocumentService>();

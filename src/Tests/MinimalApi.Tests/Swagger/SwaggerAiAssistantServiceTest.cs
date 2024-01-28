@@ -1,5 +1,4 @@
 using System.Collections;
-
 using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,10 +8,11 @@ using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger;
 
-public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory<Program>>
+public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime  
 {
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly ISwaggerAiAssistantService _swaggerAiAssistantService;
+    private string _swaggerFile;
 
     public SwaggerAiAssistantServiceTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
     {
@@ -24,7 +24,7 @@ public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory
     [ClassData(typeof(UserPromptsTestData))]
     public async Task CanAskApi(string userPrompt)
     {
-        var result = await _swaggerAiAssistantService.AskApi(userPrompt);
+        var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
 
         PrintResult(result.FinalleResult, result.ToJson());
     }
@@ -46,7 +46,7 @@ public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory
     [ClassData(typeof(UserPromptsTestData))]
     public async Task GenerateCurl(string userPrompt)
     {
-        var result = await _swaggerAiAssistantService.GenerateCurl(userPrompt);
+        var result = await _swaggerAiAssistantService.GenerateCurl(_swaggerFile, userPrompt);
 
         PrintResult(result.ToString(), result.Metadata.ToJson());
     }
@@ -56,6 +56,17 @@ public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory
         _testOutputHelper.WriteLine("result: " + content);
 
         _testOutputHelper.WriteLine("metadata: " + metadata);
+    }
+
+    public async Task InitializeAsync()
+    {
+        string swaggerFilePath = "Assets/petstore-swagger-full.json";
+        _swaggerFile = await File.ReadAllTextAsync(swaggerFilePath);
+    }
+
+    public Task DisposeAsync()
+    {
+        return Task.CompletedTask;
     }
 }
 

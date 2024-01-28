@@ -8,35 +8,35 @@ namespace DocAssistant.Ai.Services
 {
     public interface ISwaggerAiAssistantService
     {
-        Task<SwaggerCompletionInfo> AskApi(string userInput);
+        Task<SwaggerCompletionInfo> AskApi(string swaggerFile, string userInput);
+
         Task<FunctionResult> SummarizeForNonTechnical(string input, string curl, string response);
-        Task<ChatMessageContent> GenerateCurl(string userInput);
+        Task<ChatMessageContent> GenerateCurl(string swaggerFile, string userInput);
     }
 
     public class SwaggerAiAssistantService : ISwaggerAiAssistantService
     {
         private readonly ICurlExecutor _curlExecutor;
-        private readonly Kernel _kernel;
         private readonly IChatCompletionService _chatService;
+        private readonly string _swaggerPrompt;
+        private readonly Kernel _kernel;
 
-        //TODO add filePath to config
-        public SwaggerAiAssistantService(IConfiguration configuration, OpenAIClient openAiClient, ICurlExecutor curlExecutor)
+        public SwaggerAiAssistantService(IConfiguration configuration, Kernel kernel, ICurlExecutor curlExecutor)
         {
-            var deployedModelName = configuration["AzureOpenAiChatGptDeployment"];
+            var swaggerPromptFilePath = configuration["SwaggerAiAssistant:SystemPromptSwaggerPath"];
 
             _curlExecutor = curlExecutor;
-            _kernel = Kernel.CreateBuilder()
-                .AddAzureOpenAIChatCompletion(deployedModelName, openAiClient)
-                .AddAzureOpenAITextGeneration(deployedModelName, openAiClient)
-                .Build();
-
+            _kernel = kernel;
             _chatService = _kernel.GetRequiredService<IChatCompletionService>();
+            
+            var path = string.Concat(AppContext.BaseDirectory, swaggerPromptFilePath);
+
+            _swaggerPrompt = File.ReadAllText(path);
         }
 
-        //TODO return response and curl as well, and calculate metadata
-        public async Task<SwaggerCompletionInfo> AskApi(string userInput)
+        public async Task<SwaggerCompletionInfo> AskApi(string swaggerFile, string userInput)
         {
-            var curlChatMessage = await GenerateCurl(userInput);
+            var curlChatMessage = await GenerateCurl(swaggerFile, userInput);
             var curl = curlChatMessage.Content;
 
             var curlMetadata = curlChatMessage.Metadata["Usage"] as CompletionsUsage;
@@ -77,9 +77,9 @@ namespace DocAssistant.Ai.Services
             return chatResult;
         }
 
-        public async Task<ChatMessageContent> GenerateCurl(string userInput)
+        public async Task<ChatMessageContent> GenerateCurl(string swaggerFile, string userInput)
         {
-            var systemPrompt = await GenerateSystemPrompt();
+            var systemPrompt = GenerateSystemPrompt(swaggerFile);
 
             var getQueryChat = new ChatHistory(systemPrompt);
             getQueryChat.AddUserMessage(userInput);
@@ -89,15 +89,9 @@ namespace DocAssistant.Ai.Services
             return chatMessage[0];
         }
 
-        private async Task<string> GenerateSystemPrompt(CancellationToken cancellationToken = default)
+        private string GenerateSystemPrompt(string swaggerFile)
         {
-            string swaggerFilePath = "Assets/petstore-swagger-full.json";
-            string swaggerPromptFilePath = "Assets/system-prompt-swagger.txt";
-
-            var swaggerFile = await File.ReadAllTextAsync(swaggerFilePath, cancellationToken);
-            var swaggerPrompt = await File.ReadAllTextAsync(swaggerPromptFilePath, cancellationToken);
-
-            var systemPrompt = swaggerPrompt.Replace("{{swagger-file}}", swaggerFile);
+            var systemPrompt = _swaggerPrompt.Replace("{{swagger-file}}", swaggerFile);
             return systemPrompt;
         }
     }
