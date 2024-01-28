@@ -1,4 +1,5 @@
 ﻿using Azure.AI.OpenAI;
+using DocAssistant.Ai.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -7,7 +8,7 @@ namespace DocAssistant.Ai.Services
 {
     public interface ISwaggerAiAssistantService
     {
-        Task<FunctionResult> AskApi(string userInput);
+        Task<SwaggerCompletionInfo> AskApi(string userInput);
         Task<FunctionResult> SummarizeForNonTechnical(string input, string curl, string response);
         Task<ChatMessageContent> GenerateCurl(string userInput);
     }
@@ -33,15 +34,29 @@ namespace DocAssistant.Ai.Services
         }
 
         //TODO return response and curl as well, and calculate metadata
-        public async Task<FunctionResult> AskApi(string userInput)
+        public async Task<SwaggerCompletionInfo> AskApi(string userInput)
         {
             var curlChatMessage = await GenerateCurl(userInput);
             var curl = curlChatMessage.Content;
 
+            var curlMetadata = curlChatMessage.Metadata["Usage"] as CompletionsUsage;
+
             var response = await _curlExecutor.ExecuteCurl(curl);
             var completion = await SummarizeForNonTechnical(userInput, curl, response);
 
-            return completion;
+            var summaryMetadata = completion.Metadata["Usage"] as CompletionsUsage;
+
+            var swaggerCompletionInfo = new SwaggerCompletionInfo
+            {
+                FinalleResult = completion?.ToString(),
+                Curl = curl,
+                Response = response,
+                CompletionTokens = curlMetadata.CompletionTokens + summaryMetadata.CompletionTokens,
+                PromptTokens = curlMetadata.PromptTokens + summaryMetadata.PromptTokens,
+                TotalTokens = curlMetadata.TotalTokens + summaryMetadata.TotalTokens,
+            };
+
+            return swaggerCompletionInfo;
         }
 
         public async Task<FunctionResult> SummarizeForNonTechnical(string input, string curl, string response)

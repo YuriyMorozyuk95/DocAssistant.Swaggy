@@ -1,10 +1,10 @@
 using System.Collections;
-using Blazor.Serialization.Extensions;
 
 using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Extensions;
 using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger;
@@ -26,7 +26,7 @@ public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory
     {
         var result = await _swaggerAiAssistantService.AskApi(userPrompt);
 
-        PrintResult(result.ToString(), result.Metadata);
+        PrintResult(result.FinalleResult, result.ToJson());
     }
 
     //TODO add more test cases
@@ -39,7 +39,7 @@ public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory
 
         var chatResult = await _swaggerAiAssistantService.SummarizeForNonTechnical(input, curl, response);
 
-        PrintResult(chatResult.ToString(), chatResult.Metadata);
+        PrintResult(chatResult.ToString(), chatResult.Metadata.ToJson());
     }
 
     [Theory]
@@ -48,15 +48,14 @@ public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory
     {
         var result = await _swaggerAiAssistantService.GenerateCurl(userPrompt);
 
-        PrintResult(result.ToString(), result.Metadata);
+        PrintResult(result.ToString(), result.Metadata.ToJson());
     }
 
-    private void PrintResult(string content, IReadOnlyDictionary<string, object> metadata)
+    private void PrintResult(string content, string metadata)
     {
         _testOutputHelper.WriteLine("result: " + content);
 
-        var metadataJson = metadata.ToJson();
-        _testOutputHelper.WriteLine("metadata: " + metadataJson);
+        _testOutputHelper.WriteLine("metadata: " + metadata);
     }
 }
 
