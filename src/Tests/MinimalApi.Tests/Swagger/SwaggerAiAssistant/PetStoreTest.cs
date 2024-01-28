@@ -29,7 +29,7 @@ public class PetStoreTest : IClassFixture<WebApplicationFactory<Program>>, IAsyn
     [Fact]
     public async Task CanAskApiUpdate()
     {
-        var userPrompt = "Update pet in store with id 17 to name Barsik, and make his status available?";
+        var userPrompt = "Update pet in store with id 10 to name Barsik, and make his status available?";
         var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
 
         PrintResult(result.FinalleResult, result.ToJson());

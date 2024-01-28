@@ -3,6 +3,9 @@ using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+
+using Shared.Extensions;
+
 using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger
@@ -17,6 +20,40 @@ namespace MinimalApi.Tests.Swagger
         {
             _testOutputHelper = testOutputHelper;
             _curlExecutor = factory.Services.GetRequiredService<ICurlExecutor>();
+        }
+
+        [Fact]
+        public async Task CallCurlPut()
+        {
+            string json = @"  
+{    
+    ""id"": 10,    
+    ""category"": {    
+        ""id"": 1,    
+        ""name"": ""cat""    
+    },    
+    ""name"": ""Barsik"",    
+    ""photoUrls"": [    
+    ""http://example.com/photo1.jpg""    
+    ],    
+    ""tags"": [    
+    {    
+        ""id"": 1,    
+        ""name"": ""tag1""    
+    }    
+    ],    
+    ""status"": ""available""    
+}";  
+  
+// Write JSON to a temporary file  
+            string tempFile = Path.GetTempFileName();  
+            File.WriteAllText(tempFile, json);  
+  
+            string curl = $@"curl -X PUT ""https://petstore3.swagger.io/api/v3/pet"" -H ""Content-Type: application/json"" -d @{tempFile}"; 
+
+            var response = await _curlExecutor.ExecuteCurl(curl);
+            _testOutputHelper.WriteLine("response: " + response.ToJson());
+            File.Delete(tempFile); 
         }
 
         [Theory]
