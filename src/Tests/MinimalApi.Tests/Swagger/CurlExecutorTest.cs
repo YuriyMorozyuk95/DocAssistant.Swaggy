@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger
 {
+    //TODO add test with error
     public class CurlExecutorTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly ITestOutputHelper _testOutputHelper;

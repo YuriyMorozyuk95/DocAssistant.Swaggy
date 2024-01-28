@@ -41,7 +41,9 @@ namespace DocAssistant.Ai.Services
 
             var curlMetadata = curlChatMessage.Metadata["Usage"] as CompletionsUsage;
 
-            var response = await _curlExecutor.ExecuteCurl(curl);
+            var apiResponse = await _curlExecutor.ExecuteCurl(curl);
+            var response = apiResponse.Result;
+
             var completion = await SummarizeForNonTechnical(userInput, curl, response);
 
             var summaryMetadata = completion.Metadata["Usage"] as CompletionsUsage;
@@ -50,7 +52,7 @@ namespace DocAssistant.Ai.Services
             {
                 FinalleResult = completion?.ToString(),
                 Curl = curl,
-                Response = response,
+                Response = apiResponse,
                 CompletionTokens = curlMetadata.CompletionTokens + summaryMetadata.CompletionTokens,
                 PromptTokens = curlMetadata.PromptTokens + summaryMetadata.PromptTokens,
                 TotalTokens = curlMetadata.TotalTokens + summaryMetadata.TotalTokens,

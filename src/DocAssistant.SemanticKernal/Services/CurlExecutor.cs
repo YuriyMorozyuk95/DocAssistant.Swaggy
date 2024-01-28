@@ -1,15 +1,20 @@
-﻿using System.Diagnostics;
+﻿using Azure;
+using DocAssistant.Ai.Model;
+using System.Diagnostics;
+using System.Text.Json;
+
+using static DocAssistant.Ai.Services.CurlExecutor;
 
 namespace DocAssistant.Ai.Services;
 
 public interface ICurlExecutor
 {
-    Task<string> ExecuteCurl(string curl, TimeSpan timeOut = default);
+    Task<ApiResponse> ExecuteCurl(string curl, TimeSpan timeOut = default);
 }
 
 public class CurlExecutor : ICurlExecutor
 {
-    public async Task<string> ExecuteCurl(string curl, TimeSpan timeOut = default)
+    public async Task<ApiResponse> ExecuteCurl(string curl, TimeSpan timeOut = default)
     {
         if (timeOut == default)
         {
@@ -33,12 +38,16 @@ public class CurlExecutor : ICurlExecutor
             await process.WaitForExitAsync(cts.Token);
             string result = await process.StandardOutput.ReadToEndAsync(cts.Token);
 
-            return result;
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse>(result);
+            apiResponse.IsSuccess = apiResponse.Code >= 200 && apiResponse.Code <= 299;
+            apiResponse.Result = result;
+
+            return apiResponse;
         }
         catch (TaskCanceledException)
         {
             process.Kill();
-            return "Process timed out and was terminated";
+            return new ApiResponse { Result = "Process timed out and was terminated" };
         }
     }
 }

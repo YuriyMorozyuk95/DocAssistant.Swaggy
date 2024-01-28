@@ -6,18 +6,33 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Extensions;
 using Xunit.Abstractions;
 
-namespace MinimalApi.Tests.Swagger;
+namespace MinimalApi.Tests.Swagger.SwaggerAiAssistant;
 
-public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime  
+public class PetStoreTest : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
 {
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly ISwaggerAiAssistantService _swaggerAiAssistantService;
     private string _swaggerFile;
 
-    public SwaggerAiAssistantServiceTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
+    public PetStoreTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         _swaggerAiAssistantService = factory.Services.GetRequiredService<ISwaggerAiAssistantService>();
+    }
+
+    public async Task InitializeAsync()
+    {
+        string swaggerFilePath = "Assets/petstore-swagger-full.json";
+        _swaggerFile = await File.ReadAllTextAsync(swaggerFilePath);
+    }
+
+    [Fact]
+    public async Task CanAskApiUpdate()
+    {
+        var userPrompt = "Update pet in store with id 17 to name Barsik, and make his status available?";
+        var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
+
+        PrintResult(result.FinalleResult, result.ToJson());
     }
 
     [Theory]
@@ -58,12 +73,6 @@ public class SwaggerAiAssistantServiceTest : IClassFixture<WebApplicationFactory
         _testOutputHelper.WriteLine("metadata: " + metadata);
     }
 
-    public async Task InitializeAsync()
-    {
-        string swaggerFilePath = "Assets/petstore-swagger-full.json";
-        _swaggerFile = await File.ReadAllTextAsync(swaggerFilePath);
-    }
-
     public Task DisposeAsync()
     {
         return Task.CompletedTask;
@@ -75,15 +84,15 @@ public class UserPromptsTestData : IEnumerable<object[]>
     public IEnumerator<object[]> GetEnumerator()
     {
         yield return new object[] { "Update an existing pet with id 1 to name doggie 1" };
-        yield return new object[] { "Find pet by id 2" };
+        yield return new object[] { "Find pet by id 9223372036854761000" };
         yield return new object[] { "Returns pet inventories by status" };
         yield return new object[] { "Find purchase order by id 3" };
-        yield return new object[] { "Find pet by id 5" };
+        yield return new object[] { "Find pet by id 9223372036854761000" };
         yield return new object[] { "Returns pet inventories by status" };  //ERROR
         yield return new object[] { "Find purchase order by id 6" };   //ERROR
-        yield return new object[] { "Find pet by id 8" };  //ERROR
+        yield return new object[] { "Find pet by id 9223372036854761000" };  //ERROR
         yield return new object[] { "Returns pet inventories by status" };  //ERROR
-        yield return new object[] { "Find purchase order by id 9" };  //ERROR
+        yield return new object[] { "Find purchase order by id 9223372036854761000" };  //ERROR
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
