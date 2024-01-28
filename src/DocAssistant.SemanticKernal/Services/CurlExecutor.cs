@@ -2,6 +2,7 @@
 
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace DocAssistant.Ai.Services;
 
@@ -41,8 +42,8 @@ public class CurlExecutor : ICurlExecutor
                 await process.WaitForExitAsync(cts.Token);
                 string result = await process.StandardOutput.ReadToEndAsync(cts.Token);
 
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse>(result);
-                apiResponse.IsSuccess = apiResponse.Code >= 200 && apiResponse.Code <= 299;
+                var apiResponse = CreateApiResponseFromResult(result);
+
                 apiResponse.Result = result;
 
                 return apiResponse;
@@ -62,6 +63,26 @@ public class CurlExecutor : ICurlExecutor
         }
     }
 
+    //TODO Test
+    private ApiResponse CreateApiResponseFromResult(string result)
+    {
+        ApiResponse apiResponse = new ApiResponse();
+        if (CanDeserializeToApiResponse(result))
+        {
+            apiResponse = JsonSerializer.Deserialize<ApiResponse>(result);
+            apiResponse.IsSuccess = apiResponse.Code >= 200 && apiResponse.Code <= 299;
+        }
+        else
+        {
+            apiResponse.IsSuccess = true;
+            apiResponse.Code = 200;
+            apiResponse.Message = result;
+        }
+
+        return apiResponse;
+    }
+
+    //TODO Test
     private async Task<(string curl, string filePath)> PutJsonToFile(string curl)
     {
         string[] parts = curl.Split(" -d ");
@@ -77,10 +98,12 @@ public class CurlExecutor : ICurlExecutor
 
         return (curlCommand, tempFile);
     }
+
+    public bool CanDeserializeToApiResponse(string jsonString)  
+    {  
+        var pattern = @"\{""Code"":\d+,""Message"":""[^""]*""\}";  
+        var regex = new Regex(pattern);  
+        return regex.IsMatch(jsonString);  
+    }  
+
 }
-//ProcessStartInfo startInfo = new ProcessStartInfo()  
-//{  
-//    FileName = @"C:\Users\ymoroziuk\AppData\Local\Programs\Git\git-bash.exe",  // Update this path if necessary  
-//    Arguments = "-c \"" + curl + "\"",  
-//    RedirectStandardOutput = true  
-//};
