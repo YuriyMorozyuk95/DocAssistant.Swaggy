@@ -20,6 +20,39 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
+    public async Task CanAskApiCreateOrder()
+    {
+        var swaggerFile = await ReadSwagger("petstore-swagger-order-create.json");
+
+        var userPrompt = "Could you make an order for a pet with id 198773 with quantity 10?";
+        var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
+
+        PrintResult(result.FinalleResult, result.ToJson());
+    }
+
+    [Fact]
+    public async Task CanAskApiFindById()
+    {
+        var swaggerFile = await ReadSwagger("petstore-swagger-order-find-by-id.json");
+
+        var userPrompt = "Could you find order by id 10?";
+        var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
+
+        PrintResult(result.FinalleResult, result.ToJson());
+    }
+
+    [Fact]
+    public async Task CanAskApiStoreInventory()
+    {
+        var swaggerFile = await ReadSwagger("petstore-swagger-order-inventories.json");
+
+        var userPrompt = "Could you provide to me store inventories?";
+        var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
+
+        PrintResult(result.FinalleResult, result.ToJson());
+    }
+
+    [Fact]
     public async Task CanAskApiCreate()
     {
         var swaggerFile = await ReadSwagger("petstore-swagger-create-user.json");

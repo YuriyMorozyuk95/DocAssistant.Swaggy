@@ -9,10 +9,22 @@
 	<ItemGroup>
 	  <None Remove="Assets\petstore-swagger-create-user.json" />
 	  <None Remove="Assets\petstore-swagger-full.json" />
+	  <None Remove="Assets\petstore-swagger-order-create.json" />
+	  <None Remove="Assets\petstore-swagger-order-find-by-id.json" />
+	  <None Remove="Assets\petstore-swagger-order-inventories.json" />
 	  <None Remove="Assets\test.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="Assets\petstore-swagger-order-find-by-id.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\petstore-swagger-order-create.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\petstore-swagger-order-inventories.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Assets\petstore-swagger-create-user.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
