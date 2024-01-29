@@ -14,46 +14,95 @@ namespace MinimalApi.Tests.Swagger
     public class CurlExecutorTest : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly ITestOutputHelper _testOutputHelper;
-        private readonly ICurlExecutor _curlExecutor;
+        private readonly CurlExecutor _curlExecutor;
 
         public CurlExecutorTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
-            _curlExecutor = factory.Services.GetRequiredService<ICurlExecutor>();
+            _curlExecutor = factory.Services.GetRequiredService<ICurlExecutor>() as CurlExecutor;
+        }
+
+        [Fact]
+        public void CanCheckApiResponseWhenStatusCode()
+        {
+            var response = 
+                """
+                {
+                    "code": 400,
+                    "message": "error while processing request",
+                }
+                """;
+
+            var apiResponse = _curlExecutor.CreateApiResponseFromResult(response);
+            
+            Assert.Equal(400, apiResponse.Code);
+            Assert.False(apiResponse.IsSuccess);
+            Assert.Equal("error while processing request", apiResponse.Message);
+            Assert.Equal(response, apiResponse.Result);
+        }
+
+        [Fact]
+        public void CanCheckApiResponseWhenNotStatusCode()
+        {
+            var response = 
+            """
+            {
+                "id": 10,
+                "name": "Barsik",
+                "photoUrls": [],
+                "tags": [],
+                "status": "available"
+            }
+            """;
+
+            var apiResponse = _curlExecutor.CreateApiResponseFromResult(response);
+            Assert.Equal(200, apiResponse.Code);
+            Assert.True(apiResponse.IsSuccess);
+            Assert.Equal(response, apiResponse.Message);
+            Assert.Equal(response, apiResponse.Result);
+        }
+
+        [Fact]
+        public async Task CanPutJsonToFile()
+        {
+            string curl =
+                """
+                curl -X PUT "https://petstore3.swagger.io/api/v3/pet" -H "Content-Type: application/json" -d '{
+                  "id": 10,
+                  "name": "Barsik",
+                  "status": "available"
+                }'
+                """;
+
+            string file = null;
+            try
+            {
+                (curl, file) = await _curlExecutor.PutJsonToFile(curl);
+
+                Assert.True(File.Exists(file));
+                Assert.Equal($"curl -X PUT \"https://petstore3.swagger.io/api/v3/pet\" -H \"Content-Type: application/json\" -d @{file}", curl);
+                Assert.Equal("{\r\n  \"id\": 10,\r\n  \"name\": \"Barsik\",\r\n  \"status\": \"available\"\r\n}", await File.ReadAllTextAsync(file));
+            }
+            finally
+            {
+                File.Delete(file);
+            }
         }
 
         [Fact]
         public async Task CallCurlPut()
         {
-            string json = @"  
-{    
-    ""id"": 10,    
-    ""category"": {    
-        ""id"": 1,    
-        ""name"": ""cat""    
-    },    
-    ""name"": ""Barsik"",    
-    ""photoUrls"": [    
-    ""http://example.com/photo1.jpg""    
-    ],    
-    ""tags"": [    
-    {    
-        ""id"": 1,    
-        ""name"": ""tag1""    
-    }    
-    ],    
-    ""status"": ""available""    
-}";  
+            string curl = 
+            """
+            curl -X PUT "https://petstore3.swagger.io/api/v3/pet" -H "Content-Type: application/json" -d '{
+              "id": 10,
+              "name": "Barsik",
+              "status": "available"
+            }'
+            """;
   
-// Write JSON to a temporary file  
-            string tempFile = Path.GetTempFileName();  
-            File.WriteAllText(tempFile, json);  
-  
-            string curl = $@"curl -X PUT ""https://petstore3.swagger.io/api/v3/pet"" -H ""Content-Type: application/json"" -d @{tempFile}"; 
-
             var response = await _curlExecutor.ExecuteCurl(curl);
             _testOutputHelper.WriteLine("response: " + response.ToJson());
-            File.Delete(tempFile); 
         }
 
         [Theory]

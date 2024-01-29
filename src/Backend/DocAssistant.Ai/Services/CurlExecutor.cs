@@ -44,8 +44,6 @@ public class CurlExecutor : ICurlExecutor
 
                 var apiResponse = CreateApiResponseFromResult(result);
 
-                apiResponse.Result = result;
-
                 return apiResponse;
             }
             catch (TaskCanceledException)
@@ -63,13 +61,18 @@ public class CurlExecutor : ICurlExecutor
         }
     }
 
-    //TODO Test
-    private ApiResponse CreateApiResponseFromResult(string result)
+    public ApiResponse CreateApiResponseFromResult(string result)
     {
         ApiResponse apiResponse = new ApiResponse();
         if (CanDeserializeToApiResponse(result))
         {
-            apiResponse = JsonSerializer.Deserialize<ApiResponse>(result);
+            var options = new JsonSerializerOptions  
+            {  
+                AllowTrailingCommas = true,  
+                PropertyNameCaseInsensitive = true,
+            };
+
+            apiResponse = JsonSerializer.Deserialize<ApiResponse>(result, options);
             apiResponse.IsSuccess = apiResponse.Code >= 200 && apiResponse.Code <= 299;
         }
         else
@@ -79,11 +82,12 @@ public class CurlExecutor : ICurlExecutor
             apiResponse.Message = result;
         }
 
+        apiResponse.Result = result;
+
         return apiResponse;
     }
 
-    //TODO Test
-    private async Task<(string curl, string filePath)> PutJsonToFile(string curl)
+    public async Task<(string curl, string filePath)> PutJsonToFile(string curl)
     {
         string[] parts = curl.Split(" -d ");
 
@@ -99,11 +103,39 @@ public class CurlExecutor : ICurlExecutor
         return (curlCommand, tempFile);
     }
 
-    public bool CanDeserializeToApiResponse(string jsonString)  
-    {  
-        var pattern = @"\{""Code"":\d+,""Message"":""[^""]*""\}";  
-        var regex = new Regex(pattern);  
-        return regex.IsMatch(jsonString);  
+    public bool CanDeserializeToApiResponse(string jsonString)    
+    {    
+        try  
+        {
+            var options = new JsonDocumentOptions  
+            {  
+                AllowTrailingCommas = true,  
+            };
+            JsonDocument doc = JsonDocument.Parse(jsonString, options);
+            JsonElement root = doc.RootElement;  
+  
+            // Check if keys "code" and "message" exist  
+            if (root.TryGetProperty("code", out JsonElement codeElement) && root.TryGetProperty("message", out JsonElement messageElement))  
+            {  
+                // Check if "code" is integer and "message" is string  
+                if (codeElement.ValueKind == JsonValueKind.Number && messageElement.ValueKind == JsonValueKind.String)  
+                {  
+                    return true;  
+                }  
+            }  
+  
+            return false;  
+        }  
+        catch (JsonException jex)  
+        {  
+            // Exception in parsing json  
+            Console.WriteLine(jex.Message);  
+            return false;  
+        }  
+        catch (Exception ex) // Some other exception  
+        {  
+            Console.WriteLine(ex.ToString());  
+            return false;  
+        }  
     }  
-
 }
