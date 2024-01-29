@@ -1,4 +1,3 @@
-using System.Collections;
 using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
