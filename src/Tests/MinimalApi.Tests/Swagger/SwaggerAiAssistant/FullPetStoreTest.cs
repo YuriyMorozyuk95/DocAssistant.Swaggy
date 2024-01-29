@@ -8,13 +8,13 @@ using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger.SwaggerAiAssistant;
 
-public class PetStoreTest : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
+public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
 {
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly ISwaggerAiAssistantService _swaggerAiAssistantService;
     private string _swaggerFile;
 
-    public PetStoreTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
+    public FullPetStoreTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         _swaggerAiAssistantService = factory.Services.GetRequiredService<ISwaggerAiAssistantService>();
