@@ -7,11 +7,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Assets\petstore-swagger-create-user.json" />
 	  <None Remove="Assets\petstore-swagger-full.json" />
 	  <None Remove="Assets\test.jpg" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Include="Assets\petstore-swagger-create-user.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="Assets\petstore-swagger-full.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
