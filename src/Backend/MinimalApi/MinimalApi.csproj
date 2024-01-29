@@ -62,6 +62,7 @@
 		<ProjectReference Include="..\..\DocAssistant.SemanticKernal\DocAssistant.Ai.csproj" />
 		<ProjectReference Include="..\..\Frontend\ClientApp\ClientApp.csproj" />
 		<ProjectReference Include="..\..\Shared\Shared\Shared.csproj" />
+		<ProjectReference Include="..\DocAssistant.Ai\DocAssistant.Ai.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
