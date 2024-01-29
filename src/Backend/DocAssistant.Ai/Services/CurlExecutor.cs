@@ -106,6 +106,7 @@ public class CurlExecutor : ICurlExecutor
         return (curlCommand, tempFile);
     }
 
+    //TODO use logger instead of console
     public bool CanDeserializeToApiResponse(string jsonString)    
     {    
         try  
