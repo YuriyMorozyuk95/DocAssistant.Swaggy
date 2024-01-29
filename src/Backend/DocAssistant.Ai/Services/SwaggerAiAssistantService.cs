@@ -63,12 +63,10 @@ namespace DocAssistant.Ai.Services
 
         public async Task<FunctionResult> SummarizeForNonTechnical(string input, string curl, string response)
         {
-            var prompts = _kernel.ImportPluginFromPromptDirectory("Prompts");
-
-            var summaryPrompt = prompts["SummarizeForNonTechnical"];
+            var prompts = _kernel.Plugins["Prompts"]["SummarizeForNonTechnical"];
 
             var chatResult = await _kernel.InvokeAsync(
-                summaryPrompt,
+                prompts,
                 new KernelArguments() {
                     { "input", input },
                     { "curl", curl },

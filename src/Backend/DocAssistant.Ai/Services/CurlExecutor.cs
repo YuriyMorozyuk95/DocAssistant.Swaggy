@@ -22,7 +22,10 @@ public class CurlExecutor : ICurlExecutor
         string filePath = null;
         try
         {
-            (curl, filePath) = await PutJsonToFile(curl);
+            if (curl.Contains("-d"))
+            {
+                (curl, filePath) = await PutJsonToFile(curl);
+            }
 
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {

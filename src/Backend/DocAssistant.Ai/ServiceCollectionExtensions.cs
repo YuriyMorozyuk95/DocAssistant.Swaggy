@@ -50,6 +50,8 @@ public static class AiServiceCollectionExtensions
                 .AddAzureOpenAITextGeneration(deployedModelName, openAiClient)
                 .Build();
 
+            kernel.ImportPluginFromPromptDirectory("Prompts");
+
             return kernel;
         });
 
