@@ -2,7 +2,6 @@
 
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 namespace DocAssistant.Ai.Services;
 
@@ -51,8 +50,10 @@ public class CurlExecutor : ICurlExecutor
             }
             catch (TaskCanceledException)
             {
-                process.Kill();
-                return new ApiResponse { Result = "Process timed out and was terminated" };
+               process.Kill();
+               var message = "Process timed out and was terminated";
+
+               return Error(message);
             }
         }
         finally
@@ -64,9 +65,19 @@ public class CurlExecutor : ICurlExecutor
         }
     }
 
+    private ApiResponse Error(string message)
+    {
+        return new ApiResponse { IsSuccess = false, Code = 400, Message = message, Result = message, };
+    }
+
     public ApiResponse CreateApiResponseFromResult(string result)
     {
         ApiResponse apiResponse = new ApiResponse();
+        if(string.IsNullOrWhiteSpace(result))
+        {
+           return Error("Empty response");
+        }
+
         if (CanDeserializeToApiResponse(result))
         {
             var options = new JsonSerializerOptions  
