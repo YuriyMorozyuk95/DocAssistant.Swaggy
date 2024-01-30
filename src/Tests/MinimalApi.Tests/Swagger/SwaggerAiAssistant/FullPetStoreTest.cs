@@ -103,9 +103,11 @@ public class UserPromptsTestData : IEnumerable<object[]>
     {
         yield return new object[] { "Update an existing pet with id 1 to name doggie 1" };
         yield return new object[] { "Find pet by id 11" };
-        yield return new object[] { "Returns pet inventories by status" };
+        yield return new object[] { "Could you remove pet in store with id 11?" };
         yield return new object[] { "Find purchase order by id 3" };
-        yield return new object[] { "Find pet by id 10" };
+        yield return new object[] { "Could you create pet in store with id 11 to name Boggi, and make his status available?" };
+        yield return new object[] { "Update pet in store with id 10 to name Barsik, and make his status available?" };
+
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
