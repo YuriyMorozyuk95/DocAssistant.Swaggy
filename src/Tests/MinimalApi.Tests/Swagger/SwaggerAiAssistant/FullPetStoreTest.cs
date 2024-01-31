@@ -22,7 +22,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
 
     public async Task InitializeAsync()
     {
-        string swaggerFilePath = "Assets/petstore-swagger-full.json";
+        var swaggerFilePath = "Assets/petstore-swagger-full.json";
         _swaggerFile = await File.ReadAllTextAsync(swaggerFilePath);
     }
 
