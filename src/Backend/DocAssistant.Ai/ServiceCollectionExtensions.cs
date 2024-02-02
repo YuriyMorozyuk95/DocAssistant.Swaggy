@@ -1,10 +1,14 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Azure;
 using Azure.AI.OpenAI;
 using Azure.Core.Pipeline;
+using DocAssistant.Ai.MemoryHandlers;
 using DocAssistant.Ai.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory;
+using Microsoft.KernelMemory.Handlers;
 using Microsoft.SemanticKernel;
 
 namespace DocAssistant.Ai;
@@ -55,7 +59,55 @@ public static class AiServiceCollectionExtensions
             return kernel;
         });
 
+        services.AddSingleton(sp =>
+        {
+            var config = sp.GetRequiredService<IConfiguration>();
+
+            var azureOpenAiTextConfig = new AzureOpenAIConfig();
+            var azureOpenAiEmbeddingConfig = new AzureOpenAIConfig();
+            var searchClientConfig = new AzureAISearchConfig();
+            var azureBlobConfig = new AzureBlobsConfig();
+            var azureAiSearchConfig = new AzureAISearchConfig();
+            config.BindSection("KernelMemory:Services:AzureOpenAIText", azureOpenAiTextConfig);
+            config.BindSection("KernelMemory:Services:AzureOpenAIEmbedding", azureOpenAiEmbeddingConfig);
+            config.BindSection("KernelMemory:Retrieval:SearchClient", searchClientConfig);
+            config.BindSection("KernelMemory:Services:AzureBlobs", azureBlobConfig);
+            config.BindSection("KernelMemory:Services:AzureAISearch", azureAiSearchConfig);
+
+            var services = new ServiceCollection(); 
+            services.AddHandlerAsHostedService<TextExtractionHandler>(Constants.PipelineStepsExtract);
+            services.AddHandlerAsHostedService<SwaggerPartitioningHandler>(Constants.PipelineStepsPartition);
+            services.AddHandlerAsHostedService<GenerateEmbeddingsHandler>(Constants.PipelineStepsGenEmbeddings);
+            services.AddHandlerAsHostedService<SaveRecordsHandler>(Constants.PipelineStepsSaveRecords);
+            services.AddHandlerAsHostedService<SummarizationHandler>(Constants.PipelineStepsSummarize);
+            services.AddHandlerAsHostedService<DeleteDocumentHandler>(Constants.PipelineStepsDeleteDocument);
+            services.AddHandlerAsHostedService<DeleteIndexHandler>(Constants.PipelineStepsDeleteIndex);
+            services.AddHandlerAsHostedService<DeleteGeneratedFilesHandler>(Constants.PipelineStepsDeleteGeneratedFiles);
+
+            var memory = new KernelMemoryBuilder(services)
+                .WithAzureOpenAITextGeneration(azureOpenAiTextConfig)
+                .WithAzureOpenAITextEmbeddingGeneration(azureOpenAiEmbeddingConfig)
+                .WithAzureBlobsStorage(azureBlobConfig)                             
+                .WithAzureAISearchMemoryDb(azureAiSearchConfig)
+                .WithoutDefaultHandlers()
+                .Build<MemoryServerless>();
+
+            var serviceProvider = services.BuildServiceProvider();
+
+            memory.AddHandler(serviceProvider.GetRequiredService<TextExtractionHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<SwaggerPartitioningHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<GenerateEmbeddingsHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<SaveRecordsHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<SummarizationHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<DeleteDocumentHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<DeleteIndexHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<DeleteGeneratedFilesHandler>());
+
+            return memory;
+        });
+
         services.AddTransient<ICurlExecutor, CurlExecutor>();
+        services.AddTransient<ISwaggerMemorySearchService, SwaggerMemorySearchService>();
         services.AddTransient<ISwaggerAiAssistantService, SwaggerAiAssistantService>();
     }
 }

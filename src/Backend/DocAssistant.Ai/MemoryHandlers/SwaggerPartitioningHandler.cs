@@ -1,97 +1,14 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.KernelMemory;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory.AI.OpenAI;
 using Microsoft.KernelMemory.Configuration;
-using Microsoft.KernelMemory.DataFormats.Text;
 using Microsoft.KernelMemory.Diagnostics;
 using Microsoft.KernelMemory.Extensions;
-using Microsoft.KernelMemory.Handlers;
 using Microsoft.KernelMemory.Pipeline;
+using Microsoft.KernelMemory.DataFormats.Text;
 
-namespace MinimalApi.Tests.Swagger
+namespace DocAssistant.Ai.MemoryHandlers
 {
-    public class SearchEndpointTest : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
-    {
-        private readonly MemoryServerless _memory;
-
-        public SearchEndpointTest(WebApplicationFactory<Program> factory)
-        {
-            var config = factory.Services.GetRequiredService<IConfiguration>();
-
-#pragma warning disable SKEXP0001
-#pragma warning restore SKEXP0001
-
-            var azureOpenAITextConfig = new AzureOpenAIConfig();
-            var azureOpenAIEmbeddingConfig = new AzureOpenAIConfig();
-            var searchClientConfig = new AzureAISearchConfig();
-
-            config.BindSection("KernelMemory:Services:AzureOpenAIText", azureOpenAITextConfig);
-            config.BindSection("KernelMemory:Services:AzureOpenAIEmbedding", azureOpenAIEmbeddingConfig);
-            config.BindSection("KernelMemory:Retrieval:SearchClient", searchClientConfig);
-
-            var services = new ServiceCollection(); 
-            services.AddHandlerAsHostedService<TextExtractionHandler>(Constants.PipelineStepsExtract);
-            services.AddHandlerAsHostedService<SwaggerPartitioningHandler>(Constants.PipelineStepsPartition);
-            services.AddHandlerAsHostedService<GenerateEmbeddingsHandler>(Constants.PipelineStepsGenEmbeddings);
-            services.AddHandlerAsHostedService<SaveRecordsHandler>(Constants.PipelineStepsSaveRecords);
-            services.AddHandlerAsHostedService<SummarizationHandler>(Constants.PipelineStepsSummarize);
-            services.AddHandlerAsHostedService<DeleteDocumentHandler>(Constants.PipelineStepsDeleteDocument);
-            services.AddHandlerAsHostedService<DeleteIndexHandler>(Constants.PipelineStepsDeleteIndex);
-            services.AddHandlerAsHostedService<DeleteGeneratedFilesHandler>(Constants.PipelineStepsDeleteGeneratedFiles);
-
-            _memory = new KernelMemoryBuilder(services)
-                .WithAzureOpenAITextGeneration(azureOpenAITextConfig)
-                .WithAzureOpenAITextEmbeddingGeneration(azureOpenAIEmbeddingConfig)
-                //.WithAzureBlobsStorage(new AzureBlobsConfig {...})                             // => use Azure Blobs
-                //.WithAzureAISearchMemoryDb(new AzureAISearchConfig { Endpoint = endpoint, APIKey = apiKey, Auth = AzureAISearchConfig.AuthTypes.APIKey })
-                .WithoutDefaultHandlers()
-                .Build<MemoryServerless>();
-
-            var serviceProvider = services.BuildServiceProvider();
-
-            _memory.AddHandler(serviceProvider.GetRequiredService<TextExtractionHandler>());
-            _memory.AddHandler(serviceProvider.GetRequiredService<SwaggerPartitioningHandler>());
-            _memory.AddHandler(serviceProvider.GetRequiredService<GenerateEmbeddingsHandler>());
-            _memory.AddHandler(serviceProvider.GetRequiredService<SaveRecordsHandler>());
-            _memory.AddHandler(serviceProvider.GetRequiredService<SummarizationHandler>());
-            _memory.AddHandler(serviceProvider.GetRequiredService<DeleteDocumentHandler>());
-            _memory.AddHandler(serviceProvider.GetRequiredService<DeleteIndexHandler>());
-            _memory.AddHandler(serviceProvider.GetRequiredService<DeleteGeneratedFilesHandler>());
-        }
-
-        public async Task InitializeAsync()
-        {
-            await _memory.ImportDocumentAsync(new Document()
-                .AddFile("Assets/petstore-swagger-create-user.json")
-                .AddFile("Assets/petstore-swagger-order-create.json")
-                .AddFile("Assets/petstore-swagger-order-find-by-id.json")
-                .AddFile("Assets/petstore-swagger-order-inventories.json")
-                .AddFile("Assets/petstore-swagger-create-user.json"));
-
-        }
-
-        [Fact]
-        public async Task CanSearch()
-        {
-            var question = "Could you make an order for a pet with id 198773 with quantity 10?";
-            var a = await _memory.SearchAsync(question);
-            var b = await _memory.AskAsync(question);
-        }
-
-        
-
-        public Task DisposeAsync()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class SwaggerPartitioningHandler : IPipelineStepHandler
+   public class SwaggerPartitioningHandler : IPipelineStepHandler
 {
     private readonly IPipelineOrchestrator _orchestrator;
     private readonly TextPartitioningOptions _options;
@@ -155,6 +72,9 @@ namespace MinimalApi.Tests.Swagger
 
         foreach (DataPipeline.FileDetails uploadedFile in pipeline.Files)
         {
+            //TODO Add endpoint tag
+	        uploadedFile.Tags.Add(TagsKeys.Endpoint, "test");
+
             // Track new files being generated (cannot edit originalFile.GeneratedFiles while looping it)
             Dictionary<string, DataPipeline.GeneratedFileDetails> newFiles = new();
 

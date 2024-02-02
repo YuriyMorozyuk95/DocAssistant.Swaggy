@@ -33,6 +33,11 @@
       "name": "response",
       "description": "The successful response from the CURL command.",
       "required": true
+    },
+    {
+      "name": "swaggerFileName",
+      "description": "The Swagger file name used to build the CURL command.",
+      "required": true
     }
   ]
 }  

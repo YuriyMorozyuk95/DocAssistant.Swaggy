@@ -9,6 +9,7 @@ namespace DocAssistant.Ai.Services
     public interface ISwaggerAiAssistantService
     {
         Task<SwaggerCompletionInfo> AskApi(string swaggerFile, string userInput);
+        Task<SwaggerCompletionInfo> AskApi(string userInput);
 
         Task<FunctionResult> SummarizeForNonTechnical(string input, string curl, string response);
         Task<ChatMessageContent> GenerateCurl(string swaggerFile, string userInput);
@@ -17,21 +18,57 @@ namespace DocAssistant.Ai.Services
     public class SwaggerAiAssistantService : ISwaggerAiAssistantService
     {
         private readonly ICurlExecutor _curlExecutor;
+        private readonly ISwaggerMemorySearchService _swaggerMemorySearchService;
         private readonly IChatCompletionService _chatService;
         private readonly string _swaggerPrompt;
         private readonly Kernel _kernel;
 
-        public SwaggerAiAssistantService(IConfiguration configuration, Kernel kernel, ICurlExecutor curlExecutor)
+        public SwaggerAiAssistantService(
+            IConfiguration configuration,
+            Kernel kernel,
+            ICurlExecutor curlExecutor,
+            ISwaggerMemorySearchService swaggerMemorySearchService)
         {
             var swaggerPromptFilePath = configuration["SwaggerAiAssistant:SystemPromptSwaggerPath"];
 
             _curlExecutor = curlExecutor;
+            _swaggerMemorySearchService = swaggerMemorySearchService;
             _kernel = kernel;
             _chatService = _kernel.GetRequiredService<IChatCompletionService>();
             
             var path = string.Concat(AppContext.BaseDirectory, swaggerPromptFilePath);
 
             _swaggerPrompt = File.ReadAllText(path);
+        }
+
+        public async Task<SwaggerCompletionInfo> AskApi(string userInput)
+        {
+	        var swaggerDocument = await _swaggerMemorySearchService.SearchDocument(userInput);
+
+	        var curlChatMessage = await GenerateCurl(swaggerDocument.SwaggerContent, userInput);
+	        var curl = curlChatMessage.Content;
+
+	        var curlMetadata = curlChatMessage.Metadata["Usage"] as CompletionsUsage;
+
+	        var apiResponse = await _curlExecutor.ExecuteCurl(curl);
+	        var response = apiResponse.Result;
+
+	        var completion = await SummarizeForNonTechnical(userInput, curl, response);
+
+	        var summaryMetadata = completion.Metadata["Usage"] as CompletionsUsage;
+
+	        var swaggerCompletionInfo = new SwaggerCompletionInfo
+	        {
+		        FinalleResult = completion?.ToString(),
+		        Curl = curl,
+		        Response = apiResponse,
+		        CompletionTokens = curlMetadata.CompletionTokens + summaryMetadata.CompletionTokens,
+		        PromptTokens = curlMetadata.PromptTokens + summaryMetadata.PromptTokens,
+		        TotalTokens = curlMetadata.TotalTokens + summaryMetadata.TotalTokens,
+                SwaggerDocument = swaggerDocument,
+	        };
+
+	        return swaggerCompletionInfo;
         }
 
         public async Task<SwaggerCompletionInfo> AskApi(string swaggerFile, string userInput)

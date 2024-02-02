@@ -3,7 +3,7 @@ These are the results from the API call "{{$curl}}"
 {{$response}} 
 ===END RESULTS
 
-{{$input}} 
+The Swagger file used for building the CURL command: {{$swaggerFileName}}  
 
 Use the Results to answer the following query:
 
