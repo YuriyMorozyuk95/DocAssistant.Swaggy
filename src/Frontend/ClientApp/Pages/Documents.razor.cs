@@ -1,5 +1,8 @@
 ﻿using Shared;
 
+using DialogParameters = MudBlazor.DialogParameters;
+using IDialogService = MudBlazor.IDialogService;
+
 namespace ClientApp.Pages;
 
 public sealed partial class Documents : IDisposable
@@ -23,6 +26,7 @@ public sealed partial class Documents : IDisposable
     [Inject]
     public required ApiClient Client { get; set; }
 
+    //TODO
     [Inject]
     public required IDialogService Dialog { get; set; }
 
@@ -139,6 +143,7 @@ public sealed partial class Documents : IDisposable
         }
     }
 
+    //TODO
     private void OnShowDocument(DocumentResponse document) => Dialog.Show<PdfViewerDialog>(
             $"📄 {document.Name}",
             new DialogParameters

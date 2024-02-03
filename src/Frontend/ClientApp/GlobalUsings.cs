@@ -22,6 +22,7 @@ global using MudBlazor;
 global using MudBlazor.Services;
 global using Shared.Json;
 global using Shared.Models;
+global using Microsoft.FluentUI.AspNetCore.Components;  
 
 [assembly: System.Runtime.Versioning.SupportedOSPlatform("browser")]
 [assembly: InternalsVisibleTo("ClientApp.Tests")]

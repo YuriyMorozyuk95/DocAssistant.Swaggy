@@ -1,4 +1,8 @@
-﻿using System.Globalization;
+﻿using Microsoft.FluentUI.AspNetCore.Components;
+
+using System.Globalization;
+
+using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons;
 
 namespace ClientApp.Components;
 
@@ -8,8 +12,8 @@ public sealed partial class VoiceTextInput : IDisposable
     private bool _isListening = false;
 
     private string MicIcon => _isListening
-        ? Icons.Material.Filled.MicOff
-        : Icons.Material.Filled.Mic;
+        ? new Icons.Regular.Size24.MicOff().Content
+        : new Icons.Regular.Size24.Mic().Content;
 
     private IDisposable _recognitionSubscription;
 
@@ -37,7 +41,7 @@ public sealed partial class VoiceTextInput : IDisposable
     [Parameter] public string Label { get; set; } = "";
     [Parameter] public string Placeholder { get; set; } = "";
     [Parameter] public string HelperText { get; set; } = "Use Shift + Enter for new lines.";
-    [Parameter] public string Icon { get; set; } = Icons.Material.Filled.VoiceChat;
+    [Parameter] public string Icon { get; set; } = new Icons.Regular.Size20.MicRecord().Content;
     [Inject] public required ISpeechRecognitionService SpeechRecognition { get; set; }
     [Inject] public required ILogger<VoiceTextInput> Logger { get; set; }
 

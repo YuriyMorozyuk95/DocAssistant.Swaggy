@@ -22,6 +22,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" />
     <PackageReference Include="MudBlazor" />
     <PackageReference Include="System.Linq.Async" />
   </ItemGroup>

@@ -1,10 +1,14 @@
-﻿<MudNavMenu Rounded="true" Margin=Margin.Normal Class="pa-2" Color=Color.Primary>
-    <MudNavLink Href="documents" aria-label="View (and/or upload) documents."
-                Icon="@Icons.Material.Filled.FolderSpecial">
+﻿@using Color = MudBlazor.Color
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+@using Microsoft.FluentUI.AspNetCore.Components
+
+<MudNavMenu Rounded="true" Margin=Margin.Normal Class="pa-2" Color=Color.Primary>
+    <MudNavLink Href="documents" aria-label="View (and/or upload) documents.">
+        <FluentIcon Value="@(new Icons.Regular.Size32.DocumentSync())" />
         Documents
     </MudNavLink>
-    <MudNavLink Href="chat" aria-label="Chat navigation option."
-                Icon="@Icons.Material.Filled.QuestionAnswer">
+    <MudNavLink Href="chat" aria-label="Chat navigation option.">
+        <FluentIcon Value="@(new Icons.Regular.Size32.ChatSparkle())" />
         Chat
     </MudNavLink>
 </MudNavMenu>

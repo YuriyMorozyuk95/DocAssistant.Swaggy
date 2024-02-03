@@ -1,4 +1,10 @@
-﻿namespace ClientApp.Components;
+﻿//using IDialogService = Microsoft.FluentUI.AspNetCore.Components.IDialogService;
+//TODO
+
+using DialogParameters = MudBlazor.DialogParameters;
+using IDialogService = MudBlazor.IDialogService;
+
+namespace ClientApp.Components;
 
 public sealed partial class Answer
 {

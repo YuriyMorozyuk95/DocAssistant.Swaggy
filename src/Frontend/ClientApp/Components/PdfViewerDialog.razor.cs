@@ -1,4 +1,6 @@
-﻿namespace ClientApp.Components;
+﻿using DialogResult = MudBlazor.DialogResult;
+
+namespace ClientApp.Components;
 
 public sealed partial class PdfViewerDialog
 {
@@ -23,5 +25,6 @@ public sealed partial class PdfViewerDialog
             });
     }
 
+    //TODO
     private void OnCloseClick() => Dialog.Close(DialogResult.Ok(true));
 }
