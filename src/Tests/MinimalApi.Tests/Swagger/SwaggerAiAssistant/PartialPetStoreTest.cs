@@ -1,7 +1,10 @@
+using DocAssistant.Ai;
 using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory;
+using MinimalApi.Tests.Swagger.SwaggerAiAssistant.UserPromptsTestData;
 using Shared.Extensions;
 using Xunit.Abstractions;
 
@@ -10,12 +13,40 @@ namespace MinimalApi.Tests.Swagger.SwaggerAiAssistant;
 public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly ITestOutputHelper _testOutputHelper;
+    private readonly MemoryServerless _memoryServerless;
     private readonly ISwaggerAiAssistantService _swaggerAiAssistantService;
 
-    public PartialPetStoreTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
+    public PartialPetStoreTest(
+        WebApplicationFactory<Program> factory,
+        ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
         _swaggerAiAssistantService = factory.Services.GetRequiredService<ISwaggerAiAssistantService>();
+        _memoryServerless = factory.Services.GetRequiredService<MemoryServerless>();
+    }
+    [Fact]
+    private async Task UploadPetStoreSwagger()
+    {
+        var tags = new TagCollection
+        {
+            { TagsKeys.SwaggerFile, "petstore-swagger-full.json" }
+        };
+        string path = "Assets/PetStore";  
+
+        string[] files = Directory.GetFiles(path);  
+        var upload = new Document(Guid.NewGuid().ToString(), tags, files);
+
+        await _memoryServerless.ImportDocumentAsync(upload);
+    }
+
+    //Please call UploadPetStoreSwagger, before running this test
+    [Theory]
+    [ClassData(typeof(PetStoreUserPromptsTestData))]
+    public async Task CanAskApi(string userPrompt)
+    {
+        var result = await _swaggerAiAssistantService.AskApi(userPrompt);
+
+        PrintResult(result.FinalleResult, result.ToJson());
     }
 
     [Fact]

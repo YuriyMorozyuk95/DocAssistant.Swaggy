@@ -12,6 +12,19 @@
 	  <None Remove="Assets\petstore-swagger-order-create.json" />
 	  <None Remove="Assets\petstore-swagger-order-find-by-id.json" />
 	  <None Remove="Assets\petstore-swagger-order-inventories.json" />
+	  <None Remove="Assets\PetStore\_pet.json" />
+	  <None Remove="Assets\PetStore\_pet_findByStatus.json" />
+	  <None Remove="Assets\PetStore\_pet_findByTags.json" />
+	  <None Remove="Assets\PetStore\_pet_{petId}.json" />
+	  <None Remove="Assets\PetStore\_pet_{petId}_uploadImage.json" />
+	  <None Remove="Assets\PetStore\_store_inventory.json" />
+	  <None Remove="Assets\PetStore\_store_order.json" />
+	  <None Remove="Assets\PetStore\_store_order_{orderId}.json" />
+	  <None Remove="Assets\PetStore\_user.json" />
+	  <None Remove="Assets\PetStore\_user_createWithList.json" />
+	  <None Remove="Assets\PetStore\_user_login.json" />
+	  <None Remove="Assets\PetStore\_user_logout.json" />
+	  <None Remove="Assets\PetStore\_user_{username}.json" />
 	  <None Remove="Assets\test.jpg" />
 	</ItemGroup>
 
@@ -29,6 +42,45 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Assets\petstore-swagger-full.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_pet.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_pet_findByStatus.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_pet_findByTags.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_pet_{petId}.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_pet_{petId}_uploadImage.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_store_inventory.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_store_order.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_store_order_{orderId}.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_user.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_user_createWithList.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_user_login.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_user_logout.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Assets\PetStore\_user_{username}.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="Assets\test.jpg">

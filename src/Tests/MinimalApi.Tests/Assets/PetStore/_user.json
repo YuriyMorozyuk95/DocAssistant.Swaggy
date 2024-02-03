@@ -1,0 +1,161 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Swagger Petstore - OpenAPI 3.0",
+    "description": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.\n\n_If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.11"
+  },
+  "host": "petstore3.swagger.io",
+  "basePath": "/api/v3",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/user": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Create user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "createUser",
+        "consumes": [
+          "application/json",
+          "application/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "id",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "in": "formData",
+            "name": "username",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "firstName",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "lastName",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "email",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "password",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "phone",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "userStatus",
+            "description": "User Status",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "format": "int64",
+                  "type": "integer",
+                  "example": 10
+                },
+                "username": {
+                  "type": "string",
+                  "example": "theUser"
+                },
+                "firstName": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "James"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john@email.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "12345"
+                },
+                "phone": {
+                  "type": "string",
+                  "example": "12345"
+                },
+                "userStatus": {
+                  "format": "int32",
+                  "description": "User Status",
+                  "type": "integer",
+                  "example": 1
+                }
+              },
+              "xml": {
+                "name": "user"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "pet",
+      "description": "Everything about your Pets",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "store",
+      "description": "Access to Petstore orders",
+      "externalDocs": {
+        "description": "Find out more about our store",
+        "url": "http://swagger.io"
+      }
+    },
+    {
+      "name": "user",
+      "description": "Operations about user"
+    }
+  ],
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

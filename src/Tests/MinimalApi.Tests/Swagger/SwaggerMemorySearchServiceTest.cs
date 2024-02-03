@@ -1,4 +1,5 @@
-﻿using DocAssistant.Ai;
+﻿using System.Diagnostics;
+using DocAssistant.Ai;
 using DocAssistant.Ai.Model;
 using DocAssistant.Ai.Services;
 
@@ -66,15 +67,16 @@ namespace MinimalApi.Tests.Swagger
 
 		private async Task<string> UploadDocuments(string guid)
         {
-			var tags = new TagCollection();
-			tags.Add(TagsKeys.SwaggerFile, "testSwagger File");
+			var tags = new TagCollection
+            {
+                { TagsKeys.SwaggerFile, "petstore-swagger-full.json" }
+            };
+            string path = "Assets/PetStore";  
 
-	        var output = await _memory.ImportDocumentAsync(new Document(guid, tags)
-		        .AddFile("Assets/petstore-swagger-create-user.json")
-		        .AddFile("Assets/petstore-swagger-order-create.json")
-		        .AddFile("Assets/petstore-swagger-order-find-by-id.json")
-		        .AddFile("Assets/petstore-swagger-order-inventories.json")
-		        .AddFile("Assets/petstore-swagger-create-user.json"));
+            string[] files = Directory.GetFiles(path);  
+            var upload = new Document(guid, tags, files);
+
+	        var output = await _memory.ImportDocumentAsync(upload);
 	        return output;
         }
 

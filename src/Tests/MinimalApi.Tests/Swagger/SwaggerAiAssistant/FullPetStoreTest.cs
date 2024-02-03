@@ -3,6 +3,8 @@ using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using MinimalApi.Tests.Swagger.SwaggerAiAssistant.UserPromptsTestData;
+
 using Shared.Extensions;
 using Xunit.Abstractions;
 
@@ -54,7 +56,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
     }
 
     [Theory]
-    [ClassData(typeof(UserPromptsTestData))]
+    [ClassData(typeof(PetStoreUserPromptsTestData))]
     public async Task CanAskApi(string userPrompt)
     {
         var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
@@ -62,7 +64,6 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
         PrintResult(result.FinalleResult, result.ToJson());
     }
 
-    //TODO add more test cases
     [Fact]
     public async Task SummaryPrompt()
     {
@@ -76,7 +77,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
     }
 
     [Theory]
-    [ClassData(typeof(UserPromptsTestData))]
+    [ClassData(typeof(PetStoreUserPromptsTestData))]
     public async Task GenerateCurl(string userPrompt)
     {
         var result = await _swaggerAiAssistantService.GenerateCurl(_swaggerFile, userPrompt);
@@ -96,21 +97,3 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
         return Task.CompletedTask;
     }
 }
-
-public class UserPromptsTestData : IEnumerable<object[]>
-{
-    public IEnumerator<object[]> GetEnumerator()
-    {
-        yield return new object[] { "Update an existing pet with id 1 to name doggie 1" };
-        yield return new object[] { "Find pet by id 11" };
-        yield return new object[] { "Could you remove pet in store with id 11?" };
-        yield return new object[] { "Find purchase order by id 3" };
-        yield return new object[] { "Could you create pet in store with id 11 to name Boggi, and make his status available?" };
-        yield return new object[] { "Update pet in store with id 10 to name Barsik, and make his status available?" };
-
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-}
-
-
