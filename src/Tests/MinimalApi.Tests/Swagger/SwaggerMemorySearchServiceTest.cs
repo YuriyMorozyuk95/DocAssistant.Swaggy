@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using DocAssistant.Ai;
-using DocAssistant.Ai.Model;
 using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -32,7 +31,7 @@ namespace MinimalApi.Tests.Swagger
 		    var question = "Could you make an order for a pet with id 198773 with quantity 10?";
 		   
 		    var result = await _swaggerAiAssistantService.AskApi(question);
-		    PrintResult(result.FinalleResult, result.ToJson());
+		    PrintResult(result.FinalResult, result.ToJson());
 	    }
 
 	    [Fact]

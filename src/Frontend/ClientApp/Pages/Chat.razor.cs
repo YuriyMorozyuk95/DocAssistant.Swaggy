@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using Shared.Models.Swagger;
+
+using System.Threading;
 
 namespace ClientApp.Pages;
 
@@ -13,7 +15,7 @@ public sealed partial class Chat
     private string _secondExample;
     private string _thirdExample;
 
-    private readonly Dictionary<UserQuestion, ApproachResponse> _questionAndAnswerMap = new();
+    private readonly Dictionary<UserQuestion, SwaggerCompletionInfo> _questionAndAnswerMap = new();
     private bool _isLoadingPromptsInit;
     private bool _isExamplesPromptsInit;
     private Task _copilotPromptsInitializing;
@@ -37,7 +39,7 @@ public sealed partial class Chat
         // Instead of awaiting this async enumerable here, let's capture it in a task
         // and start it in the background. This way, we can await it in the UI.
         _copilotPromptsInitializing = OnCopilotPromptsInitializingAsync();
-        _examplesPromptsInitialing = OnExamplesPromptsInitialingAsync();
+        //_examplesPromptsInitialing = OnExamplesPromptsInitialingAsync();
     }
 
     private Task OnAskQuestionAsync(string question)
@@ -62,15 +64,15 @@ public sealed partial class Chat
         {
             var history = _questionAndAnswerMap
                 .Where(x => x.Value is not null)
-                .Select(x => new ChatTurn(x.Key.Question, x.Value!.Answer))
+                .Select(x => new ChatTurn(x.Key.Question, x.Value!.FinalResult))
                 .ToList();
 
             history.Add(new ChatTurn(_userQuestion));
 
             var request = new ChatRequest(history.ToArray(), Settings.Approach, Settings.Overrides);
-            var result = await ApiClient.ChatConversationAsync(request);
+            var result = await ApiClient.ChatToApiConversationAsync(request);
 
-            _questionAndAnswerMap[_currentQuestion] = result.Response;
+            _questionAndAnswerMap[_currentQuestion] = result;
             if (result.IsSuccessful)
             {
                 _userQuestion = "";

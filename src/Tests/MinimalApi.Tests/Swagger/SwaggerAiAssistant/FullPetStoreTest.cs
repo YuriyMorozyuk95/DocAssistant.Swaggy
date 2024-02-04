@@ -34,7 +34,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
         var userPrompt = "Could you remove pet in store with id 11?";
         var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
         var userPrompt = "Could you create pet in store with id 11 to name Boggi, and make his status available?";
         var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
         var userPrompt = "Update pet in store with id 10 to name Barsik, and make his status available?";
         var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Theory]
@@ -61,7 +61,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
     {
         var result = await _swaggerAiAssistantService.AskApi(_swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Fact]

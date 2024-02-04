@@ -1,5 +1,5 @@
-﻿using DocAssistant.Ai.Model;
-using Microsoft.KernelMemory;
+﻿using Microsoft.KernelMemory;
+using Shared.Models.Swagger;
 
 namespace DocAssistant.Ai.Services
 {

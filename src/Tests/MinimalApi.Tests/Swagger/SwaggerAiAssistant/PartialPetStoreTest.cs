@@ -46,7 +46,7 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
     {
         var result = await _swaggerAiAssistantService.AskApi(userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
         var userPrompt = "Could you make an order for a pet with id 198773 with quantity 10?";
         var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
         var userPrompt = "Could you find order by id 10?";
         var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
         var userPrompt = "Could you provide to me store inventories?";
         var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
         var userPrompt = "Could you create new user Alexander Whatson with email Alexander.Whatson@gmail.com with id 1000 ?";
         var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
 
-        PrintResult(result.FinalleResult, result.ToJson());
+        PrintResult(result.FinalResult, result.ToJson());
     }
 
     private Task<string> ReadSwagger(string fileName)

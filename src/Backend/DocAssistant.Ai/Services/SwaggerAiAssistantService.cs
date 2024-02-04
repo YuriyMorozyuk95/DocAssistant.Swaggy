@@ -1,8 +1,8 @@
 ﻿using Azure.AI.OpenAI;
-using DocAssistant.Ai.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Shared.Models.Swagger;
 
 namespace DocAssistant.Ai.Services
 {
@@ -59,7 +59,7 @@ namespace DocAssistant.Ai.Services
 
 	        var swaggerCompletionInfo = new SwaggerCompletionInfo
 	        {
-		        FinalleResult = completion?.ToString(),
+		        FinalResult = completion?.ToString(),
 		        Curl = curl,
 		        Response = apiResponse,
 		        CompletionTokens = curlMetadata.CompletionTokens + summaryMetadata.CompletionTokens,
@@ -87,7 +87,7 @@ namespace DocAssistant.Ai.Services
 
             var swaggerCompletionInfo = new SwaggerCompletionInfo
             {
-                FinalleResult = completion?.ToString(),
+                FinalResult = completion?.ToString(),
                 Curl = curl,
                 Response = apiResponse,
                 CompletionTokens = curlMetadata.CompletionTokens + summaryMetadata.CompletionTokens,

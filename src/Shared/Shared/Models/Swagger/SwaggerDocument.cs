@@ -1,4 +1,4 @@
-﻿namespace DocAssistant.Ai.Model;
+﻿namespace Shared.Models.Swagger;
 
 public class SwaggerDocument
 {

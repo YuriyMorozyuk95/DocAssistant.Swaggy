@@ -1,7 +1,6 @@
-﻿using DocAssistant.Ai.Model;
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
+using Shared.Models.Swagger;
 
 namespace DocAssistant.Ai.Services;
 

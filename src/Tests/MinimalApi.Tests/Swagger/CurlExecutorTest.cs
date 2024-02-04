@@ -3,9 +3,7 @@ using DocAssistant.Ai.Services;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-
 using Shared.Extensions;
-
 using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger

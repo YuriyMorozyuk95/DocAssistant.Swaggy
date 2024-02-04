@@ -1,8 +1,8 @@
 ﻿<MudGrid Justify="Justify.Center">
-@if (_parsedAnswer is not null)
+    @if (Retort is not null)
 {
-    var answer = _parsedAnswer;
-    var html = answer.AnswerHtml;
+   @*  var answer = _parsedAnswer;
+    var html = answer.AnswerHtml; *@
 
     <MudItem xs="12">
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
@@ -10,9 +10,9 @@
                 <ChildContent>
                     <MudPaper Class="pa-6" Elevation="3">
                         <MudText Typo="Typo.body1">
-                            @((MarkupString)html)
+                            @* @((MarkupString)html) *@ @Retort.FinalResult 
                         </MudText>
-                        @if (answer is { Citations.Count: > 0 })
+                       @*  @if (answer is { Citations.Count: > 0 })
                         {
                             <div class="pt-4">
                                 <MudText Typo="Typo.subtitle2" Class="pb-2">Citations:</MudText>
@@ -40,26 +40,25 @@
                                     </MudChip>
                                 }
                             </div>
-                        }
+                        } *@
                     </MudPaper>
                 </ChildContent>
             </MudTabPanel>
             <MudTabPanel Icon="@Icons.Material.Filled.Lightbulb" Text="Thought process" 
-                         ToolTip="Show thought process."
-                         Disabled="@(Retort is { Thoughts: null })">
+                         ToolTip="Show thought process.">
                 <ChildContent>
                     <MudPaper Class="pa-6" Elevation="3">
-                        <pre style="white-space: normal; font-size: 1.2em;">
+                       @*  <pre style="white-space: normal; font-size: 1.2em;">
                             @(RemoveLeadingAndTrailingLineBreaks(Retort.Thoughts!))
-                        </pre>
+                        </pre> *@
                     </MudPaper>
                 </ChildContent>
             </MudTabPanel>
             <MudTabPanel Icon="@Icons.Material.Filled.TextSnippet" Text="Supporting Content"
-                         ToolTip="Show the supporting content." Disabled="@(Retort is { DataPoints: null } or { DataPoints.Length: 0 })">
+                         ToolTip="Show the supporting content.">
                 <ChildContent>
                     <MudPaper Class="pa-2" Elevation="3">
-                        <SupportingContent DataPoints="Retort.DataPoints" />
+                        @* <SupportingContent DataPoints="Retort.DataPoints" /> *@
                     </MudPaper>
                 </ChildContent>
             </MudTabPanel>

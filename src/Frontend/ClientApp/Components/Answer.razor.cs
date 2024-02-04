@@ -1,6 +1,8 @@
 ﻿//using IDialogService = Microsoft.FluentUI.AspNetCore.Components.IDialogService;
 //TODO
 
+using Shared.Models.Swagger;
+
 using DialogParameters = MudBlazor.DialogParameters;
 using IDialogService = MudBlazor.IDialogService;
 
@@ -8,20 +10,20 @@ namespace ClientApp.Components;
 
 public sealed partial class Answer
 {
-    [Parameter, EditorRequired] public required ApproachResponse Retort { get; set; }
+    [Parameter, EditorRequired] public required SwaggerCompletionInfo Retort { get; set; }
     [Parameter, EditorRequired] public required EventCallback<string> FollowupQuestionClicked { get; set; }
 
     [Inject] public required IDialogService Dialog { get; set; }
 
-    private HtmlParsedAnswer _parsedAnswer;
+    //private HtmlParsedAnswer _parsedAnswer;
 
-    protected override void OnParametersSet()
-    {
-        _parsedAnswer = ParseAnswerToHtml(
-            Retort.Answer, Retort.CitationBaseUrl, Retort.DataPoints);
+    //protected override void OnParametersSet()
+    //{
+    //    _parsedAnswer = ParseAnswerToHtml(
+    //        Retort.Answer, Retort.CitationBaseUrl, Retort.DataPoints);
 
-        base.OnParametersSet();
-    }
+    //    base.OnParametersSet();
+    //}
 
     private async Task OnAskFollowupAsync(string followupQuestion)
     {

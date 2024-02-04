@@ -9,7 +9,7 @@
     <MudItem id="answers" xs="12" Class="overflow-x-auto">
         @if (_questionAndAnswerMap is { Count: 0 })
         {
-            @if (_isExamplesPromptsInit)
+            @* @if (_isExamplesPromptsInit)
             {
                 <MudText Typo="Typo.h5">
                     Loading examples...
@@ -22,7 +22,7 @@
                 <div class="d-flex align-content-center flex-wrap flex-grow-1 full-height">
                     <Examples Message="Here is 3 example of question" @bind-FirstExample="_firstExample" @bind-SecondExample="_secondExample" @bind-ThirdExample="_thirdExample" OnExampleClicked="@OnAskQuestionAsync" />
                 </div>
-            }
+            } *@
         }
         else
         {
@@ -51,7 +51,8 @@
                                     </MudPaper>
                                 </MudBadge>
                             }
-                            else if (answer is { Error.Length: > 0 })
+                            //TODO: Implement the logic to handle error response from the server
+                           @*  else if (answer is { Error.Length: > 0 })
                             {
                                 <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Error"
                                           Icon="@Icons.Material.Filled.Error">
@@ -60,12 +61,12 @@
                                 </MudBadge>
                             }
                             else
-                            {
+                            { *@
                                 <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Secondary"
                                           Icon="@Icons.Material.Filled.AutoAwesome">
                                     <Answer Retort="@answer" FollowupQuestionClicked="@OnAskQuestionAsync" />
                                 </MudBadge>
-                            }
+                            @* } *@
                         </div>
                     </MudStack>
                 }
