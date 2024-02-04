@@ -51,7 +51,7 @@ public sealed partial class MainLayout
     //TODO
     [Inject] public required IDialogService Dialog { get; set; }
     [Inject] public required ApiClient ApiClient { get; set; }
-    [Inject] public required AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+    //[Inject] public required AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
     private bool SettingsDisabled => new Uri(Nav.Uri).Segments.LastOrDefault() switch
     {

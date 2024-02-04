@@ -8,9 +8,9 @@ public class AuthenticatedUserService
     private readonly AuthenticationStateProvider _authenticationStateProvider;
     //private readonly IUserApiClient _userApiClient;
 
-    public AuthenticatedUserService(AuthenticationStateProvider authenticationStateProvider)
+    public AuthenticatedUserService(/*AuthenticationStateProvider authenticationStateProvider*/)
     {
-        _authenticationStateProvider = authenticationStateProvider;
+        //_authenticationStateProvider = authenticationStateProvider;
         //_userApiClient = userApiClient;
     }
 

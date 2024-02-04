@@ -54,7 +54,7 @@ await JSHost.ImportAsync(
     moduleName: nameof(JavaScriptModule),
     moduleUrl: $"../js/iframe.js?{Guid.NewGuid()}" /* cache bust */);
 
-builder.Services.AddTransient<CustomAuthorizationMessageHandler>();
+//builder.Services.AddTransient<CustomAuthorizationMessageHandler>();
 builder.Services.AddHttpClient("ServerAPI", client =>
 {
     var baseUrl = builder.Configuration["AppSettings:BACKEND_URI"];
