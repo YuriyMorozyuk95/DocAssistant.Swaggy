@@ -23,11 +23,6 @@ builder.Services.Configure<AppSettings>(
 builder.Configuration.GetSection(nameof(AppSettings)));
 
 builder.Services.AddTransient<ApiClient>();
-//builder.Services.AddTransient<IUserApiClient, UserApiClient>();
-//builder.Services.AddTransient<IPermissionApiClient, PermissionApiClient>();
-
-//TODO Remove
-//builder.Services.AddSingleton(_ => new BlobServiceClient(builder.Configuration["AzureStorageAccountConnectionString"]));
 
 builder.Services.AddScoped<OpenAIPromptQueue>();
 builder.Services.AddTransient<AuthenticatedUserService>();
@@ -40,15 +35,6 @@ builder.Services.AddFluentUIComponents();
 
 builder.Services.AddCascadingAuthenticationState();
 
-//TODO add when superusers group will be created
-//@attribute [Authorize(Policy="superusers")]
-//builder.Services.AddAuthorizationCore(option =>
-//{
-//    option.AddPolicy("superusers", policy =>
-//    {
-//       policy.RequireAssertion(context => context.User.HasClaim(x => x.Type == "groups" && x.Value.Contains("superusers-id"))); 
-//    });
-//});
 
 await JSHost.ImportAsync(
     moduleName: nameof(JavaScriptModule),

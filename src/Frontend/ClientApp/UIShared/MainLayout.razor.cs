@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using IDialogService = MudBlazor.IDialogService;
+﻿using IDialogService = MudBlazor.IDialogService;
 
 using Color = MudBlazor.Color;
-using IDialogService = MudBlazor.IDialogService;
 
 namespace ClientApp.UIShared;
 
@@ -25,7 +23,6 @@ public sealed partial class MainLayout
 
     private bool _drawerOpen = true;
     private bool _settingsOpen = false;
-    private SettingsPanel? _settingsPanel;
     private bool _isLoadingPromptsInit;
 
     private Task _copilotPromptsInitializing;
@@ -49,10 +46,8 @@ public sealed partial class MainLayout
 
     [Inject] public required NavigationManager Nav { get; set; }
     [Inject] public required ILocalStorageService LocalStorage { get; set; }
-    //TODO
     [Inject] public required IDialogService Dialog { get; set; }
     [Inject] public required ApiClient ApiClient { get; set; }
-    //[Inject] public required AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
     private bool SettingsDisabled => new Uri(Nav.Uri).Segments.LastOrDefault() switch
     {

@@ -54,14 +54,8 @@
         </MudDrawer>
         <MudMainContent>
             <MudContainer MaxWidth="MaxWidth.Large" Fixed="false" Class="my-6 pt-6">
-                <CascadingValue Value="_settingsPanel?.Settings" Name="Settings">
-                    <CascadingValue Value="_isReversed" Name="IsReversed">
-                        @Body
-                    </CascadingValue>
-                </CascadingValue>
+                @Body
             </MudContainer>
-            @* TODO setup email*@
-            <SettingsPanel @ref="_settingsPanel" @bind-Open="@_settingsOpen" CopilotPrompts="@CopilotPrompts" UpdateButtonClicked="@OnUpdateButtonClickedAsync" />
         </MudMainContent>
     </MudLayout>
 </MudRTLProvider>
