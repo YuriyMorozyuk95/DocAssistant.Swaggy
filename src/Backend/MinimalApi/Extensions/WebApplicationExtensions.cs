@@ -153,8 +153,8 @@ internal static class WebApplicationExtensions
         [FromServices] IHttpContextAccessor httpContextAccessor, 
         CancellationToken cancellationToken)
     {
-        var doc = service.GetDocuments(cancellationToken);
-        return doc;
+        var documentsStream = service.GetDocuments(cancellationToken);
+        return documentsStream;
     }
 
     private static async Task<IResult> OnPostSynchronizeAsync(

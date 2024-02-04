@@ -44,27 +44,26 @@ namespace MinimalApi.Tests.Swagger
 			_testOutputHelper.WriteLine(model.ToJson());
 	    }
 
-        [Fact]
-        public async Task CanUploadDocuments()
-        {
-	        var output = await UploadDocuments(Guid.NewGuid().ToString());
-
-	        _testOutputHelper.WriteLine(output);
-		}
-
 
         [Fact]
         public async Task CanCreateAndRemoveFiles()
         {
-           var guid = Guid.NewGuid().ToString();
-           var output = await UploadDocuments(guid);
+            var guid = Guid.NewGuid().ToString();
 
-            _testOutputHelper.WriteLine(output);
+            try
+            {
+                var output = await UploadDocuments(guid);
 
-            await _memory.DeleteDocumentAsync(guid);
+                _testOutputHelper.WriteLine(output);
+            }
+            finally
+            {
+
+                await _memory.DeleteDocumentAsync(guid);
+            }
         }
 
-		private async Task<string> UploadDocuments(string guid)
+        private async Task<string> UploadDocuments(string guid)
         {
 			var tags = new TagCollection
             {
