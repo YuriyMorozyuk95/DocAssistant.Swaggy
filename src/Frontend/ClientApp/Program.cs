@@ -23,8 +23,8 @@ builder.Services.Configure<AppSettings>(
 builder.Configuration.GetSection(nameof(AppSettings)));
 
 builder.Services.AddTransient<ApiClient>();
-builder.Services.AddTransient<IUserApiClient, UserApiClient>();
-builder.Services.AddTransient<IPermissionApiClient, PermissionApiClient>();
+//builder.Services.AddTransient<IUserApiClient, UserApiClient>();
+//builder.Services.AddTransient<IPermissionApiClient, PermissionApiClient>();
 
 //TODO Remove
 //builder.Services.AddSingleton(_ => new BlobServiceClient(builder.Configuration["AzureStorageAccountConnectionString"]));

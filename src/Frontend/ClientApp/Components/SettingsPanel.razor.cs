@@ -9,10 +9,10 @@ public sealed partial class SettingsPanel : IDisposable
 
     [Inject] public required NavigationManager Nav { get; set; }
     [Inject] public required AuthenticatedUserService AuthenticatedUserService { get; set; }
-    [Inject] public required IPermissionApiClient PermissionApiClient { get; set; }
+    //[Inject] public required IPermissionApiClient PermissionApiClient { get; set; }
 
-    [Inject]
-    public IUserApiClient UserApiClient { get; set; }
+    //[Inject]
+    //public IUserApiClient UserApiClient { get; set; }
 
     [Parameter]
     public required CopilotPromptsRequestResponse CopilotPrompts { get; set; } = new();  
@@ -42,16 +42,16 @@ public sealed partial class SettingsPanel : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        var user = await AuthenticatedUserService.GetAuthenticatedUserAsync();
+        //var user = await AuthenticatedUserService.GetAuthenticatedUserAsync();
 
-        if (user != null)
-        {
-            Settings.Overrides.SelectedUserGroups = user.UserGroups;
-        }
-        else
-        {
-            Settings.Overrides.SelectedUserGroups = new List<UserGroup>();
-        }
+        //if (user != null)
+        //{
+        //    Settings.Overrides.SelectedUserGroups = user.UserGroups;
+        //}
+        //else
+        //{
+        //    Settings.Overrides.SelectedUserGroups = new List<UserGroup>();
+        //}
 
         await base.OnInitializedAsync();
     }

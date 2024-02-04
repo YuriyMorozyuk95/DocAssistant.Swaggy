@@ -6,12 +6,12 @@ namespace ClientApp.Services;
 public class AuthenticatedUserService
 {
     private readonly AuthenticationStateProvider _authenticationStateProvider;
-    private readonly IUserApiClient _userApiClient;
+    //private readonly IUserApiClient _userApiClient;
 
-    public AuthenticatedUserService(AuthenticationStateProvider authenticationStateProvider, IUserApiClient userApiClient)
+    public AuthenticatedUserService(AuthenticationStateProvider authenticationStateProvider)
     {
         _authenticationStateProvider = authenticationStateProvider;
-        _userApiClient = userApiClient;
+        //_userApiClient = userApiClient;
     }
 
     public async Task<UserEntity> GetAuthenticatedUserAsync()
@@ -22,9 +22,9 @@ public class AuthenticatedUserService
             return null;
         }
 
-        var users = await _userApiClient.GetAllUsers();
+        //var users = await _userApiClient.GetAllUsers();
 
-        return users.FirstOrDefault(x => x.Email == identity);
+        return new UserEntity{ Email = identity };
     }
     private async Task<string> GetAuthenticatedUserNameAsync()
     {
