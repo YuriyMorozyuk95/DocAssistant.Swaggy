@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+using IDialogService = MudBlazor.IDialogService;
 
 using Color = MudBlazor.Color;
 using IDialogService = MudBlazor.IDialogService;
