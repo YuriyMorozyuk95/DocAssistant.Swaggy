@@ -1,9 +1,9 @@
-﻿<MudText Typo="Typo.h5" Color="Color.Secondary" Class="pb-2">
+﻿<MudText Typo="Typo.h5" Color="Color.Info" Class="pb-2">
     @BusyMessage
 </MudText>
-<MudProgressCircular Color="Color.Secondary" Indeterminate="true" Class="pb-4" />
+<MudProgressCircular Color="Color.Info" Indeterminate="true" Class="pb-4" />
 
 @code {
     [Parameter]
-    public string BusyMessage { get; set; } = "🤖 I'm generating an answer... Please wait.";
+    public string BusyMessage { get; set; } = "\ud83d\udca1 I'm generating an answer... Please wait.";
 }

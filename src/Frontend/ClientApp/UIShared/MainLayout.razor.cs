@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
+
+using Color = MudBlazor.Color;
 using IDialogService = MudBlazor.IDialogService;
 
 namespace ClientApp.UIShared;
@@ -32,6 +34,8 @@ public sealed partial class MainLayout
         get => LocalStorage.GetItem<bool>(StorageKeys.PrefersDarkTheme);
         set => LocalStorage.SetItem<bool>(StorageKeys.PrefersDarkTheme, value);
     }
+
+    public Color Color => _isDarkTheme ? Color.Dark : Color.Info;
 
     private bool _isReversed
     {
