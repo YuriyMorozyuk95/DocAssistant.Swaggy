@@ -1,6 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using Azure.Core;
-
 using Shared;
 using Shared.Models.Swagger;
 

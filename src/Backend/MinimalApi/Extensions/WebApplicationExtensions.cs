@@ -114,8 +114,8 @@ internal static class WebApplicationExtensions
     }
 
     private static async Task<IResult> OnPostChatAsync(
-        ChatRequest request,
-        ISwaggerAiAssistantService swaggerAiAssistantService,
+        [FromBody]ChatRequest request,
+        [FromServices]ISwaggerAiAssistantService swaggerAiAssistantService,
         CancellationToken cancellationToken)
     {
         if (request is { History.Length: > 0 })
