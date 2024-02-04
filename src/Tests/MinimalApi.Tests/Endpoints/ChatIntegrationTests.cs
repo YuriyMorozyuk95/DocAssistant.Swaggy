@@ -19,7 +19,7 @@ namespace MinimalApi.Tests.Endpoints
         public async Task Post_Chat_ReturnsOkResponse()  
         {  
             // Arrange  
-            var request = new ChatRequest(new ChatTurn[] { new("Test question"), }, Approach.RetrieveThenRead);
+            var request = new ChatRequest(new ChatTurn[] { new("Could you remove pet in store with id 11?"), }, Approach.RetrieveThenRead);
   
             // Act  
             var response = await _client.ChatToApiConversationAsync(request);  

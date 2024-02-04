@@ -25,7 +25,6 @@ public sealed class ApiClient
         return await response.Content.ReadFromJsonAsync<ImageResponse>();
     }
 
-
     public async Task<UploadDocumentsResponse> UploadDocumentsAsync(
         IReadOnlyList<IBrowserFile> files,
         UserGroup[] userGroups,

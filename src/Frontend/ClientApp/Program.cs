@@ -59,7 +59,7 @@ builder.Services.AddHttpClient("ServerAPI", client =>
 {
     var baseUrl = builder.Configuration["AppSettings:BACKEND_URI"];
     client.BaseAddress = new Uri(baseUrl);
-}).AddHttpMessageHandler<CustomAuthorizationMessageHandler>();
+});/*.AddHttpMessageHandler<CustomAuthorizationMessageHandler>();*/
 
 var host = builder.Build();
 await host.RunAsync();
