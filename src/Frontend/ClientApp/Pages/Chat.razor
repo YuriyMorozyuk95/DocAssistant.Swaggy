@@ -1,8 +1,9 @@
-﻿@page "/chat"
+﻿@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+
+@page "/chat"
 @* @attribute [Authorize] *@
 
 <!-- This page is intended for conversational Q&A. -->
-
 <PageTitle>Chat</PageTitle>
 
 <MudGrid Justify="Justify.Center">
@@ -30,22 +31,24 @@
                 @foreach (var ((question, askedOn), answer) in _questionAndAnswerMap)
                 {
                     <MudStack Justify="Justify.Center" AlignItems="AlignItems.Start" Spacing="4">
-                        <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Secondary"
-                          Icon="@Icons.Material.Filled.QuestionMark" Class="d-flex align-self-end">
-                            <MudPaper Class="pa-6 d-flex flex-column" Elevation="3">
-                                <MudText Typo="Typo.body1" Align="Align.End">
-                                    @question
-                                </MudText>
-                                <MudText Typo="Typo.caption" Align="Align.End" Color="Color.Secondary">
-                                    @($"Asked at {askedOn:h:mm:ss tt} on {askedOn:M/dd/yy}")
-                                </MudText>
-                            </MudPaper>
-                        </MudBadge>
+                        <MudBadge Origin="Origin.TopLeft" 
+                         Overlap="true"
+                                  Color="Color.Info"
+                         Icon="@(new Icons.Regular.Size20.ChatBubblesQuestion().Content)" Class="d-flex align-self-end">
+                             <MudPaper Class="pa-6 d-flex flex-column" Elevation="3">
+                                 <MudText Typo="Typo.body1" Align="Align.End">
+                                     @question
+                                 </MudText>
+                                <MudText Typo="Typo.caption" Align="Align.End" Color="Color.Info">
+                                     @($"Asked at {askedOn:h:mm:ss tt} on {askedOn:M/dd/yy}")
+                                 </MudText>
+                             </MudPaper>
+                         </MudBadge>
                         <div class="ten-twelves">
                             @if (answer is null)
                             {
-                                <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Secondary"
-                                          Icon="@Icons.Material.Filled.Lightbulb" Class="full-width">
+                                <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Info"
+                                          Icon="@(new Icons.Regular.Size20.LightbulbCheckmark().Content)" Class="full-width">
                                     <MudPaper Class="pa-6" Elevation="3">
                                         <Loading />
                                     </MudPaper>
@@ -62,8 +65,10 @@
                             }
                             else
                             { *@
-                                <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Secondary"
-                                          Icon="@Icons.Material.Filled.AutoAwesome">
+                            <MudBadge Origin="Origin.TopLeft" 
+                                     Overlap="true" 
+                                     Color="Color.Info"
+                                      Icon="@(new Icons.Regular.Size24.BrainCircuit().Content)">
                                     <Answer Retort="@answer" FollowupQuestionClicked="@OnAskQuestionAsync" />
                                 </MudBadge>
                             @* } *@
@@ -77,8 +82,8 @@
         <MudGrid>
             <MudItem xs="12" lg="10">
                 <VoiceTextInput @bind-Value="_userQuestion" Label="Prompt"
-                                Icon="@Icons.Material.Filled.QuestionAnswer"
-                                Placeholder="Enter OpenAI + Azure Search prompt"
+                                Icon="@(new Icons.Regular.Size24.ChatBubblesQuestion().Content)"
+                                Placeholder="Enter your prompt to AI prompt"
                                 HelperText="Use Shift + Enter for new lines."
                                 Disabled=@_isReceivingResponse
                                 OnEnterKeyPressed="OnAskClickedAsync" />
@@ -86,16 +91,18 @@
             <MudItem xs="0" lg="2" Class="d-flex align-self-center">
                 <MudGrid Justify="Justify.Center">
                     <MudItem xs="9" Class="pa-2">
-                        <MudFab Color="Color.Secondary" Size="Size.Large"
-                                StartIcon=@Icons.Material.Filled.Send Class="full-width"
-                                Label="Chat" aria-label="Ask question button."
+                        <MudFab Color="Color.Info" Size="Size.Large"
+                                StartIcon=@(new Icons.Regular.Size24.Send().Content)
+                                Class="full-width"
+                                Label="Chat" 
+                                aria-label="Ask question button."
                                 OnClick="@OnAskClickedAsync"
                                 Disabled=@(_isReceivingResponse || string.IsNullOrWhiteSpace(_userQuestion)) />
                     </MudItem>
                     <MudItem xs="3" Class="pa-2">
                         <MudTooltip Arrow="true" Text="Clear chat history" Placement="Placement.Top">
-                            <MudFab Color="Color.Primary" Size="Size.Medium"
-                                    StartIcon=@Icons.Material.Filled.DeleteForever
+                            <MudFab Color="Color.Info" Size="Size.Medium"
+                                    StartIcon=@(new Icons.Regular.Size24.Delete().Content)
                                     aria-label="Clear chat."
                                     OnClick="@OnClearChat" Disabled=@(_isReceivingResponse || _questionAndAnswerMap is { Count: 0 }) />
                         </MudTooltip>
@@ -107,7 +114,7 @@
     <MudScrollToTop Selector="#answers" 
                     VisibleCssClass="visible absolute"
                     HiddenCssClass="invisible">
-        <MudFab Color="Color.Primary" IconSize="Size.Large" StartIcon="@Icons.Material.Filled.ArrowUpward" />
+        <MudFab Color="Color.Info" IconSize="Size.Large" StartIcon="@(new Icons.Regular.Size20.ArrowCircleUp().Content)" />
     </MudScrollToTop>
 
 </MudGrid>

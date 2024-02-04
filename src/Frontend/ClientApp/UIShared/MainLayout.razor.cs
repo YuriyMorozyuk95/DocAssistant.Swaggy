@@ -51,7 +51,7 @@ public sealed partial class MainLayout
 
     private bool SettingsDisabled => new Uri(Nav.Uri).Segments.LastOrDefault() switch
     {
-        "ask" or "chat" => false,
+        "ask" or "chat" => true,
         _ => true
     };
 
