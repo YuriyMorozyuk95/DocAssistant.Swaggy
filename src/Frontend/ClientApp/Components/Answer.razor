@@ -1,4 +1,6 @@
-﻿<MudGrid Justify="Justify.Center">
+﻿@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+
+<MudGrid Justify="Justify.Center">
     @if (Retort is not null)
 {
    @*  var answer = _parsedAnswer;
@@ -6,11 +8,11 @@
 
     <MudItem xs="12">
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
-            <MudTabPanel Icon="@Icons.Material.Filled.Quickreply" Text="Answer" ToolTip="Answer text">
+            <MudTabPanel Icon="@(new Icons.Regular.Size24.ChatBubblesQuestion().Content)" Text="Answer" ToolTip="Answer text">
                 <ChildContent>
                     <MudPaper Class="pa-6" Elevation="3">
                         <MudText Typo="Typo.body1">
-                            @* @((MarkupString)html) *@ @Retort.FinalResult 
+                           @Retort.FinalResult 
                         </MudText>
                        @*  @if (answer is { Citations.Count: > 0 })
                         {
@@ -44,24 +46,40 @@
                     </MudPaper>
                 </ChildContent>
             </MudTabPanel>
-            <MudTabPanel Icon="@Icons.Material.Filled.Lightbulb" Text="Thought process" 
-                         ToolTip="Show thought process.">
+                <MudTabPanel Icon="@(new Icons.Regular.Size24.Send().Content)" Text="Request"
+                         ToolTip="Show curl request.">
                 <ChildContent>
                     <MudPaper Class="pa-6" Elevation="3">
-                       @*  <pre style="white-space: normal; font-size: 1.2em;">
-                            @(RemoveLeadingAndTrailingLineBreaks(Retort.Thoughts!))
-                        </pre> *@
+                        <pre style="white-space: normal; font-size: 1.2em;">
+                                @Retort.Curl
+                        </pre>
                     </MudPaper>
                 </ChildContent>
             </MudTabPanel>
-            <MudTabPanel Icon="@Icons.Material.Filled.TextSnippet" Text="Supporting Content"
-                         ToolTip="Show the supporting content.">
+                <MudTabPanel Icon="@(new Icons.Regular.Size24.Box().Content)" Text="Response"
+                         ToolTip="Show the response">
                 <ChildContent>
                     <MudPaper Class="pa-2" Elevation="3">
-                        @* <SupportingContent DataPoints="Retort.DataPoints" /> *@
+                        <pre style="white-space: normal; font-size: 1.2em;">
+                            @Retort.Response.Result
+                        </pre>
                     </MudPaper>
                 </ChildContent>
             </MudTabPanel>
+                <MudTabPanel Icon="@(new Icons.Regular.Size24.DataUsage().Content)" Text="Usage"
+                             ToolTip="Show how many tokens was used">
+                    <ChildContent>
+                        <MudPaper Class="pa-2" Elevation="3">
+                            <pre style="white-space: normal; font-size: 1.2em;">
+                                CompletionTokens: @Retort.CompletionTokens <br/>
+                                PromptTokens: @Retort.PromptTokens <br/>
+                                TotalTokens: @Retort.TotalTokens <br/>
+                            </pre>
+                        </MudPaper>
+                    </ChildContent>
+                </MudTabPanel>
+
+
         </MudTabs>
     </MudItem>
 }

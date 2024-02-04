@@ -153,7 +153,6 @@ internal static class WebApplicationExtensions
         [FromServices] IHttpContextAccessor httpContextAccessor, 
         CancellationToken cancellationToken)
     {
-        var user = httpContextAccessor.HttpContext.User;
         var doc = service.GetDocuments(cancellationToken);
         return doc;
     }
