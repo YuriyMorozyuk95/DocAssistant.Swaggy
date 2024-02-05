@@ -131,13 +131,15 @@ internal static class WebApplicationExtensions
     [IgnoreAntiforgeryToken]
     private static async Task<IResult> OnPostDocumentAsync(
         [FromForm] IFormFileCollection files,
-        //[FromForm] string apiToken,
+        [FromForm] string apiToken,
         [FromServices] AzureBlobStorageService service,
         [FromServices] ILogger<AzureBlobStorageService> logger,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Upload documents");
         await Task.Delay(100);
+
+        var swaggerFile = files.FirstOrDefault();
 
         // Deserialize userGroups from JSON
         //var deserializedUserGroups = JsonSerializer.Deserialize<UserGroup[]>(apiToken);

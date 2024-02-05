@@ -25,7 +25,7 @@ public sealed class ApiClient
         {
             using var content = new MultipartFormDataContent();
             // max allow size: 10mb
-            var maxSize = 10000000;
+            var maxSize = 10_000_000;
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var fileContent = new StreamContent(file.OpenReadStream(maxSize));
 #pragma warning restore CA2000 // Dispose objects before losing scope
@@ -33,12 +33,8 @@ public sealed class ApiClient
 
             content.Add(fileContent, file.Name, file.Name);
 
-            //var apiTokenContent = new StringContent(apiToken, Encoding.UTF8, "plain/text");
-            //content.Add(apiTokenContent, "apiToken");
-
-            // set cookie
-            //content.Headers.Add("X-CSRF-TOKEN-FORM", cookie);
-            //content.Headers.Add("X-CSRF-TOKEN-HEADER", cookie);
+            var apiTokenContent = new StringContent(apiToken, Encoding.UTF8, "plain/text");
+            content.Add(apiTokenContent, "apiToken");
 
             var response = await _httpClient.PostAsync("api/documents", content);
 
