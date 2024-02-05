@@ -28,6 +28,8 @@
     <PackageReference Include="Azure.AI.OpenAI" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.KernelMemory.Core" />
+    <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" />
     <PackageReference Include="Microsoft.SemanticKernel" />
   </ItemGroup>
 

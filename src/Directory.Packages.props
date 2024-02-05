@@ -50,6 +50,8 @@
     <PackageVersion Include="Microsoft.Identity.Web" Version="2.16.0" />
     <PackageVersion Include="Microsoft.KernelMemory.Core" Version="0.26.240121.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.13" />
+    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.13" />
     <PackageVersion Include="Microsoft.SemanticKernel" Version="1.2.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageVersion Include="MudBlazor" Version="6.11.2" />
