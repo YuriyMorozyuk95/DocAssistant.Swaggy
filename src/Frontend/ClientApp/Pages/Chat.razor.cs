@@ -26,7 +26,7 @@ public sealed partial class Chat
     [Inject] public required ApiClient ApiClient { get; set; }
 
     [CascadingParameter(Name = nameof(Settings))]
-    public required RequestSettingsOverrides Settings { get; set; }
+    public required RequestSettingsOverrides Settings { get; set; } = new RequestSettingsOverrides();
 
     [CascadingParameter(Name = nameof(CopilotPrompts))]
     public required CopilotPromptsRequestResponse CopilotPrompts { get; set; } = new();  

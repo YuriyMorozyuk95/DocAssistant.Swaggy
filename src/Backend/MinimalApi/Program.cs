@@ -1,8 +1,8 @@
 ﻿using System.Net;
 
 using DocAssistant.Ai;
-
 using Microsoft.AspNetCore.Antiforgery;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
@@ -60,10 +60,6 @@ public class Program
                     };
                 }, options => { builder.Configuration.Bind("AzureAd", options); });
 
-
-
-            builder.Services.AddAntiforgery(options => { options.HeaderName = "X-CSRF-TOKEN-HEADER"; options.FormFieldName = "X-CSRF-TOKEN-FORM"; });
-
             if (builder.Environment.IsDevelopment())
             {
                 builder.Services.AddDistributedMemoryCache();
@@ -108,20 +104,12 @@ public class Program
             app.UseStaticFiles();
             app.UseCors();
             app.UseBlazorFrameworkFiles();
-            app.UseAntiforgery();
             app.MapRazorPages();
             app.MapControllers();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.Use(next => context =>
-            {
-                var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
-                var tokens = antiforgery.GetAndStoreTokens(context);
-                context.Response.Cookies.Append("XSRF-TOKEN", tokens?.RequestToken ?? string.Empty, new CookieOptions() { HttpOnly = false });
-                return next(context);
-            });
             app.MapFallbackToFile("index.html");
 
             app.MapApi();

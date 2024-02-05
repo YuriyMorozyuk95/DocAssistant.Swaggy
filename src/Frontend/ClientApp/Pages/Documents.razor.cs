@@ -106,8 +106,9 @@ public sealed partial class Documents : IDisposable
         {
             var cookie = await JsRuntime.InvokeAsync<string>("getCookie", "XSRF-TOKEN");
 
+            //TODO
             var result = await Client.UploadDocumentsAsync(
-                _fileUpload.Files, _selectedUserGroupsForDoc.ToArray(), MaxIndividualFileSize, cookie);
+                _fileUpload.Files.First(), "test", cookie);
 
             Logger.LogInformation("Result: {x}", result);
 

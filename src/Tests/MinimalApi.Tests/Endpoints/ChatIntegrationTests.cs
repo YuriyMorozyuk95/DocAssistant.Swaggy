@@ -27,7 +27,5 @@ namespace MinimalApi.Tests.Endpoints
             // Assert  
             Assert.NotNull(response);  
         }  
-    }  
-
-
+    }
 }

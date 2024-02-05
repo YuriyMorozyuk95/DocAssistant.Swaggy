@@ -9,13 +9,13 @@ internal static class WebApplicationExtensions
         var api = app.MapGroup("api");
 
         // Long-form chat w/ contextual history endpoint
-       api.MapPost("chat", OnPostChatAsync);
+        api.MapPost("chat", OnPostChatAsync).DisableAntiforgery();
 
         // Upload a document
-        api.MapPost("documents", OnPostDocumentAsync).RequireAuthorization();
+        api.MapPost("documents", OnPostDocumentAsync).DisableAntiforgery();
 
         // Get all documents
-        api.MapGet("documents", OnGetDocumentsAsync).RequireAuthorization();
+        api.MapGet("documents", OnGetDocumentsAsync);
 
         // synchronize documents in with blob storage and index
         api.MapPost("synchronize", OnPostSynchronizeAsync).RequireAuthorization();
@@ -25,8 +25,8 @@ internal static class WebApplicationExtensions
 
         api.MapGet("enableLogout", OnGetEnableLogout);
 
-        api.MapGet("copilot-prompts", OnGetCopilotPrompts).RequireAuthorization();  
-  
+        api.MapGet("copilot-prompts", OnGetCopilotPrompts).RequireAuthorization();
+
         api.MapPost("copilot-prompts", OnPostCopilotPromptsAsync).RequireAuthorization();
 
         api.MapPost("upload-avatar", OnPostAvatarAsync).RequireAuthorization();
@@ -114,8 +114,8 @@ internal static class WebApplicationExtensions
     }
 
     private static async Task<IResult> OnPostChatAsync(
-        [FromBody]ChatRequest request,
-        [FromServices]ISwaggerAiAssistantService swaggerAiAssistantService,
+        [FromBody] ChatRequest request,
+        [FromServices] ISwaggerAiAssistantService swaggerAiAssistantService,
         CancellationToken cancellationToken)
     {
         if (request is { History.Length: > 0 })
@@ -128,19 +128,22 @@ internal static class WebApplicationExtensions
         return Results.BadRequest();
     }
 
+    [IgnoreAntiforgeryToken]
     private static async Task<IResult> OnPostDocumentAsync(
         [FromForm] IFormFileCollection files,
-        [FromForm] string userGroupContent,
+        //[FromForm] string apiToken,
         [FromServices] AzureBlobStorageService service,
         [FromServices] ILogger<AzureBlobStorageService> logger,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Upload documents");
+        await Task.Delay(100);
 
         // Deserialize userGroups from JSON
-        var deserializedUserGroups = JsonSerializer.Deserialize<UserGroup[]>(userGroupContent);
+        //var deserializedUserGroups = JsonSerializer.Deserialize<UserGroup[]>(apiToken);
 
-        var response = await service.UploadFilesAsync(files, deserializedUserGroups, cancellationToken);
+        //var response = await service.UploadFilesAsync(files, deserializedUserGroups, cancellationToken);
+        var response = new UploadDocumentsResponse(new[] { "dummy.txt" });
 
         logger.LogInformation("Upload documents: {x}", response);
 
@@ -150,7 +153,7 @@ internal static class WebApplicationExtensions
 
     private static IAsyncEnumerable<DocumentResponse> OnGetDocumentsAsync(
         [FromServices] IUploaderDocumentService service,
-        [FromServices] IHttpContextAccessor httpContextAccessor, 
+        [FromServices] IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {
         var documentsStream = service.GetDocuments(cancellationToken);

@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+
 using Shared;
 using Shared.Models.Swagger;
 
@@ -15,46 +16,29 @@ public sealed class ApiClient
         _httpClient = httpClient;
     }
 
-    public async Task<ImageResponse> RequestImageAsync(PromptRequest request)
-    {
-        var response = await _httpClient.PostAsJsonAsync(
-            "api/images", request, SerializerOptions.Default);
-
-        response.EnsureSuccessStatusCode();
-
-        return await response.Content.ReadFromJsonAsync<ImageResponse>();
-    }
-
     public async Task<UploadDocumentsResponse> UploadDocumentsAsync(
-        IReadOnlyList<IBrowserFile> files,
-        UserGroup[] userGroups,
-        long maxAllowedSize,
+        IBrowserFile file,
+        string apiToken,
         string cookie)
     {
         try
         {
             using var content = new MultipartFormDataContent();
-
-            foreach (var file in files)
-            {
-                // max allow size: 10mb
-                var maxSize = maxAllowedSize * 1024 * 1024;
+            // max allow size: 10mb
+            var maxSize = 10000000;
 #pragma warning disable CA2000 // Dispose objects before losing scope
-                var fileContent = new StreamContent(file.OpenReadStream(maxSize));
+            var fileContent = new StreamContent(file.OpenReadStream(maxSize));
 #pragma warning restore CA2000 // Dispose objects before losing scope
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-                content.Add(fileContent, file.Name, file.Name);
-            }
+            content.Add(fileContent, file.Name, file.Name);
 
-            // Add userGroups
-            var serializedUserGroups = JsonSerializer.Serialize(userGroups);
-            var userGroupContent = new StringContent(serializedUserGroups, Encoding.UTF8, "application/json");
-            content.Add(userGroupContent, "userGroupContent");
+            //var apiTokenContent = new StringContent(apiToken, Encoding.UTF8, "plain/text");
+            //content.Add(apiTokenContent, "apiToken");
 
             // set cookie
-            content.Headers.Add("X-CSRF-TOKEN-FORM", cookie);
-            content.Headers.Add("X-CSRF-TOKEN-HEADER", cookie);
+            //content.Headers.Add("X-CSRF-TOKEN-FORM", cookie);
+            //content.Headers.Add("X-CSRF-TOKEN-HEADER", cookie);
 
             var response = await _httpClient.PostAsync("api/documents", content);
 
@@ -119,7 +103,7 @@ public sealed class ApiClient
 
         if (response.IsSuccessStatusCode)
         {
-           return await response.Content.ReadFromJsonAsync<SwaggerCompletionInfo>();
+            return await response.Content.ReadFromJsonAsync<SwaggerCompletionInfo>();
         }
         //else
         //{
@@ -145,8 +129,8 @@ public sealed class ApiClient
         using var content = new MultipartFormDataContent();
 
         // set cookie
-        content.Headers.Add("X-CSRF-TOKEN-FORM", cookie);
-        content.Headers.Add("X-CSRF-TOKEN-HEADER", cookie);
+        //content.Headers.Add("X-CSRF-TOKEN-FORM", cookie);
+        //content.Headers.Add("X-CSRF-TOKEN-HEADER", cookie);
 
         var response = await _httpClient.PostAsync("api/synchronize", content);
 
@@ -198,25 +182,25 @@ public sealed class ApiClient
         }
     }
 
-    public async Task<CopilotPromptsRequestResponse> GetCopilotPromptsAsync()  
-    {  
-        var response = await _httpClient.GetAsync("api/copilot-prompts");  
-        response.EnsureSuccessStatusCode();  
-        return (await response.Content.ReadFromJsonAsync<CopilotPromptsRequestResponse>())!;  
-    }  
-  
-    public async Task PostCopilotPromptsServerDataAsync(CopilotPromptsRequestResponse updatedData)  
-    {  
-        var response = await _httpClient.PostAsJsonAsync("api/copilot-prompts", updatedData);  
-        response.EnsureSuccessStatusCode();  
+    public async Task<CopilotPromptsRequestResponse> GetCopilotPromptsAsync()
+    {
+        var response = await _httpClient.GetAsync("api/copilot-prompts");
+        response.EnsureSuccessStatusCode();
+        return (await response.Content.ReadFromJsonAsync<CopilotPromptsRequestResponse>())!;
     }
 
-    public async Task<IndexCreationInfo> GetIndexCreationInfoAsync()  
-    {  
-        var response = await _httpClient.GetAsync("api/synchronize-status");  
+    public async Task PostCopilotPromptsServerDataAsync(CopilotPromptsRequestResponse updatedData)
+    {
+        var response = await _httpClient.PostAsJsonAsync("api/copilot-prompts", updatedData);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task<IndexCreationInfo> GetIndexCreationInfoAsync()
+    {
+        var response = await _httpClient.GetAsync("api/synchronize-status");
         response.EnsureSuccessStatusCode();
         var stringResponse = await response.Content.ReadAsStringAsync();
-        return (await response.Content.ReadFromJsonAsync<IndexCreationInfo>())!;  
+        return (await response.Content.ReadFromJsonAsync<IndexCreationInfo>())!;
     }
 
     public async Task<string> UploadAvatarAsync(IBrowserFile file, string cookie)
@@ -240,6 +224,4 @@ public sealed class ApiClient
         var stringResponse = await response.Content.ReadAsStringAsync();
         return stringResponse;
     }
-
-
 }
