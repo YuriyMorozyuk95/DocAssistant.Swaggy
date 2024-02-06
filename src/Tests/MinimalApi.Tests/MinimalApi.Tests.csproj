@@ -7,11 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Assets\petstore-swagger-create-user.json" />
 	  <None Remove="Assets\petstore-swagger-full.json" />
-	  <None Remove="Assets\petstore-swagger-order-create.json" />
-	  <None Remove="Assets\petstore-swagger-order-find-by-id.json" />
-	  <None Remove="Assets\petstore-swagger-order-inventories.json" />
 	  <None Remove="Assets\PetStore\_pet.json" />
 	  <None Remove="Assets\PetStore\_pet_findByStatus.json" />
 	  <None Remove="Assets\PetStore\_pet_findByTags.json" />
@@ -29,18 +25,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Assets\petstore-swagger-order-find-by-id.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Assets\petstore-swagger-order-create.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Assets\petstore-swagger-order-inventories.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Include="Assets\petstore-swagger-create-user.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
 	  <Content Include="Assets\petstore-swagger-full.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>

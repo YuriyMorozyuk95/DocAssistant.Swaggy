@@ -110,5 +110,6 @@ public static class AiServiceCollectionExtensions
         services.AddTransient<ICurlExecutor, CurlExecutor>();
         services.AddTransient<ISwaggerMemorySearchService, SwaggerMemorySearchService>();
         services.AddTransient<ISwaggerAiAssistantService, SwaggerAiAssistantService>();
+        services.AddTransient<ISwaggerMemoryManagerService, SwaggerMemoryManagerService>();
     }
 }
