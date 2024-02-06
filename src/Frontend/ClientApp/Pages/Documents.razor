@@ -1,4 +1,7 @@
 ﻿@page "/documents"
+@using Microsoft.FluentUI.AspNetCore.Components
+@using Color = MudBlazor.Color
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
 @* @attribute [Authorize] *@
 
 
@@ -16,15 +19,6 @@
                     <MudText>Chunks Processed: @_indexCreationInfo.ChunksProcessed</MudText>
                     <MudProgressLinear Size="Size.Large" Color="Color.Tertiary" Buffer="true" Value="@_indexCreationInfo.DocumentPageProcessed" BufferValue="@_indexCreationInfo.DocumentPageProcessedBuffer" Max="@_indexCreationInfo.TotalPageCount" Class="my-7" />
                 </MudCardContent>
-                <MudCardHeader>
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               Size="Size.Large"
-                               OnClick="@(async () => await SynchronizeDocumentsAsync())">
-                        Synchronizing Index Documents
-                    </MudButton>
-                </MudCardHeader>
             </MudCard>
         </MudItem>
         <MudItem id="uploads" xs="12" Class="overflow-x-auto">
@@ -44,18 +38,26 @@
                                        Accept=".pdf" MaximumFileCount="10" FilesChanged=@(files => StateHasChanged())
                                        Required="true" RequiredError="You must select at least one PDF file to upload.">
                             <ButtonTemplate>
-                                <MudButton HtmlTag="label"
-                                           Variant="Variant.Filled"
-                                           StartIcon="@Icons.Material.Filled.FileOpen"
-                                           Size="Size.Large"
-                                           for="@context">
-                                    Select PDF Documents
-                                </MudButton>
-                                @* <UserGroupsMultiSelect Label="Setup user groups for document(s)"
-                                                       IsEnabled=@FilesSelected
-                                                       @bind-SelectedItems="_selectedUserGroupsForDoc" /> *@
+                                <div style="display:flex; align-items:center">
+                                    <MudButton HtmlTag="label"
+                                               Variant="Variant.Filled"
+                                               StartIcon="@(new Icons.Regular.Size24.DocumentAdd().Content)"
+                                               Size="Size.Large"
+                                               for="@context">
+                                        Select swagger documents
+                                    </MudButton>
+
+
+                                    <FluentTextField Class="pt-4" @bind-Value="@ApiToken" TextFieldType="TextFieldType.Password">
+                                        <FluentIcon Value="@(new Icons.Regular.Size24.Key())" Slot="end" />
+                                    </FluentTextField>
+
+                                </div>
+
                             </ButtonTemplate>
                             <SelectedTemplate>
+
+
                                 <MudExpansionPanels Class="pt-4" Elevation=2>
                                     @{
                                     var enabled = context is { Count: > 0 };
@@ -64,7 +66,7 @@
                                 <MudExpansionPanel Disabled="@(enabled is false)">
                                     <TitleContent>
                                         <div class="d-flex">
-                                            <MudIcon Icon="@Icons.Material.Filled.Info" Class="mr-3" Size="Size.Medium"></MudIcon>
+                                            <MudIcon Icon="@(new Icons.Regular.Size20.Info().Content)" Class="mr-3" Size="Size.Medium"></MudIcon>
                                             @if (enabled)
                                             {
                                                 <MudText>
@@ -82,7 +84,7 @@
                                             @foreach (var file in context ?? new List<IBrowserFile>())
                                             {
                                                 <MudListItem IconColor="Color.Error" @key="@file"
-                                                             Icon="@Icons.Material.Filled.PictureAsPdf">
+                                                             Icon="media/swagger-svgrepo-com.svg">
                                                     @file.Name <MudChip Size="Size.Small">@file.Size.ToHumanReadableSize()</MudChip>
                                                     </MudListItem>
                                             }
@@ -94,7 +96,7 @@
                     </MudFileUpload>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton StartIcon="@Icons.Material.Filled.Clear"
+                    <MudButton StartIcon="@(new Icons.Regular.Size20.Delete().Content)"
                                Variant="Variant.Filled"
                                Color="Color.Error"
                                Disabled=@(!FilesSelected)
@@ -102,7 +104,7 @@
                                OnClick="@(async () => await _fileUpload.ResetAsync())">
                         Clear Selected Documents
                     </MudButton>
-                    <MudButton StartIcon="@Icons.Material.Filled.Upload"
+                    <MudButton StartIcon="@(new Icons.Regular.Size24.ArrowUpload().Content)"
                                Variant="Variant.Filled"
                                Color="Color.Primary"
                                Disabled=@(!FilesSelected)
@@ -142,7 +144,7 @@
                 }
                 <MudSpacer />
                 <MudTextField @bind-Value="@_filter" Placeholder="Filter" Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"
+                              AdornmentIcon="@(new Icons.Regular.Size24.DatabaseSearch().Content)" IconSize="Size.Medium"
                               DebounceInterval="500" Class="mt-0">
                 </MudTextField>
             </ToolBarContent>
@@ -179,7 +181,7 @@
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Preview" Style="text-align:center">
-                    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Pageview"
+                    <MudFab Color="Color.Primary" StartIcon="@(new Icons.Regular.Size24.BookOpen().Content)"
                             Size="Size.Small" OnClick="@(() => OnShowDocument(context))" />
                 </MudTd>
                 <MudTd DataLabel="Status" Style="text-align:center">
@@ -187,13 +189,13 @@
                         switch (context.Status)
                         {
                             case DocumentProcessingStatus.Failed:
-                                <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Close" />
+                                <MudIcon Color="Color.Error" Icon="@(new Icons.Regular.Size24.DocumentError().Content)" />
                                 break;
                             case DocumentProcessingStatus.Succeeded:
-                                <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Check" />
+                            <MudIcon Color="Color.Success" Icon="@(new Icons.Regular.Size24.Document().Content)" />
                                 break;
                             default:
-                                <MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.QuestionMark" />
+                                <MudIcon Color="Color.Warning" Icon="@(new Icons.Regular.Size24.DocumentQuestionMark().Content)" />
                                 break;
                         }
                     }
@@ -235,6 +237,6 @@
     <MudScrollToTop Selector="#uploads"
                     VisibleCssClass="visible absolute"
                     HiddenCssClass="invisible">
-        <MudFab Color="Color.Primary" IconSize="Size.Large" StartIcon="@Icons.Material.Filled.ArrowUpward" />
+        <MudFab Color="Color.Primary" IconSize="Size.Large" StartIcon="@(new Icons.Regular.Size24.ArrowCircleUp().Content)" />
     </MudScrollToTop>
 </MudGrid>

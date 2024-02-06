@@ -31,7 +31,7 @@ public class DocumentUploadIntegrationTests : IClassFixture<WebApplicationFactor
         var cookie = "YourCookie";  
   
         // Act  
-        var response = await _client.UploadDocumentsAsync(fileMock.Object, apiToken, cookie);  
+        var response = await _client.UploadDocumentsAsync(fileMock.Object, apiToken);  
   
         // Assert  
         Assert.NotNull(response);  

@@ -18,8 +18,7 @@ public sealed class ApiClient
 
     public async Task<UploadDocumentsResponse> UploadDocumentsAsync(
         IBrowserFile file,
-        string apiToken,
-        string cookie)
+        string apiToken)
     {
         try
         {

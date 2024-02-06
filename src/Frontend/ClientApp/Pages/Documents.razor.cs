@@ -40,6 +40,7 @@ public sealed partial class Documents : IDisposable
     public required IJSRuntime JsRuntime { get; set; }
 
     private bool FilesSelected => _fileUpload is { Files.Count: > 0 };
+    public string ApiToken { get; set; }
 
     protected override void OnInitialized()
     {
@@ -106,9 +107,10 @@ public sealed partial class Documents : IDisposable
         {
             var cookie = await JsRuntime.InvokeAsync<string>("getCookie", "XSRF-TOKEN");
 
-            //TODO
             var result = await Client.UploadDocumentsAsync(
-                _fileUpload.Files.First(), "test", cookie);
+                _fileUpload.Files.First(), ApiToken);
+
+            ApiToken = string.Empty;
 
             Logger.LogInformation("Result: {x}", result);
 
