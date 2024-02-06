@@ -8,14 +8,11 @@ namespace MinimalApi.Tests.Swagger
 {
     public class SwaggerMemoryManagerServiceTest: IClassFixture<WebApplicationFactory<Program>>
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-        private readonly MemoryServerless _memory;
         private readonly ISwaggerMemoryManagerService _swaggerMemoryManagerService;
 
         public SwaggerMemoryManagerServiceTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
         {
-            _testOutputHelper = testOutputHelper;
-            _memory = factory.Services.GetRequiredService<MemoryServerless>();
+            factory.Services.GetRequiredService<MemoryServerless>();
             _swaggerMemoryManagerService = factory.Services.GetRequiredService<ISwaggerMemoryManagerService>();
         }
 

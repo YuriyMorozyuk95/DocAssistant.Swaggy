@@ -17,19 +17,10 @@ internal static class WebApplicationExtensions
         // Get all documents
         api.MapGet("documents", OnGetDocumentsAsync);
 
-        // synchronize documents in with blob storage and index
-        api.MapPost("synchronize", OnPostSynchronizeAsync).RequireAuthorization();
+        api.MapDelete("clear", OnPostClearAsync).DisableAntiforgery();
 
         // Get synchronize status  
-        api.MapGet("synchronize-status", OnGetIndexCreationInfo).RequireAuthorization();
-
-        api.MapGet("enableLogout", OnGetEnableLogout);
-
-        api.MapGet("copilot-prompts", OnGetCopilotPrompts).RequireAuthorization();
-
-        api.MapPost("copilot-prompts", OnPostCopilotPromptsAsync).RequireAuthorization();
-
-        api.MapPost("upload-avatar", OnPostAvatarAsync).RequireAuthorization();
+        api.MapGet("synchronize-status", OnGetIndexCreationInfo).DisableAntiforgery();
 
         return app;
     }
@@ -38,79 +29,6 @@ internal static class WebApplicationExtensions
     {
         var response = IndexCreationInformation.IndexCreationInfo;
         return Task.FromResult(Results.Ok(response));
-    }
-
-    private static async Task<IResult> OnPostAvatarAsync(
-        [FromForm] IFormFileCollection files,
-        [FromServices] BlobServiceClient blobService,
-        CancellationToken cancellationToken)
-    {
-        var file = files.FirstOrDefault();
-        if (file != null)
-        {
-
-            var name = Guid.NewGuid().ToString();
-            var containerClient = blobService.GetBlobContainerClient("avatars");
-            var blobClient = containerClient.GetBlobClient($"{name}.jpg");
-
-            await using var stream = file.OpenReadStream();
-            await blobClient.UploadAsync(stream, new BlobUploadOptions
-            {
-                HttpHeaders = new BlobHttpHeaders
-                {
-                    ContentType = file.ContentType,
-                },
-            }, cancellationToken);
-
-            // Since we don't have User object here, return the URL
-            return Results.Ok(blobClient.Uri.ToString());
-        }
-
-        return Results.BadRequest("No file uploaded");
-    }
-
-
-    private static async Task<IResult> OnPostCopilotPromptsAsync(HttpContext context, [FromServices] ILogger<CopilotPromptsRequestResponse> logger)
-    {
-        logger.LogInformation("Write prompt files");
-
-        var updatedData = await context.Request.ReadFromJsonAsync<CopilotPromptsRequestResponse>();
-        if (updatedData != null)
-        {
-            PromptFileService.UpdatePromptsToFile(PromptFileNames.CreateAnswer, updatedData.CreateAnswer);
-            PromptFileService.UpdatePromptsToFile(PromptFileNames.CreateJsonPrompt, updatedData.CreateJsonPrompt);
-            PromptFileService.UpdatePromptsToFile(PromptFileNames.CreateJsonPrompt2, updatedData.CreateJsonPrompt2);
-            PromptFileService.UpdatePromptsToFile(PromptFileNames.SearchPrompt, updatedData.SearchPrompt);
-            PromptFileService.UpdatePromptsToFile(PromptFileNames.SystemFollowUp, updatedData.SystemFollowUp);
-            PromptFileService.UpdatePromptsToFile(PromptFileNames.SystemFollowUpContent, updatedData.SystemFollowUpContent);
-        }
-
-        return TypedResults.Ok();
-    }
-
-    private static CopilotPromptsRequestResponse OnGetCopilotPrompts([FromServices] ILogger<CopilotPromptsRequestResponse> logger)
-    {
-        logger.LogInformation("Load file contents documents");
-
-        var response = new CopilotPromptsRequestResponse
-        {
-            CreateAnswer = PromptFileService.ReadPromptsFromFile(PromptFileNames.CreateAnswer),
-            CreateJsonPrompt = PromptFileService.ReadPromptsFromFile(PromptFileNames.CreateJsonPrompt),
-            CreateJsonPrompt2 = PromptFileService.ReadPromptsFromFile(PromptFileNames.CreateJsonPrompt2),
-            SearchPrompt = PromptFileService.ReadPromptsFromFile(PromptFileNames.SearchPrompt),
-            SystemFollowUp = PromptFileService.ReadPromptsFromFile(PromptFileNames.SystemFollowUp),
-            SystemFollowUpContent = PromptFileService.ReadPromptsFromFile(PromptFileNames.SystemFollowUpContent),
-        };
-
-        return response;
-    }
-
-    private static IResult OnGetEnableLogout(HttpContext context)
-    {
-        var header = context.Request.Headers["X-MS-CLIENT-PRINCIPAL-ID"];
-        var enableLogout = !string.IsNullOrEmpty(header);
-
-        return TypedResults.Ok(enableLogout);
     }
 
     private static async Task<IResult> OnPostChatAsync(
@@ -128,23 +46,37 @@ internal static class WebApplicationExtensions
         return Results.BadRequest();
     }
 
+    private static async Task<IResult> OnPostClearAsync(
+        [FromServices] ISwaggerMemoryManagerService swaggerMemoryManager,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await swaggerMemoryManager.RemoveMemory();
+            return Results.Ok();
+        }
+        catch(Exception)
+        {
+            return Results.BadRequest();
+        }
+    }
+
     [IgnoreAntiforgeryToken]
     private static async Task<IResult> OnPostDocumentAsync(
         [FromForm] IFormFileCollection files,
         [FromForm] string apiToken,
-        [FromServices] AzureBlobStorageService service,
+        [FromServices] ISwaggerMemoryManagerService swaggerMemoryManager,
         [FromServices] ILogger<AzureBlobStorageService> logger,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Upload documents");
-        await Task.Delay(100);
 
         var swaggerFile = files.FirstOrDefault();
+        await using var stream = swaggerFile.OpenReadStream();
 
-        // Deserialize userGroups from JSON
-        //var deserializedUserGroups = JsonSerializer.Deserialize<UserGroup[]>(apiToken);
+        await swaggerMemoryManager.UploadMemory(swaggerFile.FileName, stream, apiToken);
 
-        //var response = await service.UploadFilesAsync(files, deserializedUserGroups, cancellationToken);
+        //TODO
         var response = new UploadDocumentsResponse(new[] { "dummy.txt" });
 
         logger.LogInformation("Upload documents: {x}", response);

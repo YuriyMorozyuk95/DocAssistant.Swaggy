@@ -77,7 +77,6 @@ public sealed class ApiClient
         }
     }
 
-    public Task<AnswerResult<ChatRequest>> ChatConversationAsync(ChatRequest request) => PostRequestAsync(request, "api/chat");
     public async Task<SwaggerCompletionInfo> ChatToApiConversationAsync(ChatRequest request)
     {
         //TODO: Implement the logic to handle error response from the server
@@ -117,6 +116,18 @@ public sealed class ApiClient
         //    };
         //}
         return new SwaggerCompletionInfo();
+    }
+
+    public async Task ClearMemory()
+    {
+        var response = await _httpClient.DeleteAsync("api/clear");
+
+        if (response.IsSuccessStatusCode)
+        {
+            return;
+        }
+        
+        return;
     }
 
     public async Task SynchronizeDocumentsAsync(string cookie)
@@ -177,46 +188,11 @@ public sealed class ApiClient
         }
     }
 
-    public async Task<CopilotPromptsRequestResponse> GetCopilotPromptsAsync()
-    {
-        var response = await _httpClient.GetAsync("api/copilot-prompts");
-        response.EnsureSuccessStatusCode();
-        return (await response.Content.ReadFromJsonAsync<CopilotPromptsRequestResponse>())!;
-    }
-
-    public async Task PostCopilotPromptsServerDataAsync(CopilotPromptsRequestResponse updatedData)
-    {
-        var response = await _httpClient.PostAsJsonAsync("api/copilot-prompts", updatedData);
-        response.EnsureSuccessStatusCode();
-    }
-
     public async Task<IndexCreationInfo> GetIndexCreationInfoAsync()
     {
         var response = await _httpClient.GetAsync("api/synchronize-status");
         response.EnsureSuccessStatusCode();
         var stringResponse = await response.Content.ReadAsStringAsync();
         return (await response.Content.ReadFromJsonAsync<IndexCreationInfo>())!;
-    }
-
-    public async Task<string> UploadAvatarAsync(IBrowserFile file, string cookie)
-    {
-        using var content = new MultipartFormDataContent();
-        // max allow size: 10mb
-        var maxSize = 10 * 1024 * 1024;
-        var fileContent = new StreamContent(file.OpenReadStream(maxSize));
-        fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-
-        content.Add(fileContent, "file", file.Name);
-
-        // set cookie
-        content.Headers.Add("X-CSRF-TOKEN-FORM", cookie);
-        content.Headers.Add("X-CSRF-TOKEN-HEADER", cookie);
-
-        var response = await _httpClient.PostAsync("api/upload-avatar", content);
-
-        response.EnsureSuccessStatusCode();
-
-        var stringResponse = await response.Content.ReadAsStringAsync();
-        return stringResponse;
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Azure;
 using Azure.Search.Documents.Indexes;
 using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.KernelMemory;
-using Shared.Models.Swagger;
 
 namespace DocAssistant.Ai.Services;
 

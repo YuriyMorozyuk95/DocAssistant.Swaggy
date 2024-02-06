@@ -23,9 +23,6 @@ public sealed partial class MainLayout
 
     private bool _drawerOpen = true;
     private bool _settingsOpen = false;
-    private bool _isLoadingPromptsInit;
-
-    private Task _copilotPromptsInitializing;
 
     private bool _isDarkTheme
     {
@@ -68,31 +65,4 @@ public sealed partial class MainLayout
     private void OnThemeChanged() => _isDarkTheme = !_isDarkTheme;
 
     private void OnIsReversedChanged() => _isReversed = !_isReversed;
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Instead of awaiting this async enumerable here, let's capture it in a task
-        // and start it in the background. This way, we can await it in the UI.
-        _copilotPromptsInitializing = OnCopilotPromptsInitializingAsync();
-    }
-
-    private async Task OnUpdateButtonClickedAsync()
-    {
-        await ApiClient.PostCopilotPromptsServerDataAsync(CopilotPrompts);
-    }
-
-    private async Task OnCopilotPromptsInitializingAsync()
-    {
-        _isLoadingPromptsInit = true;
-
-        try
-        {
-            CopilotPrompts = await ApiClient.GetCopilotPromptsAsync();
-        }
-        finally
-        {
-            _isLoadingPromptsInit = false;
-            StateHasChanged();
-        }
-    }
 }

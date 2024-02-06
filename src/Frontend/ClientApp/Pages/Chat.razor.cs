@@ -34,14 +34,6 @@ public sealed partial class Chat
     [CascadingParameter(Name = nameof(IsReversed))]
     public required bool IsReversed { get; set; }
 
-    protected override void OnInitialized()
-    {
-        // Instead of awaiting this async enumerable here, let's capture it in a task
-        // and start it in the background. This way, we can await it in the UI.
-        _copilotPromptsInitializing = OnCopilotPromptsInitializingAsync();
-        //_examplesPromptsInitialing = OnExamplesPromptsInitialingAsync();
-    }
-
     private Task OnAskQuestionAsync(string question)
     {
         _userQuestion = question;
@@ -90,51 +82,5 @@ public sealed partial class Chat
         _userQuestion = _lastReferenceQuestion = "";
         _currentQuestion = default;
         _questionAndAnswerMap.Clear();
-    }
-
-    private async Task OnCopilotPromptsInitializingAsync()
-    {
-        _isLoadingPromptsInit = true;
-
-        try
-        {
-            CopilotPrompts = await ApiClient.GetCopilotPromptsAsync();
-        }
-        finally
-        {
-            _isLoadingPromptsInit = false;
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnExamplesPromptsInitialingAsync()
-    {
-        _isExamplesPromptsInit = true;
-
-        try
-        {
-            var question = new ChatTurn("Could you write summary of documents?");
-            var request = new ChatRequest(new[] { question }, Settings.Approach, Settings.Overrides);
-            var result = await ApiClient.ChatConversationAsync(request);
-
-            if (result.Response?.Questions?.Length > 2)
-            {
-                _firstExample = result.Response.Questions[0];
-                _secondExample = result.Response.Questions[1];
-                _thirdExample = result.Response.Questions[2];
-            }
-        }
-        catch(Exception e)
-        {
-            var a = e.Message;
-            var b = e.StackTrace;
-            throw;
-        }
-        finally
-        {
-            _isExamplesPromptsInit = false;
-            StateHasChanged();
-        }
-
     }
 }

@@ -163,9 +163,9 @@ public sealed partial class Documents : IDisposable
                 CloseOnEscapeKey = true
             });
 
-    private void CleanUpDocuments()
+    private async Task CleanUpDocuments()
     {
-
+        await Client.ClearMemory();
     }
     public void Dispose()
     {
