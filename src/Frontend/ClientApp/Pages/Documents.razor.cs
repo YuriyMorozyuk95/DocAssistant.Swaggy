@@ -163,6 +163,10 @@ public sealed partial class Documents : IDisposable
                 CloseOnEscapeKey = true
             });
 
+    private void CleanUpDocuments()
+    {
+
+    }
     public void Dispose()
     {
         _timer?.Dispose();

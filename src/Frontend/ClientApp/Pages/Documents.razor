@@ -2,6 +2,7 @@
 @using Microsoft.FluentUI.AspNetCore.Components
 @using Color = MudBlazor.Color
 @using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+@using Orientation = Microsoft.FluentUI.AspNetCore.Components.Orientation
 @* @attribute [Authorize] *@
 
 
@@ -17,7 +18,7 @@
                     <MudText>Documents Pages Processed: @_indexCreationInfo.DocumentPageProcessed</MudText>
                     <MudText>Total Documents Pages Processed: @_indexCreationInfo.TotalPageCount</MudText>
                     <MudText>Chunks Processed: @_indexCreationInfo.ChunksProcessed</MudText>
-                    <MudProgressLinear Size="Size.Large" Color="Color.Tertiary" Buffer="true" Value="@_indexCreationInfo.DocumentPageProcessed" BufferValue="@_indexCreationInfo.DocumentPageProcessedBuffer" Max="@_indexCreationInfo.TotalPageCount" Class="my-7" />
+                    <MudProgressLinear Size="Size.Medium" Color="Color.Primary" Buffer="true" Value="@_indexCreationInfo.DocumentPageProcessed" BufferValue="@_indexCreationInfo.DocumentPageProcessedBuffer" Max="@_indexCreationInfo.TotalPageCount" Class="my-7" />
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -34,25 +35,24 @@
                             Select up to ten PDF documents to upload, or explore the existing documents that have already been processed.
                             Each file cannot exceed a file size of @(MaxIndividualFileSize.ToHumanReadableSize())
                         </MudText>
+                        <div style="display:flex; align-items:center">
+                            <FluentTextField Label="Api Token:" @bind-Value="@ApiToken" TextFieldType="TextFieldType.Password">
+                                <FluentIcon Value="@(new Icons.Regular.Size24.Key())" Slot="end" />
+                            </FluentTextField>
+                        </div>
+
                         <MudFileUpload @ref="_fileUpload" T="IReadOnlyList<IBrowserFile>"
                                        Accept=".pdf" MaximumFileCount="10" FilesChanged=@(files => StateHasChanged())
                                        Required="true" RequiredError="You must select at least one PDF file to upload.">
                             <ButtonTemplate>
-                                <div style="display:flex; align-items:center">
                                     <MudButton HtmlTag="label"
+                                           IconColor="Color.Info"
                                                Variant="Variant.Filled"
                                                StartIcon="@(new Icons.Regular.Size24.DocumentAdd().Content)"
                                                Size="Size.Large"
                                                for="@context">
                                         Select swagger documents
                                     </MudButton>
-
-
-                                    <FluentTextField Class="pt-4" @bind-Value="@ApiToken" TextFieldType="TextFieldType.Password">
-                                        <FluentIcon Value="@(new Icons.Regular.Size24.Key())" Slot="end" />
-                                    </FluentTextField>
-
-                                </div>
 
                             </ButtonTemplate>
                             <SelectedTemplate>
@@ -96,7 +96,7 @@
                     </MudFileUpload>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudButton StartIcon="@(new Icons.Regular.Size20.Delete().Content)"
+                    <MudButton StartIcon="@(new Icons.Regular.Size24.Delete().Content)"
                                Variant="Variant.Filled"
                                Color="Color.Error"
                                Disabled=@(!FilesSelected)
@@ -233,6 +233,17 @@
                 <MudTablePager />
             </PagerContent>
         </MudTable>
+    </MudItem>
+    <MudItem xs="6" sm="3">
+        <MudButton HtmlTag="label"
+                   Color="Color.Error"
+                   Class="ml-auto mr-2 mb-2"
+                   Variant="Variant.Filled"
+                   StartIcon="@(new Icons.Regular.Size24.Delete().Content)"
+                   Size="Size.Large"
+        OnClick="@CleanUpDocuments">
+            Cleanup Documents
+        </MudButton>
     </MudItem>
     <MudScrollToTop Selector="#uploads"
                     VisibleCssClass="visible absolute"
