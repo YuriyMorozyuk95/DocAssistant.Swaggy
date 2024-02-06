@@ -12,13 +12,15 @@
     <MudItem xs="12">
         <MudCard>
             <MudCardContent>
-                <MudText Typo="Typo.h5">Synchronizing index information</MudText>
-                <MudText>Last Index Status: @_indexCreationInfo.LastIndexStatus.ToString()</MudText>
-                    <MudText>Last Index Error Message: @_indexCreationInfo.LastIndexErrorMessage</MudText>
-                    <MudText>Documents Pages Processed: @_indexCreationInfo.DocumentPageProcessed</MudText>
-                    <MudText>Total Documents Pages Processed: @_indexCreationInfo.TotalPageCount</MudText>
-                    <MudText>Chunks Processed: @_indexCreationInfo.ChunksProcessed</MudText>
-                    <MudProgressLinear Size="Size.Medium" Color="Color.Primary" Buffer="true" Value="@_indexCreationInfo.DocumentPageProcessed" BufferValue="@_indexCreationInfo.DocumentPageProcessedBuffer" Max="@_indexCreationInfo.TotalPageCount" Class="my-7" />
+                <MudText Typo="Typo.h5">Uploading information to memory</MudText>
+                <MudText> </MudText>
+                <MudText>Status: @_indexCreationInfo.LastIndexStatus.ToString()</MudText>
+                <MudText>Step information: @_indexCreationInfo.StepInfo</MudText>
+                <MudText>Progress: @_indexCreationInfo.Value / @_indexCreationInfo.Max</MudText>
+                <MudText> </MudText>
+                <MudText>Last Index Error Message: @_indexCreationInfo.LastIndexErrorMessage</MudText>
+
+                    <MudProgressLinear Size="Size.Medium" Color="Color.Primary" Buffer="true" Value="@_indexCreationInfo.Value" BufferValue="@_indexCreationInfo.ValueBuffer" Max="@_indexCreationInfo.Max" Class="my-7" />
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -42,17 +44,17 @@
                         </div>
 
                         <MudFileUpload @ref="_fileUpload" T="IReadOnlyList<IBrowserFile>"
-                                       Accept=".pdf" MaximumFileCount="10" FilesChanged=@(files => StateHasChanged())
+                                       Accept=".json" MaximumFileCount="10" FilesChanged=@(files => StateHasChanged())
                                        Required="true" RequiredError="You must select at least one PDF file to upload.">
                             <ButtonTemplate>
-                                    <MudButton HtmlTag="label"
+                                <MudButton HtmlTag="label"
                                            IconColor="Color.Info"
-                                               Variant="Variant.Filled"
-                                               StartIcon="@(new Icons.Regular.Size24.DocumentAdd().Content)"
-                                               Size="Size.Large"
-                                               for="@context">
-                                        Select swagger documents
-                                    </MudButton>
+                                           Variant="Variant.Filled"
+                                           StartIcon="@(new Icons.Regular.Size24.DocumentAdd().Content)"
+                                           Size="Size.Large"
+                                           for="@context">
+                                    Select swagger documents
+                                </MudButton>
 
                             </ButtonTemplate>
                             <SelectedTemplate>
@@ -192,7 +194,7 @@
                                 <MudIcon Color="Color.Error" Icon="@(new Icons.Regular.Size24.DocumentError().Content)" />
                                 break;
                             case DocumentProcessingStatus.Succeeded:
-                            <MudIcon Color="Color.Success" Icon="@(new Icons.Regular.Size24.Document().Content)" />
+                                <MudIcon Color="Color.Success" Icon="@(new Icons.Regular.Size24.Document().Content)" />
                                 break;
                             default:
                                 <MudIcon Color="Color.Warning" Icon="@(new Icons.Regular.Size24.DocumentQuestionMark().Content)" />
@@ -241,7 +243,7 @@
                    Variant="Variant.Filled"
                    StartIcon="@(new Icons.Regular.Size24.Delete().Content)"
                    Size="Size.Large"
-        OnClick="@CleanUpDocuments">
+                   OnClick="@CleanUpDocuments">
             Cleanup Documents
         </MudButton>
     </MudItem>

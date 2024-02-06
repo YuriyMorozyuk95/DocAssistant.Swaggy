@@ -118,73 +118,19 @@ public sealed class ApiClient
         return new SwaggerCompletionInfo();
     }
 
-    public async Task ClearMemory()
+    public async Task<ServiceResponse> ClearMemory()
     {
-        var response = await _httpClient.DeleteAsync("api/clear");
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return;
+            var response = await _httpClient.DeleteAsync("api/clear");
+
+            response.EnsureSuccessStatusCode();
+
+            return new ServiceResponse();
         }
-        
-        return;
-    }
-
-    public async Task SynchronizeDocumentsAsync(string cookie)
-    {
-        using var content = new MultipartFormDataContent();
-
-        // set cookie
-        //content.Headers.Add("X-CSRF-TOKEN-FORM", cookie);
-        //content.Headers.Add("X-CSRF-TOKEN-HEADER", cookie);
-
-        var response = await _httpClient.PostAsync("api/synchronize", content);
-
-        response.EnsureSuccessStatusCode();
-    }
-
-    private async Task<AnswerResult<TRequest>> PostRequestAsync<TRequest>(
-        TRequest request, string apiRoute) where TRequest : ApproachRequest
-    {
-        var result = new AnswerResult<TRequest>(
-            IsSuccessful: false,
-            Response: null,
-            Approach: request.Approach,
-            Request: request);
-
-        var json = JsonSerializer.Serialize(
-            request,
-            SerializerOptions.Default);
-
-        using var body = new StringContent(
-            json, Encoding.UTF8, "application/json");
-
-        var response = await _httpClient.PostAsync(apiRoute, body);
-
-        if (response.IsSuccessStatusCode)
+        catch (Exception ex)
         {
-            var answer = await response.Content.ReadFromJsonAsync<ApproachResponse>();
-            return result with
-            {
-                IsSuccessful = answer is not null,
-                Response = answer
-            };
-        }
-        else
-        {
-            var answer = new ApproachResponse(
-                $"HTTP {(int)response.StatusCode} : {response.ReasonPhrase ?? "☹️ Unknown error..."}",
-                null,
-                Array.Empty<SupportingContent>(),
-                string.Empty,
-                Array.Empty<string>(),
-                "Unable to retrieve valid response from the server.");
-
-            return result with
-            {
-                IsSuccessful = false,
-                Response = answer
-            };
+            return ServiceResponse.FromError(ex.ToString());
         }
     }
 

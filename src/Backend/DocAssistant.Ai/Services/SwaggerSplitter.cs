@@ -7,7 +7,7 @@ namespace DocAssistant.Ai.Services
 {
     public static class SwaggerSplitter
     {
-        public static IEnumerable<(string path, string document)> SplitSwagger(string swaggerFileText)
+        public static IEnumerable<(string path, string document)> SplitSwagger(string swaggerFileText, IProgress<(int max, int value)> progress)
         {
             var openApiDocument = new OpenApiStringReader().Read(swaggerFileText, out var diagnostic);
             if (openApiDocument == null)
@@ -15,8 +15,11 @@ namespace DocAssistant.Ai.Services
                 throw new ArgumentException();
             }
 
+            var total = openApiDocument.Paths.Count;
+            var current = 0;
             foreach (var path in openApiDocument.Paths)
             {
+                progress.Report((total, current++));
                 var document = new OpenApiDocument
                 {
                     Info = openApiDocument.Info,

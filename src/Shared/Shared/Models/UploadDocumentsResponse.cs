@@ -13,3 +13,15 @@ public record class UploadDocumentsResponse(
     public static UploadDocumentsResponse FromError(string error) =>
         new([], error);
 }
+
+public record class ServiceResponse(
+    string Error = null)
+{
+    public bool IsSuccessful => this is
+    {
+        Error: null,
+    };
+
+    public static ServiceResponse FromError(string error) =>
+        new(error);
+}

@@ -34,33 +34,23 @@ namespace DocAssistant.Ai.MemoryHandlers
         TextPartitioningOptions? options = null,
         ILogger<SwaggerPartitioningHandler>? log = null)
     {
-        this.StepName = stepName;
-        this._orchestrator = orchestrator;
+        StepName = stepName;
+        _orchestrator = orchestrator;
 
-        this._options = options ?? new TextPartitioningOptions();
-        this._options.Validate();
+        _options = options ?? new TextPartitioningOptions();
+        _options.Validate();
 
-        this._log = log ?? DefaultLogger<SwaggerPartitioningHandler>.Instance;
-        this._log.LogInformation("Handler '{0}' ready", stepName);
+        _log = log ?? DefaultLogger<SwaggerPartitioningHandler>.Instance;
+        _log.LogInformation("Handler '{0}' ready", stepName);
 
-        this._tokenCounter = DefaultGPTTokenizer.StaticCountTokens;
+        _tokenCounter = DefaultGPTTokenizer.StaticCountTokens;
         if (orchestrator.EmbeddingGenerationEnabled)
         {
             foreach (var gen in orchestrator.GetEmbeddingGenerators())
             {
                 // Use the last tokenizer (TODO: revisit)
-                this._tokenCounter = s => gen.CountTokens(s);
-                this._maxTokensPerPartition = Math.Min(gen.MaxTokens, this._maxTokensPerPartition);
-            }
-
-            if (this._options.MaxTokensPerParagraph > this._maxTokensPerPartition)
-            {
-#pragma warning disable CA2254 // the msg is always used
-                var errMsg = $"The configured partition size ({this._options.MaxTokensPerParagraph} tokens) is too big for one " +
-                             $"of the embedding generators in use. The max value allowed is {this._maxTokensPerPartition} tokens. ";
-                this._log.LogError(errMsg);
-                throw new ConfigurationException(errMsg);
-#pragma warning restore CA2254
+                _tokenCounter = s => gen.CountTokens(s);
+                _maxTokensPerPartition = Math.Min(gen.MaxTokens, _maxTokensPerPartition);
             }
         }
     }
@@ -69,13 +59,12 @@ namespace DocAssistant.Ai.MemoryHandlers
     public async Task<(bool success, DataPipeline updatedPipeline)> InvokeAsync(
         DataPipeline pipeline, CancellationToken cancellationToken = default)
     {
-        this._log.LogDebug("Partitioning text, pipeline '{0}/{1}'", pipeline.Index, pipeline.DocumentId);
+        IndexCreationInformation.IndexCreationInfo.StepInfo = $"{StepName}: partitioning text in small chunks.";
+
+        _log.LogDebug("Partitioning text, pipeline '{0}/{1}'", pipeline.Index, pipeline.DocumentId);
 
         foreach (DataPipeline.FileDetails uploadedFile in pipeline.Files)
         {
-            //TODO Add endpoint tag
-	        uploadedFile.Tags.Add(TagsKeys.Endpoint, "test");
-
             // Track new files being generated (cannot edit originalFile.GeneratedFiles while looping it)
             Dictionary<string, DataPipeline.GeneratedFileDetails> newFiles = new();
 
@@ -84,18 +73,18 @@ namespace DocAssistant.Ai.MemoryHandlers
                 var file = generatedFile.Value;
                 if (file.AlreadyProcessedBy(this))
                 {
-                    this._log.LogTrace("File {0} already processed by this handler", file.Name);
+                    _log.LogTrace("File {0} already processed by this handler", file.Name);
                     continue;
                 }
 
                 // Partition only the original text
                 if (file.ArtifactType != DataPipeline.ArtifactTypes.ExtractedText)
                 {
-                    this._log.LogTrace("Skipping file {0} (not original text)", file.Name);
+                    _log.LogTrace("Skipping file {0} (not original text)", file.Name);
                     continue;
                 }
 
-                BinaryData partitionContent = await this._orchestrator.ReadFileAsync(pipeline, file.Name, cancellationToken).ConfigureAwait(false);
+                BinaryData partitionContent = await _orchestrator.ReadFileAsync(pipeline, file.Name, cancellationToken).ConfigureAwait(false);
 
                 // Skip empty partitions. Also: partitionContent.ToString() throws an exception if there are no bytes.
                 if (partitionContent.ToArray().Length == 0) { continue; }
@@ -104,7 +93,7 @@ namespace DocAssistant.Ai.MemoryHandlers
 
                 if (partitions.Count == 0) { continue; }
 
-                this._log.LogDebug("Saving {0} file partitions", partitions.Count);
+                _log.LogDebug("Saving {0} file partitions", partitions.Count);
                 for (int index = 0; index < partitions.Count; index++)
                 {
                     await AddPartition(pipeline, cancellationToken, partitions, index, uploadedFile, newFiles);
@@ -132,9 +121,16 @@ namespace DocAssistant.Ai.MemoryHandlers
         {
             case MimeTypes.PlainText:
             {
-                this._log.LogDebug("Partitioning text file {0}", file.Name);
+                _log.LogDebug("Partitioning text file {0}", file.Name);
                 string content = partitionContent.ToString();
-                partitions = SwaggerSplitter.SplitSwagger(content);
+
+                        var stepProgress = new Progress<(int max, int value)>(value =>
+                        {
+                            IndexCreationInformation.IndexCreationInfo.Value = value.value;
+                            IndexCreationInformation.IndexCreationInfo.Max = value.max;
+                        });
+
+                        partitions = SwaggerSplitter.SplitSwagger(content, stepProgress);
                 break;
             }
 
@@ -142,7 +138,7 @@ namespace DocAssistant.Ai.MemoryHandlers
             // TODO: see https://learn.microsoft.com/en-us/windows/win32/search/-search-ifilter-about
 
             default:
-                this._log.LogWarning("File {0} cannot be partitioned, type '{1}' not supported", file.Name, file.MimeType);
+                _log.LogWarning("File {0} cannot be partitioned, type '{1}' not supported", file.Name, file.MimeType);
                 // Don't partition other files
                 return partitions;
         }
@@ -157,11 +153,11 @@ namespace DocAssistant.Ai.MemoryHandlers
         string text = partitions[index].document;
         BinaryData textData = new(text);
 
-        int tokenCount = this._tokenCounter(text);
-        this._log.LogDebug("Partition size: {0} tokens", tokenCount);
+        int tokenCount = _tokenCounter(text);
+        _log.LogDebug("Partition size: {0} tokens", tokenCount);
 
         var destFile = uploadedFile.GetPartitionFileName(index);
-        await this._orchestrator.WriteFileAsync(pipeline, destFile, textData, cancellationToken).ConfigureAwait(false);
+        await _orchestrator.WriteFileAsync(pipeline, destFile, textData, cancellationToken).ConfigureAwait(false);
 
         var destFileDetails = new DataPipeline.GeneratedFileDetails
         {

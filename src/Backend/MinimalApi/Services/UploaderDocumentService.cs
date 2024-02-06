@@ -1,5 +1,5 @@
 ﻿using Azure;
-
+using DocAssistant.Ai;
 using Newtonsoft.Json;
 
 namespace MinimalApi.Services;
@@ -77,10 +77,6 @@ public class UploaderDocumentService : IUploaderDocumentService
 
     public async Task UploadToAzureIndex()
     {
-        IndexCreationInformation.IndexCreationInfo.ChunksProcessed = 0;
-        IndexCreationInformation.IndexCreationInfo.DocumentPageProcessed = 0;
-        IndexCreationInformation.IndexCreationInfo.LastIndexErrorMessage = string.Empty;
-        IndexCreationInformation.IndexCreationInfo.LastIndexStatus = IndexStatus.Processing;
 
         try
         {
@@ -94,7 +90,7 @@ public class UploaderDocumentService : IUploaderDocumentService
 
             var inputContainer = await _storageService.GetInputBlobContainerClient();
             var pageCount = await CalculateTotalDocumentsPagesAsync(inputContainer);
-            IndexCreationInformation.IndexCreationInfo.TotalPageCount = pageCount;
+            IndexCreationInformation.IndexCreationInfo.Max = pageCount;
 
             await foreach (var document in GetDocuments())
             {
@@ -124,7 +120,7 @@ public class UploaderDocumentService : IUploaderDocumentService
 
                 for (int i = 0; i < documents.PageCount; i++)
                 {
-                    IndexCreationInformation.IndexCreationInfo.DocumentPageProcessed++;
+                    IndexCreationInformation.IndexCreationInfo.Value++;
 
                     var chunkName = BlobNameFromFilePage(fileName, i);
                     var tempFileName = Path.GetTempFileName();

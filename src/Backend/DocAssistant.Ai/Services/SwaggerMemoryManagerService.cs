@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Search.Documents.Indexes;
 using Azure.Storage.Blobs;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.KernelMemory;
 
@@ -25,37 +26,49 @@ public class SwaggerMemoryManagerService : ISwaggerMemoryManagerService
 
     public async Task UploadMemory(string fileName, Stream stream, string apiKey)
     {
-        var tags = new TagCollection
+        IndexCreationInformation.IndexCreationInfo.LastIndexStatus = Shared.IndexStatus.Processing;
+
+        try
+        {
+            var tags = new TagCollection
         {
             { TagsKeys.SwaggerFile, fileName },
             { TagsKeys.ApiToken, apiKey }
         };
 
-        var document = new Document(Guid.NewGuid().ToString(), tags);
-        document.AddStream(fileName, stream);
+            var document = new Document(Guid.NewGuid().ToString(), tags);
+            document.AddStream(fileName, stream);
 
-        await _memory.ImportDocumentAsync(document);
+            await _memory.ImportDocumentAsync(document);
+
+            IndexCreationInformation.IndexCreationInfo.LastIndexStatus = Shared.IndexStatus.Succeeded;
+        }
+        catch (Exception e)
+        {
+            IndexCreationInformation.IndexCreationInfo.LastIndexStatus = Shared.IndexStatus.Failed;
+            IndexCreationInformation.IndexCreationInfo.LastIndexErrorMessage = e.ToString();
+        }
     }
 
     public async Task RemoveMemory()
     {
         // Create a BlobServiceClient object which will be used to create a container client  
         var connectionString = _configuration["KernelMemory:Services:AzureBlobs:ConnectionString"];
-        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);  
+        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
         // Create the container client.  
         var containerName = _configuration["KernelMemory:Services:AzureBlobs:Container"];
-        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);  
+        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         // Delete the container  
-        await containerClient.DeleteIfExistsAsync(); 
+        await containerClient.DeleteIfExistsAsync();
 
         var apiKey = _configuration["KernelMemory:Services:AzureAISearch:APIKey"];
         var endpoint = _configuration["KernelMemory:Services:AzureAISearch:Endpoint"];
-        SearchIndexClient indexClient = new SearchIndexClient(new Uri(endpoint), new AzureKeyCredential(apiKey));  
-  
+        SearchIndexClient indexClient = new SearchIndexClient(new Uri(endpoint), new AzureKeyCredential(apiKey));
+
         var indexes = await _memory.ListIndexesAsync();
-        foreach(var index in indexes)
+        foreach (var index in indexes)
         {
-            await indexClient.DeleteIndexAsync(index.Name);  
+            await indexClient.DeleteIndexAsync(index.Name);
         }
     }
 }

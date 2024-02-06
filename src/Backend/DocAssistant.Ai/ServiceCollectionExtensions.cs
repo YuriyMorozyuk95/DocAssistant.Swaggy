@@ -76,10 +76,10 @@ public static class AiServiceCollectionExtensions
             config.BindSection("KernelMemory:Services:AzureAISearch", azureAiSearchConfig);
 
             var services = new ServiceCollection(); 
-            services.AddHandlerAsHostedService<TextExtractionHandler>(Constants.PipelineStepsExtract);
+            services.AddHandlerAsHostedService<CustomTextExtractionHandler>(Constants.PipelineStepsExtract);
             services.AddHandlerAsHostedService<SwaggerPartitioningHandler>(Constants.PipelineStepsPartition);
-            services.AddHandlerAsHostedService<GenerateEmbeddingsHandler>(Constants.PipelineStepsGenEmbeddings);
-            services.AddHandlerAsHostedService<SaveRecordsHandler>(Constants.PipelineStepsSaveRecords);
+            services.AddHandlerAsHostedService<CustomGenerateEmbeddingsHandler>(Constants.PipelineStepsGenEmbeddings);
+            services.AddHandlerAsHostedService<CustomSaveRecordsHandler>(Constants.PipelineStepsSaveRecords);
             services.AddHandlerAsHostedService<SummarizationHandler>(Constants.PipelineStepsSummarize);
             services.AddHandlerAsHostedService<DeleteDocumentHandler>(Constants.PipelineStepsDeleteDocument);
             services.AddHandlerAsHostedService<DeleteIndexHandler>(Constants.PipelineStepsDeleteIndex);
@@ -95,10 +95,10 @@ public static class AiServiceCollectionExtensions
 
             var serviceProvider = services.BuildServiceProvider();
 
-            memory.AddHandler(serviceProvider.GetRequiredService<TextExtractionHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<CustomTextExtractionHandler>());
             memory.AddHandler(serviceProvider.GetRequiredService<SwaggerPartitioningHandler>());
-            memory.AddHandler(serviceProvider.GetRequiredService<GenerateEmbeddingsHandler>());
-            memory.AddHandler(serviceProvider.GetRequiredService<SaveRecordsHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<CustomGenerateEmbeddingsHandler>());
+            memory.AddHandler(serviceProvider.GetRequiredService<CustomSaveRecordsHandler>());
             memory.AddHandler(serviceProvider.GetRequiredService<SummarizationHandler>());
             memory.AddHandler(serviceProvider.GetRequiredService<DeleteDocumentHandler>());
             memory.AddHandler(serviceProvider.GetRequiredService<DeleteIndexHandler>());

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Azure;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
+using DocAssistant.Ai;
 
 namespace MinimalApi.Services;
 
@@ -454,7 +455,6 @@ public sealed partial class AzureSearchAzureSearchEmbedService : IAzureSearchEmb
                     ["embedding"] = embedding,
                 }));
 
-            IndexCreationInformation.IndexCreationInfo.ChunksProcessed++;
 
             iteration++;
             if (iteration % 1_000 is 0)
