@@ -111,5 +111,6 @@ public static class AiServiceCollectionExtensions
         services.AddTransient<ISwaggerMemorySearchService, SwaggerMemorySearchService>();
         services.AddTransient<ISwaggerAiAssistantService, SwaggerAiAssistantService>();
         services.AddTransient<ISwaggerMemoryManagerService, SwaggerMemoryManagerService>();
+        services.AddTransient<IDocumentStorageService, DocumentStorageService>();
     }
 }
