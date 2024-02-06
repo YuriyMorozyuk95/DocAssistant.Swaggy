@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DocAssistant.Ai.Services;
+using Microsoft.Extensions.Logging;
 using Microsoft.KernelMemory.AI.OpenAI;
 using Microsoft.KernelMemory.Configuration;
 using Microsoft.KernelMemory.Diagnostics;
@@ -94,73 +95,19 @@ namespace DocAssistant.Ai.MemoryHandlers
                     continue;
                 }
 
-                // Use a different partitioning strategy depending on the file type
-                List<string> paragraphs;
-                List<string> lines;
                 BinaryData partitionContent = await this._orchestrator.ReadFileAsync(pipeline, file.Name, cancellationToken).ConfigureAwait(false);
 
                 // Skip empty partitions. Also: partitionContent.ToString() throws an exception if there are no bytes.
                 if (partitionContent.ToArray().Length == 0) { continue; }
 
-                switch (file.MimeType)
+                var partitions = CreatePartitions(file, partitionContent).ToList();
+
+                if (partitions.Count == 0) { continue; }
+
+                this._log.LogDebug("Saving {0} file partitions", partitions.Count);
+                for (int index = 0; index < partitions.Count; index++)
                 {
-                    case MimeTypes.PlainText:
-                    {
-                        this._log.LogDebug("Partitioning text file {0}", file.Name);
-                        string content = partitionContent.ToString();
-                        //lines = TextChunker.SplitPlainTextLines(content, maxTokensPerLine: this._options.MaxTokensPerLine, tokenCounter: this._tokenCounter);
-                        //paragraphs = TextChunker.SplitPlainTextParagraphs(
-                        //    lines, maxTokensPerParagraph: this._options.MaxTokensPerParagraph, overlapTokens: this._options.OverlappingTokens, tokenCounter: this._tokenCounter);
-                        paragraphs = new List<string> () { content };
-                        break;
-                    }
-
-                    case MimeTypes.MarkDown:
-                    {
-                        this._log.LogDebug("Partitioning MarkDown file {0}", file.Name);
-                        string content = partitionContent.ToString();
-                        lines = TextChunker.SplitMarkDownLines(content, maxTokensPerLine: this._options.MaxTokensPerLine, tokenCounter: this._tokenCounter);
-                        paragraphs = TextChunker.SplitMarkdownParagraphs(
-                            lines, maxTokensPerParagraph: this._options.MaxTokensPerParagraph, overlapTokens: this._options.OverlappingTokens, tokenCounter: this._tokenCounter);
-                        break;
-                    }
-
-                    // TODO: add virtual/injectable logic
-                    // TODO: see https://learn.microsoft.com/en-us/windows/win32/search/-search-ifilter-about
-
-                    default:
-                        this._log.LogWarning("File {0} cannot be partitioned, type '{1}' not supported", file.Name, file.MimeType);
-                        // Don't partition other files
-                        continue;
-                }
-
-                if (paragraphs.Count == 0) { continue; }
-
-                this._log.LogDebug("Saving {0} file partitions", paragraphs.Count);
-                for (int index = 0; index < paragraphs.Count; index++)
-                {
-                    string text = paragraphs[index];
-                    BinaryData textData = new(text);
-
-                    int tokenCount = this._tokenCounter(text);
-                    this._log.LogDebug("Partition size: {0} tokens", tokenCount);
-
-                    var destFile = uploadedFile.GetPartitionFileName(index);
-                    await this._orchestrator.WriteFileAsync(pipeline, destFile, textData, cancellationToken).ConfigureAwait(false);
-
-                    var destFileDetails = new DataPipeline.GeneratedFileDetails
-                    {
-                        Id = Guid.NewGuid().ToString("N"),
-                        ParentId = uploadedFile.Id,
-                        Name = destFile,
-                        Size = text.Length,
-                        MimeType = MimeTypes.PlainText,
-                        ArtifactType = DataPipeline.ArtifactTypes.TextPartition,
-                        Tags = pipeline.Tags,
-                        ContentSHA256 = textData.CalculateSHA256(),
-                    };
-                    newFiles.Add(destFile, destFileDetails);
-                    destFileDetails.MarkProcessedBy(this);
+                    await AddPartition(pipeline, cancellationToken, partitions, index, uploadedFile, newFiles);
                 }
 
                 file.MarkProcessedBy(this);
@@ -174,6 +121,64 @@ namespace DocAssistant.Ai.MemoryHandlers
         }
 
         return (true, pipeline);
+    }
+
+    private IEnumerable<(string path, string partition)> CreatePartitions(DataPipeline.GeneratedFileDetails file, BinaryData partitionContent)
+    {
+        IEnumerable<(string, string)> partitions = new List<(string path, string partition)>();
+
+        // Use a different partitioning strategy depending on the file type
+        switch (file.MimeType)
+        {
+            case MimeTypes.PlainText:
+            {
+                this._log.LogDebug("Partitioning text file {0}", file.Name);
+                string content = partitionContent.ToString();
+                partitions = SwaggerSplitter.SplitSwagger(content);
+                break;
+            }
+
+            // TODO: add virtual/injectable logic
+            // TODO: see https://learn.microsoft.com/en-us/windows/win32/search/-search-ifilter-about
+
+            default:
+                this._log.LogWarning("File {0} cannot be partitioned, type '{1}' not supported", file.Name, file.MimeType);
+                // Don't partition other files
+                return partitions;
+        }
+
+        return partitions;
+    }
+
+    private async Task AddPartition(DataPipeline pipeline, CancellationToken cancellationToken, List<(string path, string document)> partitions, int index,
+        DataPipeline.FileDetails uploadedFile, Dictionary<string, DataPipeline.GeneratedFileDetails> newFiles)
+    {
+        string endpoint = partitions[index].path;
+        string text = partitions[index].document;
+        BinaryData textData = new(text);
+
+        int tokenCount = this._tokenCounter(text);
+        this._log.LogDebug("Partition size: {0} tokens", tokenCount);
+
+        var destFile = uploadedFile.GetPartitionFileName(index);
+        await this._orchestrator.WriteFileAsync(pipeline, destFile, textData, cancellationToken).ConfigureAwait(false);
+
+        var destFileDetails = new DataPipeline.GeneratedFileDetails
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            ParentId = uploadedFile.Id,
+            Name = destFile,
+            Size = text.Length,
+            MimeType = MimeTypes.PlainText,
+            ArtifactType = DataPipeline.ArtifactTypes.TextPartition,
+            Tags = pipeline.Tags,
+            ContentSHA256 = textData.CalculateSHA256(),
+        };
+
+        destFileDetails.Tags.Add(TagsKeys.Endpoint, endpoint);
+
+        newFiles.Add(destFile, destFileDetails);
+        destFileDetails.MarkProcessedBy(this);
     }
 }
 }
