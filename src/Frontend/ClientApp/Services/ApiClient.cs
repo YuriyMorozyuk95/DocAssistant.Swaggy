@@ -123,7 +123,6 @@ public sealed class ApiClient
     {
         try
         {
-            //TODO refresh document after complite
             var response = await _httpClient.DeleteAsync("api/clear");
 
             response.EnsureSuccessStatusCode();

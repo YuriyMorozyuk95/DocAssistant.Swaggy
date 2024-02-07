@@ -165,34 +165,41 @@ public sealed partial class Documents : IDisposable
 
     private async Task CleanUpDocuments()
     {
-        var result = await Client.ClearMemory();
-
-        if (result.IsSuccessful)
+        try
         {
-            Snackbar.Add(
-                $"Memory successfully cleaned, please wait 10 sec to refresh container.",
-                Severity.Success,
-                static options =>
-                {
-                    options.ShowCloseIcon = true;
-                    options.VisibleStateDuration = 10_000;
-                });
+            _isLoadingDocuments = true;
+            var result = await Client.ClearMemory();
+            if (result.IsSuccessful)
+            {
+                Snackbar.Add(
+                    $"Memory successfully cleaned, please wait 10 sec to refresh container.",
+                    Severity.Success,
+                    static options =>
+                    {
+                        options.ShowCloseIcon = true;
+                        options.VisibleStateDuration = 10_000;
+                    });
 
-            await _fileUpload.ResetAsync();
-            ApiToken =  string.Empty;
+                await _fileUpload.ResetAsync();
+                ApiToken = string.Empty;
 
-            await GetDocumentsAsync();
+                _documents.Clear();
+            }
+            else
+            {
+                Snackbar.Add(
+                    result.Error,
+                    Severity.Error,
+                    static options =>
+                    {
+                        options.ShowCloseIcon = true;
+                        options.VisibleStateDuration = 10_000;
+                    });
+            }
         }
-        else
+        finally
         {
-            Snackbar.Add(
-                result.Error,
-                Severity.Error,
-                static options =>
-                {
-                    options.ShowCloseIcon = true;
-                    options.VisibleStateDuration = 10_000;
-                });
+            _isLoadingDocuments = false;
         }
     }
     public void Dispose()
