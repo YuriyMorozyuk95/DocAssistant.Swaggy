@@ -27,6 +27,7 @@ public class SwaggerMemoryManagerService : ISwaggerMemoryManagerService
     public async Task UploadMemory(string fileName, Stream stream, string apiKey)
     {
         IndexCreationInformation.IndexCreationInfo.LastIndexStatus = Shared.IndexStatus.Processing;
+        IndexCreationInformation.IndexCreationInfo.LastIndexErrorMessage = string.Empty;
 
         try
         {

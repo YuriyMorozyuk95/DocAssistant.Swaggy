@@ -152,8 +152,8 @@ public sealed partial class Documents : IDisposable
             new DialogParameters
             {
                 [nameof(PdfViewerDialog.FileName)] = document.Name,
-                [nameof(PdfViewerDialog.BaseUrl)] =
-                    document.Url.ToString().Replace($"/{document.Name}", ""),
+                [nameof(PdfViewerDialog.BaseUrl)] = string.Empty,
+                    //document.Url.ToString().Replace($"/{document.Name}", ""),
             },
             new DialogOptions
             {

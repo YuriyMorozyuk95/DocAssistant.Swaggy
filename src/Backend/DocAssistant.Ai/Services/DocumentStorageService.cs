@@ -2,13 +2,14 @@
 
 using Microsoft.Extensions.Configuration;
 using Azure.Storage.Blobs.Models;
+using Shared.Models;
 
 namespace DocAssistant.Ai.Services
 {
     public interface IDocumentStorageService
     {
         Task SetOriginFlagMetadata(string documentId, string documentName);
-        IAsyncEnumerable<BlobItem> CanRetrieveOriginFiles();
+        IAsyncEnumerable<DocumentResponse> RetrieveOriginFiles();
     }
 
     public class DocumentStorageService : IDocumentStorageService
@@ -39,7 +40,7 @@ namespace DocAssistant.Ai.Services
             await blobClient.SetMetadataAsync(metadata);
         }
 
-        public async IAsyncEnumerable<BlobItem> CanRetrieveOriginFiles()
+        public async IAsyncEnumerable<DocumentResponse> RetrieveOriginFiles()
         {
             BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);  
             BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);  
@@ -49,9 +50,17 @@ namespace DocAssistant.Ai.Services
             {  
                 BlobClient blobClient = containerClient.GetBlobClient(blobItem.Name);  
                 var response = await blobClient.GetPropertiesAsync();  
+
+
                 if (response.Value.Metadata.TryGetValue("isOriginFile", out string isOriginFile) && isOriginFile == "true")  
-                {  
-                    yield return blobItem;
+                {
+                    string name = blobItem.Name.Split('/').Last();
+
+                    yield return new DocumentResponse(
+                        name,
+                        blobItem.Properties.ContentType,
+                        blobItem.Properties.ContentLength ?? 0,
+                        blobItem.Properties.LastModified);
                 }  
             }
         }

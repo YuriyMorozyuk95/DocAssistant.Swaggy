@@ -93,19 +93,11 @@ internal static class WebApplicationExtensions
 
 
     private static IAsyncEnumerable<DocumentResponse> OnGetDocumentsAsync(
-        [FromServices] IUploaderDocumentService service,
+        [FromServices] IDocumentStorageService service,
         [FromServices] IHttpContextAccessor httpContextAccessor,
         CancellationToken cancellationToken)
     {
-        var documentsStream = service.GetDocuments(cancellationToken);
+        var documentsStream = service.RetrieveOriginFiles();
         return documentsStream;
-    }
-
-    private static async Task<IResult> OnPostSynchronizeAsync(
-        [FromServices] IUploaderDocumentService service,
-        CancellationToken cancellationToken)
-    {
-        await service.UploadToAzureIndex();
-        return TypedResults.Ok();
     }
 }

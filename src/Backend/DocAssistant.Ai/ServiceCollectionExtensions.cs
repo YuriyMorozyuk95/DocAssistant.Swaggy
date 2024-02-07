@@ -7,6 +7,7 @@ using DocAssistant.Ai.MemoryHandlers;
 using DocAssistant.Ai.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.KernelMemory;
 using Microsoft.KernelMemory.Handlers;
 using Microsoft.SemanticKernel;
@@ -75,17 +76,18 @@ public static class AiServiceCollectionExtensions
             config.BindSection("KernelMemory:Services:AzureBlobs", azureBlobConfig);
             config.BindSection("KernelMemory:Services:AzureAISearch", azureAiSearchConfig);
 
-            var services = new ServiceCollection(); 
-            services.AddHandlerAsHostedService<CustomTextExtractionHandler>(Constants.PipelineStepsExtract);
-            services.AddHandlerAsHostedService<SwaggerPartitioningHandler>(Constants.PipelineStepsPartition);
-            services.AddHandlerAsHostedService<CustomGenerateEmbeddingsHandler>(Constants.PipelineStepsGenEmbeddings);
-            services.AddHandlerAsHostedService<CustomSaveRecordsHandler>(Constants.PipelineStepsSaveRecords);
-            services.AddHandlerAsHostedService<SummarizationHandler>(Constants.PipelineStepsSummarize);
-            services.AddHandlerAsHostedService<DeleteDocumentHandler>(Constants.PipelineStepsDeleteDocument);
-            services.AddHandlerAsHostedService<DeleteIndexHandler>(Constants.PipelineStepsDeleteIndex);
-            services.AddHandlerAsHostedService<DeleteGeneratedFilesHandler>(Constants.PipelineStepsDeleteGeneratedFiles);
+            var kernelMemoryServiceCollection = new ServiceCollection { services };
 
-            var memory = new KernelMemoryBuilder(services)
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<CustomTextExtractionHandler>(Constants.PipelineStepsExtract);
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<SwaggerPartitioningHandler>(Constants.PipelineStepsPartition);
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<CustomGenerateEmbeddingsHandler>(Constants.PipelineStepsGenEmbeddings);
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<CustomSaveRecordsHandler>(Constants.PipelineStepsSaveRecords);
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<SummarizationHandler>(Constants.PipelineStepsSummarize);
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<DeleteDocumentHandler>(Constants.PipelineStepsDeleteDocument);
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<DeleteIndexHandler>(Constants.PipelineStepsDeleteIndex);
+            kernelMemoryServiceCollection.AddHandlerAsHostedService<DeleteGeneratedFilesHandler>(Constants.PipelineStepsDeleteGeneratedFiles);
+
+            var memory = new KernelMemoryBuilder(kernelMemoryServiceCollection)
                 .WithAzureOpenAITextGeneration(azureOpenAiTextConfig)
                 .WithAzureOpenAITextEmbeddingGeneration(azureOpenAiEmbeddingConfig)
                 .WithAzureBlobsStorage(azureBlobConfig)                             
@@ -93,7 +95,7 @@ public static class AiServiceCollectionExtensions
                 .WithoutDefaultHandlers()
                 .Build<MemoryServerless>();
 
-            var serviceProvider = services.BuildServiceProvider();
+            var serviceProvider = kernelMemoryServiceCollection.BuildServiceProvider();
 
             memory.AddHandler(serviceProvider.GetRequiredService<CustomTextExtractionHandler>());
             memory.AddHandler(serviceProvider.GetRequiredService<SwaggerPartitioningHandler>());

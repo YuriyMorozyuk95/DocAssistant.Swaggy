@@ -154,21 +154,21 @@
                 <MudTh Style="text-align:center">
                     Preview
                 </MudTh>
-                <MudTh Style="text-align:center">
+               @*  <MudTh Style="text-align:center">
                     <MudTableSortLabel SortBy="new Func<DocumentResponse, object>(d => d.Status)">
                         Status
                     </MudTableSortLabel>
-                </MudTh>
+                </MudTh> *@
                 <MudTh>
                     <MudTableSortLabel SortBy="new Func<DocumentResponse, object>(d => d.Name)">
                         Name
                     </MudTableSortLabel>
                 </MudTh>
-                <MudTh Style="text-align:center">
+                @* <MudTh Style="text-align:center">
                     <MudTableSortLabel SortBy="new Func<DocumentResponse, object>(d => d.UserGroups)">
                         Permission
                     </MudTableSortLabel>
-                </MudTh>
+                </MudTh> *@
                 <MudTh>Content Type</MudTh>
                 <MudTh>
                     <MudTableSortLabel SortBy="new Func<DocumentResponse, object>(d => d.Size)">
@@ -186,7 +186,7 @@
                     <MudFab Color="Color.Primary" StartIcon="@(new Icons.Regular.Size24.BookOpen().Content)"
                             Size="Size.Small" OnClick="@(() => OnShowDocument(context))" />
                 </MudTd>
-                <MudTd DataLabel="Status" Style="text-align:center">
+                @* <MudTd DataLabel="Status" Style="text-align:center">
                     @{
                         switch (context.Status)
                         {
@@ -201,11 +201,11 @@
                                 break;
                         }
                     }
-                </MudTd>
+                </MudTd> *@
                 <MudTd DataLabel="Name">
                     <strong>@context.Name</strong>
                 </MudTd>
-                <MudTd DataLabel="User Groups">
+               @*  <MudTd DataLabel="User Groups">
                     @if (string.IsNullOrEmpty(@context.UserGroups))
                     {
                         <MudChip Size="Size.Small">
@@ -218,7 +218,7 @@
                             @context.UserGroups
                         </MudChip>
                     }
-                </MudTd>
+                </MudTd> *@
                 <MudTd DataLabel="Content Type">
                     <code>@context.ContentType</code>
                 </MudTd>

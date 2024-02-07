@@ -66,7 +66,7 @@ namespace DocAssistant.Ai.MemoryHandlers
                     continue;
                 }
 
-                await UpdateSourceFileMetadata(uploadedFile.Id, uploadedFile.Name);
+                await UpdateSourceFileMetadata(pipeline.DocumentId, uploadedFile.Name);
 
                 var sourceFile = uploadedFile.Name;
                 var destFile = $"{uploadedFile.Name}.extract.txt";

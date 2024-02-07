@@ -28,7 +28,7 @@ namespace MinimalApi.Tests.Swagger
         [Fact]
         public async Task CanRetrieveOriginFiles()
         {
-            await foreach (BlobItem blobItem in _documentStorageService.CanRetrieveOriginFiles())
+            await foreach (var blobItem in _documentStorageService.RetrieveOriginFiles())
             {
                 _testOutputHelper.WriteLine(blobItem.Name);
             }
