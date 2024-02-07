@@ -51,7 +51,7 @@ public sealed partial class Documents : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        _timer = new Timer(async _ => await LoadIndexCreationInfoAsync(), null, 0, 2000);
+        _timer = new Timer(async _ => await LoadIndexCreationInfoAsync(), null, 0, 5000);
 
         await LoadIndexCreationInfoAsync();
     }
@@ -86,13 +86,16 @@ public sealed partial class Documents : IDisposable
         {
             _documents.Clear();
             var documents =
-                await Client.GetDocumentsAsync(_cancellationTokenSource.Token)
-                    .ToListAsync();
+                await Client.GetDocumentsAsync(_cancellationTokenSource.Token);
 
             foreach (var document in documents)
             {
                 _documents.Add(document);
             }
+        }
+        catch(Exception e)
+        {
+            throw;
         }
         finally
         {
@@ -152,7 +155,7 @@ public sealed partial class Documents : IDisposable
             new DialogParameters
             {
                 [nameof(PdfViewerDialog.FileName)] = document.Name,
-                [nameof(PdfViewerDialog.BaseUrl)] = string.Empty,
+                [nameof(PdfViewerDialog.BaseUrl)] = document.Url,
                     //document.Url.ToString().Replace($"/{document.Name}", ""),
             },
             new DialogOptions

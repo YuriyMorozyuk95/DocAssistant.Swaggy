@@ -1,4 +1,6 @@
-﻿namespace ClientApp.Extensions;
+﻿using System;
+
+namespace ClientApp.Extensions;
 
 internal static class StringExtensions
 {

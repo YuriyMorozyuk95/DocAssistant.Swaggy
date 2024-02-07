@@ -36,7 +36,10 @@ namespace DocAssistant.Ai.Services
             // Get a reference to a blob  
             BlobClient blobClient = containerClient.GetBlobClient(relativePath);
 
-            var metadata = new Dictionary<string, string> { { "isOriginFile", "true" } };
+            // Get the blob URL  
+            string blobUrl = blobClient.Uri.AbsoluteUri;
+
+            var metadata = new Dictionary<string, string> { { "isOriginFile", "true" }, { "blobUrl", blobUrl } };
             await blobClient.SetMetadataAsync(metadata);
         }
 
@@ -49,19 +52,23 @@ namespace DocAssistant.Ai.Services
             await foreach (BlobItem blobItem in containerClient.GetBlobsAsync(BlobTraits.Metadata))  
             {  
                 BlobClient blobClient = containerClient.GetBlobClient(blobItem.Name);  
-                var response = await blobClient.GetPropertiesAsync();  
+                var response = await blobClient.GetPropertiesAsync();
 
 
-                if (response.Value.Metadata.TryGetValue("isOriginFile", out string isOriginFile) && isOriginFile == "true")  
+                if (response.Value.Metadata.TryGetValue("isOriginFile", out string isOriginFile) && isOriginFile == "true")
                 {
                     string name = blobItem.Name.Split('/').Last();
+                    var blobUrl = blobClient.Uri.AbsoluteUri;
 
-                    yield return new DocumentResponse(
-                        name,
-                        blobItem.Properties.ContentType,
-                        blobItem.Properties.ContentLength ?? 0,
-                        blobItem.Properties.LastModified);
-                }  
+                    yield return new DocumentResponse
+                    {
+                        Name = name,
+                        ContentType = blobItem.Properties.ContentType,
+                        Size = blobItem.Properties.ContentLength ?? 0,
+                        LastModified = blobItem.Properties.LastModified,
+                        Url = blobUrl
+                    };
+                }
             }
         }
     }

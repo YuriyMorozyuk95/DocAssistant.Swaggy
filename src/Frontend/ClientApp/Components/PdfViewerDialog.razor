@@ -2,14 +2,7 @@
     <DialogContent>
         <MudContainer Class="pdf-container">
             <div style="@_pdfViewerVisibilityStyle">
-                @if(OriginUri is null)
-                {
-                    <iframe id="pdf-viewer" src="@(FileName.ToCitationUrl(BaseUrl))" title="@FileName" />
-                }
-                else
-                {
-                    <iframe id="pdf-viewer" src="@(OriginUri.ToOriginCitationUrl())" title="@FileName" />
-                }
+                <pre> @Json </pre>
             </div>
             @if (_isLoading)
             {
