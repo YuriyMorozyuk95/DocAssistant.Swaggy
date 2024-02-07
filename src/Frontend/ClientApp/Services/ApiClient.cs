@@ -35,6 +35,7 @@ public sealed class ApiClient
             var apiTokenContent = new StringContent(apiToken, Encoding.UTF8, "plain/text");
             content.Add(apiTokenContent, "apiToken");
 
+            //TODO do not await , as it long runnign task
             var response = await _httpClient.PostAsync("api/documents", content);
 
             response.EnsureSuccessStatusCode();
@@ -122,6 +123,7 @@ public sealed class ApiClient
     {
         try
         {
+            //TODO refresh document after complite
             var response = await _httpClient.DeleteAsync("api/clear");
 
             response.EnsureSuccessStatusCode();
