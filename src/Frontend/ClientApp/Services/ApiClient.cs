@@ -3,8 +3,6 @@
 using Shared;
 using Shared.Models.Swagger;
 
-using SupportingContent = Shared.Models.SupportingContent;
-
 namespace ClientApp.Services;
 
 public sealed class ApiClient
@@ -32,10 +30,12 @@ public sealed class ApiClient
 
             content.Add(fileContent, file.Name, file.Name);
 
-            var apiTokenContent = new StringContent(apiToken, Encoding.UTF8, "plain/text");
-            content.Add(apiTokenContent, "apiToken");
+            if(!string.IsNullOrWhiteSpace(apiToken))
+            {
+                var apiTokenContent = new StringContent(apiToken, Encoding.UTF8, "plain/text");
+                content.Add(apiTokenContent, "apiToken");
+            }
 
-            //TODO do not await , as it long runnign task
             var response = await _httpClient.PostAsync("api/documents", content);
 
             response.EnsureSuccessStatusCode();

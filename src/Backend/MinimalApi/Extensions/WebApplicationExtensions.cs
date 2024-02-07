@@ -78,7 +78,8 @@ internal static class WebApplicationExtensions
             var swaggerFile = files.First();
             await using var stream = swaggerFile.OpenReadStream();
 
-            await swaggerMemoryManager.UploadMemory(swaggerFile.FileName, stream, apiToken);
+            _ = swaggerMemoryManager.UploadMemory(swaggerFile.FileName, stream, apiToken);
+            await Task.Delay(3000, cancellationToken);
 
             var response = new UploadDocumentsResponse(new[] { swaggerFile.FileName });
 
