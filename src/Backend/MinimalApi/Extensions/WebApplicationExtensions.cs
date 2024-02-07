@@ -54,6 +54,7 @@ internal static class WebApplicationExtensions
         try
         {
             await swaggerMemoryManager.RemoveMemory();
+            await Task.Delay(10000, cancellationToken);
             return Results.Ok();
         }
         catch(Exception)

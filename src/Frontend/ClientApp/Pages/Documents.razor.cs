@@ -170,7 +170,7 @@ public sealed partial class Documents : IDisposable
         if (result.IsSuccessful)
         {
             Snackbar.Add(
-                $"Memory sucessfule cleaned.",
+                $"Memory successfully cleaned, please wait 10 sec to refresh container.",
                 Severity.Success,
                 static options =>
                 {
