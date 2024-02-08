@@ -15,7 +15,7 @@ public sealed class ApiClient
         _httpClient = httpClient;
     }
 
-    public async Task<UploadDocumentsResponse> UploadDocumentsAsync(
+    public async Task<UploadDocumentsResponse> UploadFromFileDocumentsAsync(
         IBrowserFile file,
         string apiToken)
     {
@@ -38,6 +38,43 @@ public sealed class ApiClient
             }
 
             var response = await _httpClient.PostAsync("api/documents", content);
+
+            response.EnsureSuccessStatusCode();
+
+            var result =
+                await response.Content.ReadFromJsonAsync<UploadDocumentsResponse>();
+
+            return result
+                   ?? UploadDocumentsResponse.FromError(
+                       "Unable to upload files, unknown error.");
+        }
+        catch (Exception ex)
+        {
+            return UploadDocumentsResponse.FromError(ex.ToString());
+        }
+    }
+
+
+    public async Task<UploadDocumentsResponse> UploadFromUrlDocumentsAsync(
+        string url,
+        string apiToken)
+    {
+        try
+        {
+            using var content = new MultipartFormDataContent();
+            // max allow size: 10mb
+            var maxSize = 10_000_000;
+
+            var urlContent = new StringContent(url, Encoding.UTF8, "plain/text");
+            content.Add(urlContent, "swaggerFileUrl");
+
+            if(!string.IsNullOrWhiteSpace(apiToken))
+            {
+                var apiTokenContent = new StringContent(apiToken, Encoding.UTF8, "plain/text");
+                content.Add(apiTokenContent, "apiToken");
+            }
+
+            var response = await _httpClient.PostAsync("api/documents-url", content);
 
             response.EnsureSuccessStatusCode();
 
