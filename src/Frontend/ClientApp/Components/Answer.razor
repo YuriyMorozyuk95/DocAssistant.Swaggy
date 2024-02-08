@@ -2,85 +2,90 @@
 
 <MudGrid Justify="Justify.Center">
     @if (Retort is not null)
-{
-   @*  var answer = _parsedAnswer;
+    {
+        @*  var answer = _parsedAnswer;
     var html = answer.AnswerHtml; *@
 
-    <MudItem xs="12">
-        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
-            <MudTabPanel Icon="@(new Icons.Regular.Size24.ChatBubblesQuestion().Content)" Text="Answer" ToolTip="Answer text">
-                <ChildContent>
-                    <MudPaper Class="pa-6" Elevation="3">
-                        <MudText Typo="Typo.body1">
-                           @Retort.FinalResult 
-                        </MudText>
-                       @*  @if (answer is { Citations.Count: > 0 })
+        <MudItem xs="12">
+            <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true">
+                <MudTabPanel Icon="@(new Icons.Regular.Size24.ChatBubblesQuestion().Content)" Text="Answer" ToolTip="Answer text">
+                    <ChildContent>
+                        <MudPaper Class="pa-6" Elevation="3">
+                            <MudText Typo="Typo.body1">
+                                @Retort.FinalResult
+                            </MudText>
+                            @*  @if (answer is { Citations.Count: > 0 })
                         {
-                            <div class="pt-4">
-                                <MudText Typo="Typo.subtitle2" Class="pb-2">Citations:</MudText>
-                                @foreach (var citation in answer.Citations)
-                                {
-                                    var icon = citation.Name.EndsWith(".pdf")
-                                        ? @Icons.Custom.FileFormats.FilePdf
-                                        : null;
-                                    <MudChip Variant="Variant.Text" Color="Color.Info"
-                                             Icon="@icon" OnClick="@(_ => OnShowCitation(citation))">
-                                        @($"{citation.Number}. {citation.Name}")
-                                    </MudChip>
-                                }
-                            </div>
+                        <div class="pt-4">
+                        <MudText Typo="Typo.subtitle2" Class="pb-2">Citations:</MudText>
+                        @foreach (var citation in answer.Citations)
+                        {
+                        var icon = citation.Name.EndsWith(".pdf")
+                        ? @Icons.Custom.FileFormats.FilePdf
+                        : null;
+                        <MudChip Variant="Variant.Text" Color="Color.Info"
+                        Icon="@icon" OnClick="@(_ => OnShowCitation(citation))">
+                        @($"{citation.Number}. {citation.Name}")
+                        </MudChip>
+                        }
+                        </div>
                         }
                         @if (answer is { FollowupQuestions.Count: > 0 })
                         {
-                            <div class="pt-4">
-                                <MudText Typo="Typo.subtitle2" Class="pb-2">Follow-up questions:</MudText>
-                                @foreach (var followup in answer.FollowupQuestions)
-                                {
-                                    <MudChip Variant="Variant.Text" Color="Color.Tertiary"
-                                        OnClick="@(_ => OnAskFollowupAsync(followup))">
-                                            @followup
-                                    </MudChip>
-                                }
-                            </div>
+                        <div class="pt-4">
+                        <MudText Typo="Typo.subtitle2" Class="pb-2">Follow-up questions:</MudText>
+                        @foreach (var followup in answer.FollowupQuestions)
+                        {
+                        <MudChip Variant="Variant.Text" Color="Color.Tertiary"
+                        OnClick="@(_ => OnAskFollowupAsync(followup))">
+                        @followup
+                        </MudChip>
+                        }
+                        </div>
                         } *@
-                    </MudPaper>
-                </ChildContent>
-            </MudTabPanel>
+                        </MudPaper>
+                    </ChildContent>
+                </MudTabPanel>
                 <MudTabPanel Icon="@(new Icons.Regular.Size24.Send().Content)" Text="Request"
-                         ToolTip="Show curl request.">
-                <ChildContent>
-                    <MudPaper Class="pa-6" Elevation="3">
-                        <pre style="white-space: normal; font-size: 1.2em;">
+                             ToolTip="Show curl request.">
+                    <ChildContent>
+                        <MudPaper Class="pa-6" Elevation="3">
+                            <pre style="white-space: normal; font-size: 1.2em;">
                                 @Retort.Curl
-                        </pre>
-                    </MudPaper>
-                </ChildContent>
-            </MudTabPanel>
+                            </pre>
+                        </MudPaper>
+                    </ChildContent>
+                </MudTabPanel>
                 <MudTabPanel Icon="@(new Icons.Regular.Size24.Box().Content)" Text="Response"
-                         ToolTip="Show the response">
-                <ChildContent>
-                    <MudPaper Class="pa-2" Elevation="3">
-                        <pre style="white-space: normal; font-size: 1.2em;">
-                            @Retort.Response.Result
-                        </pre>
-                    </MudPaper>
-                </ChildContent>
-            </MudTabPanel>
+                             ToolTip="Show the response">
+                    <ChildContent>
+                        <MudPaper Class="pa-2" Elevation="3">
+                            <pre style="white-space: normal; font-size: 1.2em;">
+                                @Retort.Response.Result
+                            </pre>
+                        </MudPaper>
+                    </ChildContent>
+                </MudTabPanel>
                 <MudTabPanel Icon="@(new Icons.Regular.Size24.DataUsage().Content)" Text="Usage"
                              ToolTip="Show how many tokens was used">
                     <ChildContent>
                         <MudPaper Class="pa-2" Elevation="3">
                             <pre style="white-space: normal; font-size: 1.2em;">
-                                CompletionTokens: @Retort.CompletionTokens <br/>
-                                PromptTokens: @Retort.PromptTokens <br/>
-                                TotalTokens: @Retort.TotalTokens <br/>
-                            </pre>
+                                    CompletionTokens: @Retort.CompletionTokens <br />
+                                    PromptTokens: @Retort.PromptTokens <br />
+                                    TotalTokens: @Retort.TotalTokens <br />
+                                </pre>
                         </MudPaper>
                     </ChildContent>
                 </MudTabPanel>
+                <MudTabPanel Icon="@(new Icons.Regular.Size24.ClipboardCode().Content)" Text="Swagger File"
+                             OnClick="@(async _ => await ShowMergedSwaggerDocument())"
+                             ToolTip="Show merged from retrived chunks swagger file">
+                
+                </MudTabPanel>
 
 
-        </MudTabs>
-    </MudItem>
-}
+            </MudTabs>
+        </MudItem>
+    }
 </MudGrid>

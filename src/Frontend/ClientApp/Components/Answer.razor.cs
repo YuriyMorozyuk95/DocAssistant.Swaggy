@@ -15,16 +15,6 @@ public sealed partial class Answer
 
     [Inject] public required IDialogService Dialog { get; set; }
 
-    //private HtmlParsedAnswer _parsedAnswer;
-
-    //protected override void OnParametersSet()
-    //{
-    //    _parsedAnswer = ParseAnswerToHtml(
-    //        Retort.Answer, Retort.CitationBaseUrl, Retort.DataPoints);
-
-    //    base.OnParametersSet();
-    //}
-
     private async Task OnAskFollowupAsync(string followupQuestion)
     {
         if (FollowupQuestionClicked.HasDelegate)
@@ -53,4 +43,18 @@ public sealed partial class Answer
 
     [GeneratedRegex("^(\\s*<br\\s*/?>\\s*)+|(\\s*<br\\s*/?>\\s*)+$", RegexOptions.Multiline)]
     private static partial Regex HtmlLineBreakRegex();
+
+    private async Task ShowMergedSwaggerDocument() => await Dialog.ShowAsync<PdfViewerDialog>(
+        $"📄 Merged swagger file that was used for creating curl for endpoint : {Retort.SwaggerDocument.Endpoints}",
+        new DialogParameters
+        {
+            [nameof(PdfViewerDialog.JsonContent)] = Retort.SwaggerDocument.SwaggerContent,
+        },
+        new DialogOptions
+        {
+            MaxWidth = MaxWidth.Large,
+            FullWidth = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true
+        });
 }

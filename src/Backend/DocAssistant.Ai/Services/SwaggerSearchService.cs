@@ -21,18 +21,21 @@ namespace DocAssistant.Ai.Services
 		{
 			var searchResult = await _memory.SearchAsync(userPrompt);
 
-			var firstDoc = searchResult.Results.FirstOrDefault()?.Partitions.FirstOrDefault();
-
-			if (firstDoc == null)
+			var partitions = searchResult.Results.FirstOrDefault()?.Partitions.Take(3).ToList();
+            
+            if (partitions == null && partitions.Count != 0)
 			{
-				throw new Exception("Result not foud");
+				throw new Exception("Result not found");
 			}
 
-			return new SwaggerDocument
+            //partitions.First().Tags.TryGetValue(TagsKeys.SwaggerFile, out var swaggerFile);
+
+            var mergedDocument = SwaggerSplitter.MergeSwagger(partitions.Select(x => x.Text).ToList());
+
+            return new SwaggerDocument
 			{
-				SwaggerFileName = firstDoc.Tags[TagsKeys.SwaggerFile].FirstOrDefault(),
-				Endpoint = firstDoc.Tags[TagsKeys.Endpoint].FirstOrDefault(),
-				SwaggerContent = firstDoc.Text,
+                Endpoints = mergedDocument.paths,
+				SwaggerContent = mergedDocument.document,
 			};
 		}	
 	}

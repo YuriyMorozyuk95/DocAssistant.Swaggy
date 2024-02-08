@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi.Writers;
@@ -34,6 +36,49 @@ namespace DocAssistant.Ai.Services
 
                 yield return (path.Key, Serialize(document));
             }
+        }
+
+        public static (string[] paths, string document) MergeSwagger(List<string> jsonDocuments)
+        {
+            if (!jsonDocuments.Any())
+            {
+                return (Array.Empty<string>(), string.Empty);
+            }
+
+            List<OpenApiDocument> documents = new List<OpenApiDocument>();
+
+            foreach (var document in jsonDocuments)
+            {
+                var openApiDocument = new OpenApiStringReader().Read(document, out var diagnostic);
+                if (openApiDocument == null)
+                {
+                    throw new ArgumentException();
+                }
+                documents.Add(openApiDocument);
+            }
+
+            var firstDocument = documents.First();
+
+            var result = new OpenApiDocument
+            {
+                Info = firstDocument.Info,
+                Servers = firstDocument.Servers,
+                Paths = firstDocument.Paths,
+                ExternalDocs = firstDocument.ExternalDocs,
+                Extensions = firstDocument.Extensions,
+                SecurityRequirements = firstDocument.SecurityRequirements,
+                Tags = firstDocument.Tags,
+                Workspace = firstDocument.Workspace,
+            };
+
+            foreach (var document in documents.Skip(1))
+            {
+                var path = document.Paths.First();
+                result.Paths.Add(path.Key, path.Value);
+            }
+
+            var resultPaths = result.Paths.Select(x => x.Key).ToArray();
+            return (resultPaths,  result.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0));
         }
 
         private static string Serialize(OpenApiDocument document)

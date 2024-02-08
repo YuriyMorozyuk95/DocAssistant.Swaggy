@@ -1,5 +1,6 @@
 ﻿using DocAssistant.Ai.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.KernelMemory;
 using Microsoft.KernelMemory.AI.OpenAI;
 using Microsoft.KernelMemory.Configuration;
 using Microsoft.KernelMemory.Diagnostics;
@@ -167,10 +168,11 @@ namespace DocAssistant.Ai.MemoryHandlers
             Size = text.Length,
             MimeType = MimeTypes.PlainText,
             ArtifactType = DataPipeline.ArtifactTypes.TextPartition,
-            Tags = pipeline.Tags,
+            Tags = new TagCollection(),
             ContentSHA256 = textData.CalculateSHA256(),
         };
 
+        pipeline.Tags.CopyTo(destFileDetails.Tags);
         destFileDetails.Tags.Add(TagsKeys.Endpoint, endpoint);
 
         newFiles.Add(destFile, destFileDetails);
