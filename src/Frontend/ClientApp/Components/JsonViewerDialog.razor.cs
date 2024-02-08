@@ -2,7 +2,7 @@
 
 namespace ClientApp.Components;
 
-public sealed partial class PdfViewerDialog
+public sealed partial class JsonViewerDialog
 {
     private bool _isLoading = true;
     private string _pdfViewerVisibilityStyle => _isLoading ? "display:none;" : "display:default; overflow-y: scroll; overflow-x: scroll;";

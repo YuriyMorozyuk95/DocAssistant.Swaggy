@@ -23,13 +23,13 @@ public sealed partial class Answer
         }
     }
 
-    private void OnShowCitation(CitationDetails citation) => Dialog.Show<PdfViewerDialog>(
+    private void OnShowCitation(CitationDetails citation) => Dialog.Show<JsonViewerDialog>(
             $"📄 {citation.Name}",
             new DialogParameters
             {
-                [nameof(PdfViewerDialog.FileName)] = citation.Name,
-                [nameof(PdfViewerDialog.BaseUrl)] = citation.BaseUrl,
-                [nameof(PdfViewerDialog.OriginUri)] = citation.OriginUri,
+                [nameof(JsonViewerDialog.FileName)] = citation.Name,
+                [nameof(JsonViewerDialog.BaseUrl)] = citation.BaseUrl,
+                [nameof(JsonViewerDialog.OriginUri)] = citation.OriginUri,
             },
             new DialogOptions
             {
@@ -44,11 +44,11 @@ public sealed partial class Answer
     [GeneratedRegex("^(\\s*<br\\s*/?>\\s*)+|(\\s*<br\\s*/?>\\s*)+$", RegexOptions.Multiline)]
     private static partial Regex HtmlLineBreakRegex();
 
-    private async Task ShowMergedSwaggerDocument() => await Dialog.ShowAsync<PdfViewerDialog>(
+    private async Task ShowMergedSwaggerDocument() => await Dialog.ShowAsync<JsonViewerDialog>(
         $"📄 Merged swagger file that was used for creating curl for endpoint : {Retort.SwaggerDocument.Endpoints}",
         new DialogParameters
         {
-            [nameof(PdfViewerDialog.JsonContent)] = Retort.SwaggerDocument.SwaggerContent,
+            [nameof(JsonViewerDialog.JsonContent)] = Retort.SwaggerDocument.SwaggerContent,
         },
         new DialogOptions
         {

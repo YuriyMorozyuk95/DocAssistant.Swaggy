@@ -150,12 +150,12 @@ public sealed partial class Documents : IDisposable
     }
 
     //TODO
-    private void OnShowDocument(DocumentResponse document) => Dialog.Show<PdfViewerDialog>(
+    private void OnShowDocument(DocumentResponse document) => Dialog.Show<JsonViewerDialog>(
             $"📄 {document.Name}",
             new DialogParameters
             {
-                [nameof(PdfViewerDialog.FileName)] = document.Name,
-                [nameof(PdfViewerDialog.BaseUrl)] = document.Url,
+                [nameof(JsonViewerDialog.FileName)] = document.Name,
+                [nameof(JsonViewerDialog.BaseUrl)] = document.Url,
                     //document.Url.ToString().Replace($"/{document.Name}", ""),
             },
             new DialogOptions
