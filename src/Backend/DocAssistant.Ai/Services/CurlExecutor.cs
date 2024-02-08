@@ -109,7 +109,11 @@ public class CurlExecutor : ICurlExecutor
         jsonBody = jsonBody.Replace("'", string.Empty);
 
         string tempFile = Path.GetTempFileName();
-        await File.WriteAllTextAsync(tempFile, jsonBody);
+
+        JsonDocument document = JsonDocument.Parse(jsonBody);  
+        string cleanJsonString = document.RootElement.GetRawText(); 
+
+        await File.WriteAllTextAsync(tempFile, cleanJsonString);
 
         curlCommand += $" -d @{tempFile}";
 
