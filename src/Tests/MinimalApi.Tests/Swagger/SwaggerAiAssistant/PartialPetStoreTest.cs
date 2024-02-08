@@ -52,10 +52,8 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task CanAskApiCreateOrder()
     {
-        var swaggerFile = await ReadSwagger("petstore-swagger-order-create.json");
-
         var userPrompt = "Could you make an order for a pet with id 198773 with quantity 10?";
-        var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
+        var result = await _swaggerAiAssistantService.AskApi(userPrompt);
 
         PrintResult(result.FinalResult, result.ToJson());
     }
