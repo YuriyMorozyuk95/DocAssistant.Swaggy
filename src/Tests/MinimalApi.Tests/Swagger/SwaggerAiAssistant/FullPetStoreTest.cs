@@ -80,7 +80,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
     [ClassData(typeof(PetStoreUserPromptsTestData))]
     public async Task GenerateCurl(string userPrompt)
     {
-        var result = await _swaggerAiAssistantService.GenerateCurl(_swaggerFile, userPrompt);
+        var result = await _swaggerAiAssistantService.GenerateCurl(_swaggerFile, userPrompt, "test_token");
 
         PrintResult(result.ToString(), result.Metadata.ToJson());
     }

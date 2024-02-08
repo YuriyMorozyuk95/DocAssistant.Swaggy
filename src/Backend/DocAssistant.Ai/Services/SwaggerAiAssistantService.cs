@@ -15,7 +15,7 @@ namespace DocAssistant.Ai.Services
         Task<SwaggerCompletionInfo> AskApi(string userInput);
 
         Task<FunctionResult> SummarizeForNonTechnical(string input, string curl, string response);
-        Task<ChatMessageContent> GenerateCurl(string swaggerFile, string userInput);
+        Task<ChatMessageContent> GenerateCurl(string swaggerFile, string userInput, string apiToken = null);
     }
 
     public class SwaggerAiAssistantService : ISwaggerAiAssistantService
@@ -53,7 +53,7 @@ namespace DocAssistant.Ai.Services
             {
                 var swaggerDocument = await _swaggerMemorySearchService.SearchDocument(userInput);
 
-                var curlChatMessage = await GenerateCurl(swaggerDocument.SwaggerContent, userInput);
+                var curlChatMessage = await GenerateCurl(swaggerDocument.SwaggerContent, userInput, swaggerDocument.ApiToken);
                 var curl = curlChatMessage.Content;
 
                 var curlMetadata = curlChatMessage.Metadata["Usage"] as CompletionsUsage;
@@ -87,7 +87,7 @@ namespace DocAssistant.Ai.Services
 
         public async Task<SwaggerCompletionInfo> AskApi(string swaggerFile, string userInput)
         {
-            var curlChatMessage = await GenerateCurl(swaggerFile, userInput);
+            var curlChatMessage = await GenerateCurl(swaggerFile, userInput, string.Empty);
             var curl = curlChatMessage.Content;
 
             var curlMetadata = curlChatMessage.Metadata["Usage"] as CompletionsUsage;
@@ -128,9 +128,9 @@ namespace DocAssistant.Ai.Services
             return chatResult;
         }
 
-        public async Task<ChatMessageContent> GenerateCurl(string swaggerFile, string userInput)
+        public async Task<ChatMessageContent> GenerateCurl(string swaggerFile, string userInput, string apiKey = null)
         {
-            var systemPrompt = GenerateSystemPrompt(swaggerFile);
+            var systemPrompt = GenerateSystemPrompt(swaggerFile, apiKey);
 
             var getQueryChat = new ChatHistory(systemPrompt);
             getQueryChat.AddUserMessage(userInput);
@@ -140,9 +140,9 @@ namespace DocAssistant.Ai.Services
             return chatMessage[0];
         }
 
-        private string GenerateSystemPrompt(string swaggerFile)
+        private string GenerateSystemPrompt(string swaggerFile, string apiKey)
         {
-            var systemPrompt = _swaggerPrompt.Replace("{{swagger-file}}", swaggerFile);
+            var systemPrompt = _swaggerPrompt.Replace("{{swagger-file}}", swaggerFile).Replace("{{apiKey}}", apiKey);
             return systemPrompt;
         }
     }

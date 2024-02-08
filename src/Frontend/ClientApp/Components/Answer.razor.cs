@@ -45,7 +45,7 @@ public sealed partial class Answer
     private static partial Regex HtmlLineBreakRegex();
 
     private async Task ShowMergedSwaggerDocument() => await Dialog.ShowAsync<JsonViewerDialog>(
-        $"📄 Merged swagger file that was used for creating curl for endpoint : {Retort.SwaggerDocument.Endpoints}",
+        $"📄 Merged swagger with best matched endpoints : {string.Join(",",Retort.SwaggerDocument.Endpoints)}",
         new DialogParameters
         {
             [nameof(JsonViewerDialog.JsonContent)] = Retort.SwaggerDocument.SwaggerContent,

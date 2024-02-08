@@ -28,14 +28,13 @@ namespace DocAssistant.Ai.Services
 				throw new Exception("Result not found");
 			}
 
-            //partitions.First().Tags.TryGetValue(TagsKeys.SwaggerFile, out var swaggerFile);
-
-            var mergedDocument = SwaggerSplitter.MergeSwagger(partitions.Select(x => x.Text).ToList());
+            var mergedDocument = SwaggerSplitter.MergeSwagger(partitions);
 
             return new SwaggerDocument
 			{
                 Endpoints = mergedDocument.paths,
 				SwaggerContent = mergedDocument.document,
+				ApiToken = mergedDocument.apiKey
 			};
 		}	
 	}

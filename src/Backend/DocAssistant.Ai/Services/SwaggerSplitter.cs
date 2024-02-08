@@ -1,9 +1,12 @@
-﻿using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Text;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi.Writers;
+
+using static Microsoft.KernelMemory.Citation;
 
 namespace DocAssistant.Ai.Services
 {
@@ -38,12 +41,15 @@ namespace DocAssistant.Ai.Services
             }
         }
 
-        public static (string[] paths, string document) MergeSwagger(List<string> jsonDocuments)
+        public static (string[] paths, string document, string apiKey) MergeSwagger(List<Partition> partitions)
         {
-            if (!jsonDocuments.Any())
+            if (!partitions.Any())
             {
-                return (Array.Empty<string>(), string.Empty);
+                return (Array.Empty<string>(), string.Empty, string.Empty);
             }
+
+            var apiKey = partitions.First().Tags[TagsKeys.ApiToken].FirstOrDefault();
+            var jsonDocuments = partitions.Select(x => x.Text).ToList();
 
             List<OpenApiDocument> documents = new List<OpenApiDocument>();
 
@@ -78,7 +84,7 @@ namespace DocAssistant.Ai.Services
             }
 
             var resultPaths = result.Paths.Select(x => x.Key).ToArray();
-            return (resultPaths,  result.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0));
+            return (resultPaths,  result.SerializeAsJson(OpenApiSpecVersion.OpenApi2_0), apiKey);
         }
 
         private static string Serialize(OpenApiDocument document)
