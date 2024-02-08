@@ -69,5 +69,7 @@
     <PackageVersion Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.21.2" />
     <PackageVersion Include="NLog" Version="5.2.8" />
     <PackageVersion Include="NLog.Web.AspNetCore" Version="5.3.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 </Project>

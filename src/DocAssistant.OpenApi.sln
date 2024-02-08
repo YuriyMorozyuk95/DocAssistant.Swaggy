@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApi.Tests", "Tests\M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocAssistant.Ai", "Backend\DocAssistant.Ai\DocAssistant.Ai.csproj", "{74A3FF37-17CC-48F9-A845-3BE3A223EB47}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BmwCarApi", "Tests\BmwCarApi\BmwCarApi.csproj", "{D515577E-E320-4C76-9B72-299DBAFE45A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{74A3FF37-17CC-48F9-A845-3BE3A223EB47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74A3FF37-17CC-48F9-A845-3BE3A223EB47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74A3FF37-17CC-48F9-A845-3BE3A223EB47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D515577E-E320-4C76-9B72-299DBAFE45A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D515577E-E320-4C76-9B72-299DBAFE45A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D515577E-E320-4C76-9B72-299DBAFE45A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D515577E-E320-4C76-9B72-299DBAFE45A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +86,7 @@ Global
 		{C9F404D7-A854-4FF9-9E0F-2430350CE7E4} = {0CFB7725-7EB4-477A-965D-1B2CC63E8290}
 		{E9EC292A-E452-4B96-BEFD-7B51DD261D08} = {4A842A53-D58F-404E-98ED-56D006F8DC89}
 		{74A3FF37-17CC-48F9-A845-3BE3A223EB47} = {DD32AB26-537E-4214-A5E5-76B1ADB9531C}
+		{D515577E-E320-4C76-9B72-299DBAFE45A2} = {4A842A53-D58F-404E-98ED-56D006F8DC89}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA4105F8-C5B7-48AF-BC29-32EF86986CDD}
