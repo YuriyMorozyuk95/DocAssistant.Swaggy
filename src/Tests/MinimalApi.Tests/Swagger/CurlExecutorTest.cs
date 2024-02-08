@@ -75,7 +75,7 @@ namespace MinimalApi.Tests.Swagger
             string file = null;
             try
             {
-                (curl, file) = await _curlExecutor.PutJsonToFile(curl);
+                curl = await _curlExecutor.FormatJsonInCurl(curl);
 
                 Assert.True(File.Exists(file));
                 Assert.Equal($"curl -X PUT \"https://petstore3.swagger.io/api/v3/pet\" -H \"Content-Type: application/json\" -d @{file}", curl);
