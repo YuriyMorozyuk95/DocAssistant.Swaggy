@@ -24,4 +24,11 @@ internal static class StringExtensions
 
         return builder.Uri.AbsoluteUri;
     }
+
+    internal static string ToSwaggerUrl(this string url)
+    {
+        var swaggerUrl = $"https://editor.swagger.io/?url={url}";
+
+        return swaggerUrl;
+    }
 }
