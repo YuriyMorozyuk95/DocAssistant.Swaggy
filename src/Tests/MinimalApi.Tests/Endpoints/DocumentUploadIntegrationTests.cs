@@ -58,4 +58,14 @@ public class DocumentUploadIntegrationTests : IClassFixture<WebApplicationFactor
         Assert.NotNull(response);  
         Assert.True(response.IsSuccessful);  
     }  
+
+    [Fact]  
+    public async Task Test()  
+    {  
+        // Act  
+        var response = await _client.PostTextToSpeech("Hello", default);  
+  
+        // Assert  
+        Assert.NotNull(response);  
+    }  
 }

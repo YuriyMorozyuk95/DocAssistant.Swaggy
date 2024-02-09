@@ -1,6 +1,8 @@
 ﻿using DocAssistant.Ai;
 using DocAssistant.Ai.Services;
 
+using Microsoft.CognitiveServices.Speech;
+
 namespace MinimalApi.Extensions;
 
 internal static class WebApplicationExtensions
@@ -17,6 +19,8 @@ internal static class WebApplicationExtensions
 
         api.MapPost("documents-url", OnPostFromUrlDocumentAsync).DisableAntiforgery();
 
+        api.MapPost("speech", OnPostSpeechAsync).DisableAntiforgery();
+
         // Get all documents
         api.MapGet("documents", OnGetDocumentsAsync);
 
@@ -26,6 +30,39 @@ internal static class WebApplicationExtensions
         api.MapGet("synchronize-status", OnGetIndexCreationInfo).DisableAntiforgery();
 
         return app;
+    }
+
+    private static async Task<IResult> OnPostSpeechAsync([FromBody]string text)
+    {
+        // Creates an instance of a speech config with specified subscription key and service region.
+        string subscriptionKey = "99d972a3858743ffa42cb1e45c576c7c";
+        string subscriptionRegion = "swedencentral";
+
+        var config = SpeechConfig.FromSubscription(subscriptionKey, subscriptionRegion);
+        // Note: the voice setting will not overwrite the voice element in input SSML.
+        config.SpeechSynthesisVoiceName = "ja-JP-AoiNeural";
+
+
+        // use the default speaker as audio output.
+        using var synthesizer = new SpeechSynthesizer(config);
+        using var result = await synthesizer.SpeakTextAsync(text);
+        if (result.Reason == ResultReason.SynthesizingAudioCompleted)
+        {
+            return Results.File(result.AudioData, "audio/wav");
+        }
+
+        var cancellation = SpeechSynthesisCancellationDetails.FromResult(result);
+        Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
+
+        if (cancellation.Reason == CancellationReason.Error)
+        {
+            Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+            Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
+            Console.WriteLine($"CANCELED: Did you update the subscription info?");
+        }
+
+        return Results.BadRequest(cancellation.ErrorDetails);
+
     }
 
     private static Task<IResult> OnGetIndexCreationInfo()

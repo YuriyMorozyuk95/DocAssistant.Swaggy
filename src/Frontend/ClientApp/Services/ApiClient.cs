@@ -91,6 +91,14 @@ public sealed class ApiClient
         }
     }
 
+    public async Task<byte[]> PostTextToSpeech(string text, CancellationToken cancellationToken)
+    {
+        var response = await _httpClient.PostAsJsonAsync("api/speech", text, cancellationToken: cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var audioData = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+        return audioData;
+    }
 
     public async Task<IEnumerable<DocumentResponse>> GetDocumentsAsync(
        CancellationToken cancellationToken)

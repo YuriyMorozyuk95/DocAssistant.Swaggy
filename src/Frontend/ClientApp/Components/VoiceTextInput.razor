@@ -1,5 +1,10 @@
-﻿<MudBadge id="toggle-mic" Origin="Origin.TopRight" Color="Color.Primary"
-          Overlap=true Dot=false Bordered=false Icon="@MicIcon"
+﻿<MudBadge id="toggle-mic" 
+          Origin="Origin.TopRight" 
+          Color="Color.Primary"
+          Overlap=true
+          Dot=false 
+          Bordered=false 
+          Icon="@MicIcon"
           Style="width:100%; cursor:pointer;" @onclick="@OnMicClicked"
           mic=@(_isListening ? "on" : "off")>
     <MudTextField @bind-Value="@Value" 

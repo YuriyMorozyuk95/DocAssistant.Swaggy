@@ -14,35 +14,6 @@
                             <MudText Typo="Typo.body1">
                                 @Retort.FinalResult
                             </MudText>
-                            @*  @if (answer is { Citations.Count: > 0 })
-                        {
-                        <div class="pt-4">
-                        <MudText Typo="Typo.subtitle2" Class="pb-2">Citations:</MudText>
-                        @foreach (var citation in answer.Citations)
-                        {
-                        var icon = citation.Name.EndsWith(".pdf")
-                        ? @Icons.Custom.FileFormats.FilePdf
-                        : null;
-                        <MudChip Variant="Variant.Text" Color="Color.Info"
-                        Icon="@icon" OnClick="@(_ => OnShowCitation(citation))">
-                        @($"{citation.Number}. {citation.Name}")
-                        </MudChip>
-                        }
-                        </div>
-                        }
-                        @if (answer is { FollowupQuestions.Count: > 0 })
-                        {
-                        <div class="pt-4">
-                        <MudText Typo="Typo.subtitle2" Class="pb-2">Follow-up questions:</MudText>
-                        @foreach (var followup in answer.FollowupQuestions)
-                        {
-                        <MudChip Variant="Variant.Text" Color="Color.Tertiary"
-                        OnClick="@(_ => OnAskFollowupAsync(followup))">
-                        @followup
-                        </MudChip>
-                        }
-                        </div>
-                        } *@
                         </MudPaper>
                     </ChildContent>
                 </MudTabPanel>

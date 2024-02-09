@@ -1,6 +1,8 @@
 ﻿using Shared.Models.Swagger;
 
 using System.Threading;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.JSInterop;
 
 namespace ClientApp.Pages;
 
@@ -24,6 +26,9 @@ public sealed partial class Chat
     [Inject] public required ISessionStorageService SessionStorage { get; set; }
 
     [Inject] public required ApiClient ApiClient { get; set; }
+
+    [Inject]
+    public required IJSRuntime JsRuntime { get; set; }
 
     [CascadingParameter(Name = nameof(Settings))]
     public required RequestSettingsOverrides Settings { get; set; } = new RequestSettingsOverrides();
@@ -82,5 +87,17 @@ public sealed partial class Chat
         _userQuestion = _lastReferenceQuestion = "";
         _currentQuestion = default;
         _questionAndAnswerMap.Clear();
+    }
+
+    private async Task OnVoiceClicked(SwaggerCompletionInfo answer)
+    {
+        if(answer == null)
+        {
+            return;
+        }
+        string text = answer.FinalResult;
+
+        var audioData = await ApiClient.PostTextToSpeech(text, CancellationToken.None);
+        await JsRuntime.InvokeVoidAsync("playAudioData", audioData);
     }
 }
