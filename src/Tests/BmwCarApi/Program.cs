@@ -1,3 +1,4 @@
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,26 +84,6 @@ app.MapPost("/api/Car/unlock", () => "Car unlock operation was successful")
     Description = "This endpoint unlocks the Car remotely."  
 });  
   
-app.MapPost("/api/Car/lights", () => "Car lights control operation was successful")  
-.WithName("ControlCarLights")  
-.WithOpenApi(c => new(c)  
-{  
-    OperationId = "ControlCarLights",  
-    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },  
-    Summary = "Control the Car's lights remotely",  
-    Description = "This endpoint controls the Car's lights, turning them on or off remotely."  
-});  
-  
-app.MapPost("/api/Car/climateControl", () => "Car climate control operation was successful")  
-.WithName("ControlCarClimate")  
-.WithOpenApi(c => new(c)  
-{  
-    OperationId = "ControlCarClimate",  
-    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },  
-    Summary = "Control the Car's climate remotely",  
-    Description = "This endpoint controls the Car's climate control system, allowing for remote temperature adjustments."  
-});  
-  
 app.MapPost("/api/Car/navigation/destination", () => "Navigation destination set operation was successful")  
 .WithName("SetNavigationDestination")  
 .WithOpenApi(c => new(c)  
@@ -112,6 +93,159 @@ app.MapPost("/api/Car/navigation/destination", () => "Navigation destination set
     Summary = "Set a destination for the Car's navigation system",  
     Description = "This endpoint sets a destination for the Car's navigation system."  
 });  
+
+
+
+/////////////////////////
+
+app.MapPost("/api/Car/lights", (string onOrOff) =>  $"Car lights {onOrOff} operation was successful")    
+.WithName("TurnCarLights")    
+.WithOpenApi(c => new(c)    
+{    
+    Parameters = new List<OpenApiParameter>
+    {
+        new()
+        {
+            Name = "onOrOff",    
+            In = ParameterLocation.Query,    
+            Required = true,    
+            Schema = new OpenApiSchema
+            {
+                Type = "string",    
+                Enum = new List<IOpenApiAny>
+                {
+                    new OpenApiString("on"),    
+                    new OpenApiString("off")    
+                }    
+            },    
+            Description = "The desired state of the Car's lights"    
+        }    
+    },
+    OperationId = "TurnCarLights",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Turn the Car's lights on or off",    
+    Description = "This endpoint controls the Car's lights, turning them on or off remotely."    
+});    
+  
+app.MapPost("/api/Car/color",  (string redGreenBlue) => $"Car lights color was change to {redGreenBlue} successful")    
+.WithName("ChangeCarColor")    
+.WithOpenApi(c => new(c)    
+{
+    Parameters = new List<OpenApiParameter>
+    {
+        new()
+        {
+            Name = "redGreenBlue",    
+            In = ParameterLocation.Query,    
+            Required = true,    
+            Schema = new OpenApiSchema
+            {
+                Type = "string",    
+                Description = "The desired color of the Car's lights to red, green or blue"    
+            }    
+        }    
+    },
+    OperationId = "ChangeCarColor",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Change the Car's color",    
+    Description = "This endpoint changes the Car's color remotely."    
+});    
+  
+app.MapPost("/api/Car/condition", () => "Car condition operation was successful")    
+.WithName("TurnCarCondition")    
+.WithOpenApi(c => new(c)    
+{    
+    OperationId = "TurnCarCondition",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Turn the Car's condition on or off",    
+    Description = "This endpoint controls the Car's condition remotely."    
+});    
+  
+app.MapPost("/api/Car/heating", () => "Car heating operation was successful")    
+.WithName("TurnCarHeating")    
+.WithOpenApi(c => new(c)    
+{    
+    OperationId = "TurnCarHeating",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Turn the Car's heating on or off",    
+    Description = "This endpoint controls the Car's heating remotely."    
+});    
+  
+app.MapPost("/api/Car/windows", (string downOrUp) => $"Car windows was put {downOrUp} operation was successful")    
+.WithName("PutWindowsDownOrUp")    
+.WithOpenApi(c => new(c)    
+{
+    Parameters = new List<OpenApiParameter>
+    {
+        new()
+        {
+            Name = "downOrUp",    
+            In = ParameterLocation.Query,    
+            Required = true,    
+            Schema = new OpenApiSchema
+            {
+                Type = "string",    
+                Enum = new List<IOpenApiAny>
+                {
+                    new OpenApiString("down"),    
+                    new OpenApiString("up")    
+                }    
+            },    
+            Description = "The desired state of the Car's windows"    
+        }    
+    },
+    OperationId = "PutWindowsDown",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Put the Car's windows down",    
+    Description = "This endpoint puts the Car's windows down remotely."    
+});    
+  
+app.MapPost("/api/Car/radio", () => "Car radio was turned on")    
+.WithName("TurnTheRadio")    
+.WithOpenApi(c => new(c)    
+{    
+    OperationId = "TurnTheRadio",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Turn the Car's radio on or off",    
+    Description = "This endpoint controls the Car's radio remotely."    
+});    
+  
+app.MapPost("/api/Car/volume", (int percentage) => $"Music volume set {percentage} operation was successful")    
+.WithName("SetMusicVolume")    
+.WithOpenApi(c => new(c)    
+{
+    Parameters = new List<OpenApiParameter>
+    {
+        new()
+        {
+            Name = "percentage",    
+            In = ParameterLocation.Query,    
+            Required = true,    
+            Schema = new OpenApiSchema
+            {
+                Type = "integer",    
+                Minimum = 0,    
+                Maximum = 100,    
+                Description = "The desired volume of the Car's music"    
+            }    
+        }    
+    },
+    OperationId = "SetMusicVolume",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Set the Car's music volume",    
+    Description = "This endpoint sets the Car's music volume remotely."    
+});    
+  
+app.MapPost("/api/Car/emergency", () => "Hazard warning lights were turned on successfuly")    
+.WithName("TurnEmergencyCar")    
+.WithOpenApi(c => new(c)    
+{    
+    OperationId = "TurnEmergencyCar",    
+    Tags = new List<OpenApiTag> { new() { Name = "Car Control" } },    
+    Summary = "Turn the Car's emergency on or off",    
+    Description = "This endpoint controls the Car's emergency remotely."    
+});    
+
 
 
 app.Run();
