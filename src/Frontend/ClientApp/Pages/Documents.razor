@@ -41,6 +41,9 @@
                             <FluentTextField Label="Api Token:" @bind-Value="@ApiToken" TextFieldType="TextFieldType.Password">
                                 <FluentIcon Value="@(new Icons.Regular.Size24.Key())" Slot="end" />
                             </FluentTextField>
+                            <FluentTextField Label="Swagger url:" @bind-Value="@SwaggerUrl" TextFieldType="TextFieldType.Url">
+                                <FluentIcon Value="@(new Icons.Regular.Size24.Globe())" Slot="end" />
+                            </FluentTextField>
                         </div>
 
                         <MudFileUpload @ref="_fileUpload" T="IReadOnlyList<IBrowserFile>"
@@ -109,10 +112,9 @@
                     <MudButton StartIcon="@(new Icons.Regular.Size24.ArrowUpload().Content)"
                                Variant="Variant.Filled"
                                Color="Color.Primary"
-                               Disabled=@(!FilesSelected)
                                Size="Size.Large" Class="ml-auto mr-2 mb-2"
                                OnClick="@(async _ => await SubmitFilesForUploadAsync())">
-                        Upload File(s)
+                        Upload File Or Url
                     </MudButton>
                 </MudCardActions>
             </MudForm>
