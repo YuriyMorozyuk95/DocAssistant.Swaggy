@@ -10,6 +10,7 @@
     <None Remove="Prompts\SummarizeForNonTechnical\config.json" />
     <None Remove="Prompts\SummarizeForNonTechnical\skprompt.txt" />
     <None Remove="Prompts\system-prompt-swagger.txt" />
+    <None Remove="Prompts\SystemPrompts\system-prompt-http-json.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +18,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Prompts\SummarizeForNonTechnical\skprompt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Prompts\SystemPrompts\system-prompt-http-json.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Prompts\SystemPrompts\system-prompt-swagger.txt">
