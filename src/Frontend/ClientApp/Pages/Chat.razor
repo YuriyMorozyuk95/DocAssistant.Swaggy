@@ -10,20 +10,6 @@
     <MudItem id="answers" xs="12" Class="overflow-x-auto">
         @if (_questionAndAnswerMap is { Count: 0 })
         {
-            @* @if (_isExamplesPromptsInit)
-            {
-                <MudText Typo="Typo.h5">
-                    Loading examples...
-                </MudText>
-                <MudProgressCircular Indeterminate="true"
-                                     Size="Size.Small" Class="ml-2" />
-            }
-            else
-            {
-                <div class="d-flex align-content-center flex-wrap flex-grow-1 full-height">
-                    <Examples Message="Here is 3 example of question" @bind-FirstExample="_firstExample" @bind-SecondExample="_secondExample" @bind-ThirdExample="_thirdExample" OnExampleClicked="@OnAskQuestionAsync" />
-                </div>
-            } *@
         }
         else
         {
@@ -31,47 +17,49 @@
                 @foreach (var ((question, askedOn), answer) in _questionAndAnswerMap)
                 {
                     <MudStack Justify="Justify.Center" AlignItems="AlignItems.Start" Spacing="4">
-                        <MudBadge Origin="Origin.TopLeft" 
-                         Overlap="true"
+                        <MudBadge Origin="Origin.TopLeft"
+                                  Overlap="true"
                                   Color="Color.Info"
-                         Icon="@(new Icons.Regular.Size20.ChatBubblesQuestion().Content)" Class="d-flex align-self-end">
-                             <MudPaper Class="pa-6 d-flex flex-column" Elevation="3">
-                                 <MudText Typo="Typo.body1" Align="Align.End">
-                                     @question
-                                 </MudText>
+                                  Icon="@(new Icons.Regular.Size20.ChatBubblesQuestion().Content)" Class="d-flex align-self-end">
+                            <MudPaper Class="pa-6 d-flex flex-column" Elevation="3">
+                                <MudText Typo="Typo.body1" Align="Align.End">
+                                    @question
+                                </MudText>
                                 <MudText Typo="Typo.caption" Align="Align.End" Color="Color.Info">
-                                     @($"Asked at {askedOn:h:mm:ss tt} on {askedOn:M/dd/yy}")
-                                 </MudText>
-                             </MudPaper>
-                         </MudBadge>
+                                    @($"Asked at {askedOn:h:mm:ss tt} on {askedOn:M/dd/yy}")
+                                </MudText>
+                            </MudPaper>
+                        </MudBadge>
                         <div class="ten-twelves">
                             @if (answer is null)
                             {
                                 <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Info"
-                                          Icon="@(new Icons.Regular.Size20.LightbulbCheckmark().Content)" Class="full-width">
+                                          Icon="@(new Icons.Regular.Size20.LightbulbCheckmark().Content)" 
+                                          Class="full-width">
                                     <MudPaper Class="pa-6" Elevation="3">
                                         <Loading />
                                     </MudPaper>
                                 </MudBadge>
                             }
-                            //TODO: Implement the logic to handle error response from the server
-                           @*  else if (answer is { Error.Length: > 0 })
+                            else
                             {
-                                <MudBadge Origin="Origin.TopLeft" Overlap="true" Color="Color.Error"
-                                          Icon="@Icons.Material.Filled.Error">
-                                    <AnswerError Error="@answer" Question="@question"
-                                        OnRetryClicked="@OnAskQuestionAsync" />
+                                <MudBadge 
+                                        Origin="Origin.BottomLeft"
+                                        Dot=false 
+                                        Bordered=false
+                                          Style="width:100%;height:100%; cursor:pointer;"
+                                          Overlap="true"
+                                          Color="Color.Info"
+                                          @onclick="@(async e => await @OnVoiceClicked(answer))"
+                                          Icon="@(new Icons.Regular.Size24.PersonVoice().Content)">
+                                    <MudBadge Origin="Origin.TopLeft"
+                                              Overlap="true"
+                                              Color="Color.Info"
+                                              Icon="@(new Icons.Regular.Size24.BrainCircuit().Content)">
+                                        <Answer Retort="@answer" FollowupQuestionClicked="@OnAskQuestionAsync" />
+                                    </MudBadge>
                                 </MudBadge>
                             }
-                            else
-                            { *@
-                            <MudBadge Origin="Origin.TopLeft" 
-                                     Overlap="true" 
-                                     Color="Color.Info"
-                                      Icon="@(new Icons.Regular.Size24.BrainCircuit().Content)">
-                                    <Answer Retort="@answer" FollowupQuestionClicked="@OnAskQuestionAsync" />
-                                </MudBadge>
-                            @* } *@
                         </div>
                     </MudStack>
                 }
@@ -94,7 +82,7 @@
                         <MudFab Color="Color.Info" Size="Size.Large"
                                 StartIcon=@(new Icons.Regular.Size24.Send().Content)
                                 Class="full-width"
-                                Label="Chat" 
+                                Label="Chat"
                                 aria-label="Ask question button."
                                 OnClick="@OnAskClickedAsync"
                                 Disabled=@(_isReceivingResponse || string.IsNullOrWhiteSpace(_userQuestion)) />
@@ -111,7 +99,7 @@
             </MudItem>
         </MudGrid>
     </MudItem>
-    <MudScrollToTop Selector="#answers" 
+    <MudScrollToTop Selector="#answers"
                     VisibleCssClass="visible absolute"
                     HiddenCssClass="invisible">
         <MudFab Color="Color.Info" IconSize="Size.Large" StartIcon="@(new Icons.Regular.Size20.ArrowCircleUp().Content)" />

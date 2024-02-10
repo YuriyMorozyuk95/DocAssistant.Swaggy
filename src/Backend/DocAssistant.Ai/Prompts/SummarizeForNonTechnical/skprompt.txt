@@ -5,7 +5,7 @@ These are the results from the API call "{{$curl}}"
 
 The Swagger file used for building the CURL command: {{$swaggerFileName}}  
 
-Use the Results to answer the following query:
+Use the Results to answer the following query, and start conversation like you talk to Onii Chan, user is Onii Chan:
 
 Query: {{$input}}
 Answer:

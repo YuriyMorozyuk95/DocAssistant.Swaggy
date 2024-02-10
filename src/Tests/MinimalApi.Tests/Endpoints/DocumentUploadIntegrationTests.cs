@@ -31,10 +31,41 @@ public class DocumentUploadIntegrationTests : IClassFixture<WebApplicationFactor
         var cookie = "YourCookie";  
   
         // Act  
-        var response = await _client.UploadDocumentsAsync(fileMock.Object, apiToken);  
+        var response = await _client.UploadFromFileDocumentsAsync(fileMock.Object, apiToken);  
   
         // Assert  
         Assert.NotNull(response);  
         Assert.True(response.IsSuccessful);  
+    }  
+
+    [Fact]  
+    public async Task Post_DocumentUrl_ReturnsOkResponse()  
+    {  
+        // Arrange  
+        var fileMock = new Mock<IBrowserFile>();  
+        fileMock.Setup(_ => _.OpenReadStream(It.IsAny<long>(), It.IsAny<CancellationToken>()))
+            .Returns(new MemoryStream(Encoding.UTF8.GetBytes("This is a dummy file")));  
+        fileMock.Setup(_ => _.ContentType).Returns("text/plain");  
+        fileMock.Setup(_ => _.Name).Returns("dummy.txt");  
+  
+        var apiToken = "YourApiToken";  
+        var url = "https://bmwcarwebapi.azurewebsites.net/swagger/v1/swagger.json";  
+  
+        // Act  
+        var response = await _client.UploadFromUrlDocumentsAsync(url, apiToken);  
+  
+        // Assert  
+        Assert.NotNull(response);  
+        Assert.True(response.IsSuccessful);  
+    }  
+
+    [Fact]  
+    public async Task Test()  
+    {  
+        // Act  
+        var response = await _client.PostTextToSpeech("Hello", default);  
+  
+        // Assert  
+        Assert.NotNull(response);  
     }  
 }

@@ -1,6 +1,7 @@
 ﻿<MudDialog DisableSidePadding="true">
     <DialogContent>
         <MudContainer Class="pdf-container">
+            <MudNavLink Href="@(BaseUrl.ToSwaggerUrl())" Target="_blank">Show endpoints</MudNavLink>
             <div style="@_pdfViewerVisibilityStyle">
                 <pre> @Json </pre>
             </div>

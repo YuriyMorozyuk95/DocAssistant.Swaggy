@@ -41,6 +41,7 @@ public sealed partial class Documents : IDisposable
 
     private bool FilesSelected => _fileUpload is { Files.Count: > 0 };
     public string ApiToken { get; set; }
+    public string SwaggerUrl { get; set; }
 
     protected override void OnInitialized()
     {
@@ -106,50 +107,68 @@ public sealed partial class Documents : IDisposable
 
     private async Task SubmitFilesForUploadAsync()
     {
+        UploadDocumentsResponse result = null;
+
         if (_fileUpload is { Files.Count: > 0 })
         {
-            var cookie = await JsRuntime.InvokeAsync<string>("getCookie", "XSRF-TOKEN");
-
-            var result = await Client.UploadDocumentsAsync(
+            result = await Client.UploadFromFileDocumentsAsync(
                 _fileUpload.Files.First(), ApiToken);
 
-            ApiToken = string.Empty;
-
-            Logger.LogInformation("Result: {x}", result);
-
-            if (result.IsSuccessful)
-            {
-                Snackbar.Add(
-                    $"Uploaded {result.UploadedFiles.Length} documents.",
-                    Severity.Success,
-                    static options =>
-                    {
-                        options.ShowCloseIcon = true;
-                        options.VisibleStateDuration = 10_000;
-                    });
-
-                await _fileUpload.ResetAsync();
-                if(_selectedUserGroupsForDoc is List<UserGroup> list)
-                {
-                    list.Clear();
-                }
-                await GetDocumentsAsync();
-            }
-            else
-            {
-                Snackbar.Add(
-                    result.Error,
+            
+        }
+        else if(!string.IsNullOrWhiteSpace(SwaggerUrl))
+        {
+            result = await Client.UploadFromUrlDocumentsAsync(
+                SwaggerUrl, ApiToken);
+        }
+        else
+        {
+            Snackbar.Add("Please select a file or provide a URL.",
                     Severity.Error,
                     static options =>
                     {
                         options.ShowCloseIcon = true;
                         options.VisibleStateDuration = 10_000;
                     });
+        }
+        if (result.IsSuccessful)
+        {
+            ApiToken = string.Empty;
+            SwaggerUrl = string.Empty;
+
+            Logger.LogInformation("Result: {x}", result);
+
+
+            Snackbar.Add(
+                $"Uploaded {result.UploadedFiles.Length} documents.",
+                Severity.Success,
+                static options =>
+                {
+                    options.ShowCloseIcon = true;
+                    options.VisibleStateDuration = 10_000;
+                });
+
+            await _fileUpload.ResetAsync();
+            if (_selectedUserGroupsForDoc is List<UserGroup> list)
+            {
+                list.Clear();
             }
+            await GetDocumentsAsync();
+        }
+        else
+        {
+            Snackbar.Add(
+                result.Error,
+                Severity.Error,
+                static options =>
+                {
+                    options.ShowCloseIcon = true;
+                    options.VisibleStateDuration = 10_000;
+                });
         }
     }
 
-    //TODO
+
     private void OnShowDocument(DocumentResponse document) => Dialog.Show<JsonViewerDialog>(
             $"📄 {document.Name}",
             new DialogParameters
