@@ -1,4 +1,4 @@
-These are the results from the API call "{{$curl}}"
+These are the results from the API call "{{$endpoint}}"
 ===RESULTS
 {{$response}} 
 ===END RESULTS

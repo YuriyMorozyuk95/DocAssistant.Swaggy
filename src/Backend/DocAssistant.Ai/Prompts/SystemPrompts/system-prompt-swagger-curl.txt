@@ -4,7 +4,6 @@ Please follow these rules:
 - Only curl command line without text!
 - If property are not required please and not exist in user prompt do not include example value to json in PUT and POST requests
 - If there is missing required property in prompt please tell me what is missing.
-- If there is missing required property in prompt please tell me what is missing.
 - If request require api key please use this value: {{apiKey}}
 
 

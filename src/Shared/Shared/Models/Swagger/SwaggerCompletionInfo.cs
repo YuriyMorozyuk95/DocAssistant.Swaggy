@@ -3,7 +3,7 @@
 public class SwaggerCompletionInfo
 {
     public string FinalResult { get; set; }
-    public string Curl { get; set; }
+    public string Endpoint { get; set; }
     public int CompletionTokens { get; set; }
     public int PromptTokens { get; set; }
     public int TotalTokens { get; set; }

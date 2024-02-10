@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MinimalApi.Tests.Swagger.SwaggerAiAssistant.UserPromptsTestData;
 
 using Shared.Extensions;
+using Shared.Models.Swagger;
 using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger.SwaggerAiAssistant;
@@ -14,7 +15,7 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
 {
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly ISwaggerAiAssistantService _swaggerAiAssistantService;
-    private string _swaggerFile;
+    private SwaggerDocument _swaggerFile;
 
     public FullPetStoreTest(WebApplicationFactory<Program> factory, ITestOutputHelper testOutputHelper)
     {
@@ -25,7 +26,10 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
     public async Task InitializeAsync()
     {
         var swaggerFilePath = "Assets/petstore-swagger-full.json";
-        _swaggerFile = await File.ReadAllTextAsync(swaggerFilePath);
+        _swaggerFile = new SwaggerDocument
+        {
+            SwaggerContent = await File.ReadAllTextAsync(swaggerFilePath)
+        };
     }
 
     [Fact]
@@ -74,15 +78,6 @@ public class FullPetStoreTest : IClassFixture<WebApplicationFactory<Program>>, I
         var chatResult = await _swaggerAiAssistantService.SummarizeForNonTechnical(input, curl, response);
 
         PrintResult(chatResult.ToString(), chatResult.Metadata.ToJson());
-    }
-
-    [Theory]
-    [ClassData(typeof(PetStoreUserPromptsTestData))]
-    public async Task GenerateCurl(string userPrompt)
-    {
-        var result = await _swaggerAiAssistantService.GenerateCurl(_swaggerFile, userPrompt, "test_token");
-
-        PrintResult(result.ToString(), result.Metadata.ToJson());
     }
 
     private void PrintResult(string content, string metadata)

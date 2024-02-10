@@ -45,6 +45,7 @@ public class CurlExecutor : ICurlExecutor
                 string result = await process.StandardOutput.ReadToEndAsync(cts.Token);
 
                 var apiResponse = CreateApiResponseFromResult(result);
+                apiResponse.Request = curl;
 
                 return apiResponse;
             }

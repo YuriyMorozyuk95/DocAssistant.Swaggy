@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory;
 using MinimalApi.Tests.Swagger.SwaggerAiAssistant.UserPromptsTestData;
 using Shared.Extensions;
+using Shared.Models.Swagger;
 using Xunit.Abstractions;
 
 namespace MinimalApi.Tests.Swagger.SwaggerAiAssistant;
@@ -61,7 +62,10 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task CanAskApiFindById()
     {
-        var swaggerFile = await ReadSwagger("petstore-swagger-order-find-by-id.json");
+        var swaggerFile = new SwaggerDocument
+        {
+            SwaggerContent = await ReadSwagger("petstore-swagger-order-find-by-id.json")
+        };
 
         var userPrompt = "Could you find order by id 10?";
         var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
@@ -72,7 +76,10 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task CanAskApiStoreInventory()
     {
-        var swaggerFile = await ReadSwagger("petstore-swagger-order-inventories.json");
+        var swaggerFile = new SwaggerDocument
+        {
+            SwaggerContent = await ReadSwagger("petstore-swagger-order-inventories.json")
+        };
 
         var userPrompt = "Could you provide to me store inventories?";
         var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);
@@ -83,7 +90,10 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task CanAskApiCreate()
     {
-        var swaggerFile = await ReadSwagger("petstore-swagger-create-user.json");
+        var swaggerFile = new SwaggerDocument
+        {
+            SwaggerContent = await ReadSwagger("petstore-swagger-create-user.json")
+        };
 
         var userPrompt = "Could you create new user Alexander Whatson with email Alexander.Whatson@gmail.com with id 1000 ?";
         var result = await _swaggerAiAssistantService.AskApi(swaggerFile, userPrompt);

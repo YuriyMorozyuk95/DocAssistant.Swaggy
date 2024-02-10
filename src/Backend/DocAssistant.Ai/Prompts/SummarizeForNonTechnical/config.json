@@ -25,18 +25,18 @@
       "required": true
     },
     {
-      "name": "curl",
-      "description": "The CURL command that was executed.",
+      "name": "endpoint",
+      "description": "The HTTP endpoint that was executed.",
       "required": true
     },
     {
       "name": "response",
-      "description": "The successful response from the CURL command.",
+      "description": "The response from the HTTP request.",
       "required": true
     },
     {
       "name": "swaggerFileName",
-      "description": "The Swagger file name used to build the CURL command.",
+      "description": "The Swagger file name used to build the HTTP request.",
       "required": true
     }
   ]

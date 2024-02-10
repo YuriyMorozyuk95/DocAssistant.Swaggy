@@ -10,6 +10,7 @@
     <None Remove="Prompts\SummarizeForNonTechnical\config.json" />
     <None Remove="Prompts\SummarizeForNonTechnical\skprompt.txt" />
     <None Remove="Prompts\system-prompt-swagger.txt" />
+    <None Remove="Prompts\SystemPrompts\system-prompt-swagger-httpc.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +20,10 @@
     <Content Include="Prompts\SummarizeForNonTechnical\skprompt.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Prompts\SystemPrompts\system-prompt-swagger.txt">
+    <Content Include="Prompts\SystemPrompts\system-prompt-swagger-httpc.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Prompts\SystemPrompts\system-prompt-swagger-curl.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

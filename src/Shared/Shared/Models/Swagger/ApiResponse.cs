@@ -2,6 +2,8 @@
 
 public class ApiResponse
 {
+    public string Request { get; set; }
+
     public int Code { get; set; }
     public string Message { get; set; }
 
