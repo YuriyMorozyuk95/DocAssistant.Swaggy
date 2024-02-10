@@ -80,8 +80,8 @@ public class Program
                 //}
             }
 
-            builder.Logging.ClearProviders();
-            builder.Logging.SetMinimumLevel(LogLevel.Information);
+            //builder.Logging.ClearProviders();
+            //builder.Logging.SetMinimumLevel(LogLevel.Information);
             builder.Host.UseNLog();
 
             var app = builder.Build();

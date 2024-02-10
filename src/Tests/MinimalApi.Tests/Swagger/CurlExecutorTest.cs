@@ -21,6 +21,17 @@ namespace MinimalApi.Tests.Swagger
         }
 
         [Fact]
+        public Task Test()
+        {
+            string curl = 
+                """
+                curl -X POST "https://bmwcarwebapi.azurewebsites.net/api/Car/lights?onOrOff=on" -H "Api-Key:test car api"
+                """;
+            return _curlExecutor.ExecuteCurl(curl);
+        }
+
+
+        [Fact]
         public void CanCheckApiResponseWhenStatusCode()
         {
             var response = 

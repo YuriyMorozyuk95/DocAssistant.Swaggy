@@ -21,16 +21,19 @@ public class CurlExecutor : ICurlExecutor
         string json = null;
         try
         {
-            if (curl.Contains("-d"))
-            {
-                curl = await FormatJsonInCurl(curl);
-            }
+            //if (curl.Contains("-d"))
+            //{
+            //    curl = await FormatJsonInCurl(curl);
+            //}
+
+            await LogWriteLine("Executing curl: " + curl);
 
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {
                 FileName = "cmd.exe",
                 Arguments = "/C" + curl,
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
             };
 
@@ -43,6 +46,10 @@ public class CurlExecutor : ICurlExecutor
             {
                 await process.WaitForExitAsync(cts.Token);
                 string result = await process.StandardOutput.ReadToEndAsync(cts.Token);
+                string error = await process.StandardError.ReadToEndAsync(cts.Token);
+
+                await LogWriteLine("result: " + result);
+                await LogWriteLine("error: " + error);
 
                 var apiResponse = CreateApiResponseFromResult(result);
 
@@ -63,6 +70,11 @@ public class CurlExecutor : ICurlExecutor
                 File.Delete(filePath);
             }
         }
+    }
+
+    private async Task LogWriteLine(string s)
+    {
+        await File.AppendAllLinesAsync("logs/curl.log", new[] { s });   
     }
 
     private ApiResponse Error(string message)

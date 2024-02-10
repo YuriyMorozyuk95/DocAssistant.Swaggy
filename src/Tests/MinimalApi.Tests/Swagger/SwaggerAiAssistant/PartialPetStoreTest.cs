@@ -39,6 +39,15 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
         await _memoryServerless.ImportDocumentAsync(upload);
     }
 
+    [Fact]
+    public async Task CanAskApiCar()
+    {
+        var userPrompt = "Could you turn on the lights of the car?";
+        var result = await _swaggerAiAssistantService.AskApi(userPrompt);
+
+        PrintResult(result.FinalResult, result.ToJson());
+    }
+
     //Please call UploadPetStoreSwagger, before running this test
     [Theory]
     [ClassData(typeof(PetStoreUserPromptsTestData))]
