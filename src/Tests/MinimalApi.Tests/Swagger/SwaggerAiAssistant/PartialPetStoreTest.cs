@@ -26,6 +26,21 @@ public class PartialPetStoreTest : IClassFixture<WebApplicationFactory<Program>>
         _memoryServerless = factory.Services.GetRequiredService<MemoryServerless>();
     }
     [Fact]
+    public async Task CanUploadSwaggerDocument()
+    {
+        var swaggerDocument = new SwaggerDocument  
+        {  
+            Endpoints = new string[] { "endpoint1", "endpoint2" },  
+            SwaggerContent = "swagger content",  
+            ApiToken = "api token"  
+        };
+
+        var result = await _swaggerAiAssistantService.UploadSwaggerDocument(swaggerDocument);
+
+        _testOutputHelper.WriteLine(result.SwaggerContentUrl);
+    }
+
+    [Fact]
     private async Task UploadPetStoreSwagger()
     {
         var tags = new TagCollection

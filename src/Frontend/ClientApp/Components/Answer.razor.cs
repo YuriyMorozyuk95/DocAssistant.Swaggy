@@ -45,10 +45,11 @@ public sealed partial class Answer
     private static partial Regex HtmlLineBreakRegex();
 
     private async Task ShowMergedSwaggerDocument() => await Dialog.ShowAsync<JsonViewerDialog>(
-        $"📄 Merged swagger with best matched endpoints : {string.Join(",",Retort.SwaggerDocument.Endpoints)}",
+        $"📄 Merged swagger file with best matched endpoints",
         new DialogParameters
         {
             [nameof(JsonViewerDialog.JsonContent)] = Retort.SwaggerDocument.SwaggerContent,
+            [nameof(JsonViewerDialog.BaseUrl)] = Retort.SwaggerDocument.SwaggerContentUrl,
         },
         new DialogOptions
         {
