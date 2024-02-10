@@ -48,31 +48,21 @@ public class HttpClientHttpRequestExecutor : IHttpRequestExecutor
         // TODO: add api token
         var client = new HttpClient();
 
-        HttpResponseMessage response;
-        if (verb == "GET")
+        StringContent? httpBody = null;
+        if(body != null)
         {
-            response = await client.GetAsync(url);
+            httpBody = new StringContent(body);
         }
-        else if (verb == "POST" && body != null)
+
+        HttpResponseMessage response = verb switch
         {
-            response = await client.PostAsync(url, new StringContent(body));
-        }
-        else if (verb == "PUT" && body != null)
-        {
-            response = await client.PutAsync(url, new StringContent(body));
-        }
-        else if (verb == "PATCH" && body != null)
-        {
-            response = await client.PatchAsync(url, new StringContent(body));
-        }
-        else if (verb == "DELETE")
-        {
-            response = await client.DeleteAsync(url);
-        }
-        else
-        {
-            throw new Exception("HTTP method not supported");
-        }
+            "GET" => await client.GetAsync(url),
+            "POST" => await client.PostAsync(url, httpBody),
+            "PUT" when body != null => await client.PutAsync(url, httpBody),
+            "PATCH" => await client.PatchAsync(url, httpBody),
+            "DELETE" => await client.DeleteAsync(url),
+            _ => throw new Exception("HTTP method not supported")
+        };
 
         var apiResponse = new ApiResponse
         {

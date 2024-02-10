@@ -152,7 +152,7 @@ internal static class WebApplicationExtensions
             var swaggerFile = Path.GetFileName(new Uri(swaggerFileUrl).LocalPath);
 
             string[] parts = swaggerFileUrl.Split('.');  
-            string firstPartOfUrl = parts[1];
+            string firstPartOfUrl = parts[0];
 
             var fileName = $"{firstPartOfUrl}-{swaggerFile}";
 

@@ -37,7 +37,7 @@ public sealed class ApiClient
                 content.Add(apiTokenContent, "apiToken");
             }
 
-            var response = await _httpClient.PostAsync("api/documents", content);
+            var response = await _httpClient.PostAsync("api/documents-file", content);
 
             response.EnsureSuccessStatusCode();
 

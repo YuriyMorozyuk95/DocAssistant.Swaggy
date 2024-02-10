@@ -29,6 +29,8 @@ public class SwaggerMemoryManagerService : ISwaggerMemoryManagerService
         IndexCreationInformation.IndexCreationInfo.LastIndexStatus = Shared.IndexStatus.Processing;
         IndexCreationInformation.IndexCreationInfo.LastIndexErrorMessage = string.Empty;
 
+        await CreateContainerIfNotExist();
+
         try
         {
             var tags = new TagCollection
@@ -49,6 +51,11 @@ public class SwaggerMemoryManagerService : ISwaggerMemoryManagerService
             IndexCreationInformation.IndexCreationInfo.LastIndexStatus = Shared.IndexStatus.Failed;
             IndexCreationInformation.IndexCreationInfo.LastIndexErrorMessage = e.ToString();
         }
+    }
+
+    private async Task CreateContainerIfNotExist()
+    {
+        throw new NotImplementedException();
     }
 
     public async Task RemoveMemory()
