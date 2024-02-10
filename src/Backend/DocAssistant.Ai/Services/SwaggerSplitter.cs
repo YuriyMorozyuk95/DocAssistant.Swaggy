@@ -48,7 +48,14 @@ namespace DocAssistant.Ai.Services
                 return (Array.Empty<string>(), string.Empty, string.Empty);
             }
 
-            var apiKey = partitions.First().Tags[TagsKeys.ApiToken].FirstOrDefault();
+
+            var firstPart = partitions.First();
+            string apiKey = string.Empty;
+            if(firstPart.Tags.TryGetValue(TagsKeys.ApiToken, out var tag))
+            {
+                apiKey = tag.FirstOrDefault();
+
+            }
             var jsonDocuments = partitions.Select(x => x.Text).ToList();
 
             List<OpenApiDocument> documents = new List<OpenApiDocument>();
