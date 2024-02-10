@@ -23,6 +23,12 @@ namespace MinimalApi.Tests.Swagger
         }
 
         [Fact]
+        public async Task CanCreateContainerIfNotExist()
+        {
+            await _swaggerMemoryManagerService.CreateContainerIfNotExist();
+        }
+
+        [Fact]
         public async Task CanUploadMemory()
         {
             var fileName = "petstore-swagger-full.json";

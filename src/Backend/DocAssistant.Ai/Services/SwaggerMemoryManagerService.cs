@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Search.Documents.Indexes;
 using Azure.Storage.Blobs;
-
+using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.KernelMemory;
 
@@ -11,6 +11,7 @@ public interface ISwaggerMemoryManagerService
 {
     Task UploadMemory(string fileName, Stream stream, string apiKey);
     Task RemoveMemory();
+    Task CreateContainerIfNotExist();
 }
 
 public class SwaggerMemoryManagerService : ISwaggerMemoryManagerService
@@ -53,9 +54,23 @@ public class SwaggerMemoryManagerService : ISwaggerMemoryManagerService
         }
     }
 
-    private async Task CreateContainerIfNotExist()
+    public async Task CreateContainerIfNotExist()
     {
-        throw new NotImplementedException();
+        var connectionString = _configuration["KernelMemory:Services:AzureBlobs:ConnectionString"];
+        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+
+        // Create the container client.    
+        var containerName = _configuration["KernelMemory:Services:AzureBlobs:Container"];
+        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+        // Create the container if it does not exist.  
+        if (!await containerClient.ExistsAsync())
+        {
+            await containerClient.CreateIfNotExistsAsync();
+        }
+
+        // Set the access level of the container to Container (anonymous read access for containers and blobs).  
+        await containerClient.SetAccessPolicyAsync(PublicAccessType.BlobContainer);
     }
 
     public async Task RemoveMemory()
