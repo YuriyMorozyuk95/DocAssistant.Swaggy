@@ -61,6 +61,7 @@ namespace DocAssistant.Ai.MemoryHandlers
         DataPipeline pipeline, CancellationToken cancellationToken = default)
     {
         IndexCreationInformation.IndexCreationInfo.StepInfo = $"{StepName}: partitioning text in small chunks.";
+        await Task.Delay(1000);
 
         _log.LogDebug("Partitioning text, pipeline '{0}/{1}'", pipeline.Index, pipeline.DocumentId);
 

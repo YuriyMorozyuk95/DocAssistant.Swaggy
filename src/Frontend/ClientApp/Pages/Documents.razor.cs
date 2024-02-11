@@ -52,7 +52,7 @@ public sealed partial class Documents : IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        _timer = new Timer(async _ => await LoadIndexCreationInfoAsync(), null, 0, 5000);
+        _timer = new Timer(async _ => await LoadIndexCreationInfoAsync(), null, 0, 500);
 
         await LoadIndexCreationInfoAsync();
     }
