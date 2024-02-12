@@ -1,4 +1,6 @@
-﻿using Azure.AI.OpenAI;
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -52,6 +54,10 @@ public class HttpClientHttpRequestExecutor : IHttpRequestExecutor
         if(body != null)
         {
             httpBody = new StringContent(body);
+            if (IsJson(body))
+            {
+                httpBody.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            }
         }
 
         HttpResponseMessage response = verb switch
@@ -101,4 +107,9 @@ public class HttpClientHttpRequestExecutor : IHttpRequestExecutor
         return systemPrompt;
     }
 
+    private static bool IsJson(string body)
+    {
+        var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(body));
+        return JsonDocument.TryParseValue(ref reader, out _);
+    }
 }
