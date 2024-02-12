@@ -21,10 +21,10 @@ public class CurlExecutor : ICurlExecutor
         string json = null;
         try
         {
-            if (curl.Contains("-d"))
-            {
-                curl = await FormatJsonInCurl(curl);
-            }
+            //if (curl.Contains("-d"))
+            //{
+            //    curl = await FormatJsonInCurl(curl);
+            //}
 
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {

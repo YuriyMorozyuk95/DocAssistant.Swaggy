@@ -110,7 +110,18 @@ public static class AiServiceCollectionExtensions
         });
 
         services.AddTransient<ICurlExecutor, CurlExecutor>();
-        services.AddTransient<IHttpRequestExecutor, HttpClientHttpRequestExecutor>();
+
+        string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");  
+
+        if (environment == "Development")
+        {
+            services.AddTransient<IHttpRequestExecutor, CurlHttpRequestExecutor>();
+        }
+        else
+        {
+            services.AddTransient<IHttpRequestExecutor, HttpClientHttpRequestExecutor>();
+        }
+
         services.AddTransient<ISwaggerMemorySearchService, SwaggerMemorySearchService>();
         services.AddTransient<ISwaggerAiAssistantService, SwaggerAiAssistantService>();
         services.AddTransient<ISwaggerMemoryManagerService, SwaggerMemoryManagerService>();
